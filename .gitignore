@@ -1,0 +1,12 @@
+# Default ignored files
+.precomp/
+lib/.precomp/
+raku-collection-plugins.iml
+.idea/
+xt/test-dir/
+trial/doc-cache/
+trial/html/
+trial/Website/reports/
+trial/Website/structure-cache/
+*.css.map
+*.css
