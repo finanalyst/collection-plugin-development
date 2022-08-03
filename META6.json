@@ -10,9 +10,7 @@
   "depends": [
     "Raku::Pod::Render",
     "Pod::From::Cache",
-    "Terminal::Spinners",
     "RakuConfig",
-    "Archive::Libarchive",
     "Collection"
   ],
   "build-depends": [],
