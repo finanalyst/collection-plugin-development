@@ -1,0 +1,9 @@
+=begin pod
+=TITLE Change log for the Collection-Plugins module
+
+=head1 2022-08-09 v0.0.2
+=item First structural draft.
+=item got C<LeafletMap> to work
+=item added ordering logic to C<gather-js>
+
+=end pod

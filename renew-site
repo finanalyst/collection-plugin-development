@@ -1,3 +1,3 @@
 #! /bin/bash
-cd ~/development/raku-collection-raku-documentation
+cd ~/development/raku-collection-plugins
 zip -r resources/website Website

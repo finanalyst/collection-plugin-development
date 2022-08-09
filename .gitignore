@@ -6,7 +6,9 @@ raku-collection-plugins.iml
 xt/test-dir/
 trial/doc-cache/
 trial/html/
-trial/Website/reports/
-trial/Website/structure-cache/
+trial/Website/
+trial/Website/*
 *.css.map
 *.css
+/trial/Website/plugins/gather-js-jq/js-templates.raku
+/Website/plugins/gather-js-jq/js-templates.raku

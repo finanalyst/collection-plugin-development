@@ -1,9 +1,32 @@
-=pod
+=begin pod
 =TITE Readme
 =SUBTITLE Plugins for Collection
 
 =head1 Introduction
 
-Development files for plugins.
+The C<Collection> module makes extensive use of plugins. They need developing and maintaining.
+
+The intention is for this distribution to be the repository for the files to develop plugins, and
+as a source for completed working plugins.
+
+A major milestone will be to have a GUI / command line utility to be distributed with C<Collection>
+so that updates can be detected for Collection systems. It is planned for a host to have multiple
+Collections and multiple Modes.
+
+=head1 Currently
+
+The 'clean' directory structure is
+=item raku-collection-plugins/ # the root of the module
+=item2 resources/ # a directory for the Module
+=item2 Website/ # the directory containing the website mode configuration/plugins
+=item2 trial/ # the directory in which testing is run
+=item3 raku-docs/ # a small collection of Raku documentation docs
+=item3 config.raku # the configuration file for trial/Website/
+=item2 renew-site # a bash file to zip Website into resources/website
+=item2 sync-site # a bash file to rsync Website/ to trial/Website/
+=item2 updateCSS # a bash file to run SCSS files in selected plugins
+
+The workflow is for changes to be made in Website, then to C<sync-site>, C<cd trial; Raku-Doc>,
+inspect the result in C<localhost:3000>, and iterate.
 
 =end pod
