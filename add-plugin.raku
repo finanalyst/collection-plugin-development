@@ -1,8 +1,9 @@
 #!/usr/bin/env perl6
 use RakuConfig;
-
+constant MODE = 'trial/Website';
 sub MAIN(Str:D $plug, :$mile = 'render') {
 my %config;
+chdir MODE;
 try {
     %config = get-config(:path<configs>);
     CATCH {
