@@ -17,16 +17,19 @@ Collections and multiple Modes.
 
 The 'clean' directory structure is
 =item raku-collection-plugins/ # the root of the module
+=item2 lib/html/plugins # location of plugin data
 =item2 resources/ # a directory for the Module
-=item2 Website/ # the directory containing the website mode configuration/plugins
 =item2 trial/ # the directory in which testing is run
 =item3 raku-docs/ # a small collection of Raku documentation docs
+=item3 Website/ # the directory containing the website mode configuration/plugins
+=item4 plugins/ # a link pointing to /lib/html/plugins
+=item4 structure-sources/collections-examples.rakudoc # demo file for all user-facing plugins
 =item3 config.raku # the configuration file for trial/Website/
-=item2 renew-site # a bash file to zip Website into resources/website
-=item2 sync-site # a bash file to rsync Website/ to trial/Website/
+=item2 add-new-plugin # adds a new plugin
+=item2 test-plugins # tests each plugin and the templates
 =item2 updateCSS # a bash file to run SCSS files in selected plugins
 
-The workflow is for changes to be made in Website, then to C<sync-site>, C<cd trial; Raku-Doc>,
+The workflow is for changes to be made in Website, run Raku-Doc,
 inspect the result in C<localhost:3000>, and iterate.
 
 =end pod

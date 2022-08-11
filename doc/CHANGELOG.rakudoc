@@ -10,5 +10,6 @@ head1 2022-08-11 v0.0.3
 =item move plugins to lib/html
 =item create symlink to trial/Website
 =item remove Website from root
+=item new Graphviz plugin
 
 =end pod

@@ -1,5 +1,6 @@
 %(
     :render,
-    :template-raku(),
-    :custom-raku(),
-)
+    :template-raku<graphv-templates.raku>,
+    :custom-raku<graphv-blocks.raku>,
+);
+
