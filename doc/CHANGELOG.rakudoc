@@ -16,4 +16,8 @@
 =item new para quotation plugin
 =item remove Graphiz example from TOC
 
+=head1 2022-08-14 v0.0.5
+=item new Latex plugin, uses CodeCogs online facility
+=item add-plugin generates README.rakudoc, not .pod6
+
 =end pod

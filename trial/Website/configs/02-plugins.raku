@@ -5,7 +5,7 @@
         :setup<raku-doc-setup>,
         :render<
             raku-styling website camelia simple-extras listfiles images font-awesome filterlines
-            leafletmap graphviz
+            leafletmap graphviz latex-render
             gather-js-jq gather-css
         >,
         :report(),

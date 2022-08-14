@@ -13,9 +13,9 @@ try {
 exit (note "%config<plugins> does not exist") unless %config<plugins>.IO.d;
 my $path = "%config<plugins>/$plug";
 $path.IO.mkdir;
-"$path/README.pod6".IO.spurt(qq:to/TEMP/);
+"$path/README.rakudoc".IO.spurt(qq:to/TEMP/);
         \=begin pod
-        \=TITLE $plug is plugin for Collection
+        \=TITLE $plug is a plugin for Collection
 
         The plugin is for the $mile milestone
 
