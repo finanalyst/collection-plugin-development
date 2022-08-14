@@ -6,10 +6,14 @@
 =item got C<LeafletMap> to work
 =item added ordering logic to C<gather-js>
 
-head1 2022-08-11 v0.0.3
+=head1 2022-08-11 v0.0.3
 =item move plugins to lib/html
 =item create symlink to trial/Website
 =item remove Website from root
 =item new Graphviz plugin
+
+=head1 2022-08-14 v0.0.4
+=item new para quotation plugin
+=item remove Graphiz example from TOC
 
 =end pod
