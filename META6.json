@@ -1,7 +1,7 @@
 {
   "name": "Collection-Plugins",
   "description": "Development and repository for Collection plugins",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "perl": "6.d",
   "authors": [
     "Richard Hainsworth, aka finanalyst"
@@ -18,7 +18,9 @@
   "resources": [
     "min-templates.raku"
   ],
-  "provides": {},
+  "provides": {
+    "Test::Collection": "lib/Test/CollectionPlugin.rakumod"
+  },
   "support": {
     "bugtracker": "https://github.com/finanalyst/collection-plugins/issues",
     "email": "richard@hainsworth.wales",

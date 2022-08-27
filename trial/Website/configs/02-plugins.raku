@@ -8,6 +8,7 @@
             leafletmap graphviz latex-render
             gather-js-jq gather-css
         >,
+        :transfer<gather-js-jq gather-css>,
         :report(),
         :compilation<website listfiles>,
         :completion<cro-app>,

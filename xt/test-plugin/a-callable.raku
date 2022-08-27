@@ -1,0 +1,1 @@
+use v6.d; sub { say 'this is a dummy callable' }

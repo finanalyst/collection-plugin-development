@@ -9,5 +9,3 @@ trial/html/
 trial/Website/structure-cache/
 trial/Website/structure-cache/*
 *.css.map
-*.css
-/lib/html/plugins/gather-js-jq/js-templates.raku

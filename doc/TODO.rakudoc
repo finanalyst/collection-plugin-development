@@ -1,0 +1,12 @@
+=begin pod
+=TITLE A list of Plugins to be implemented, or change in templates
+
+=item Implement numbered lists for items.
+
+=begin item
+B<UI rakudoc>
+This is needed to create page templates, so that titles, footnotes, tabs in the header
+can be defined as Rakudoc files, and hence have in different languages.
+=end item
+
+=end pod

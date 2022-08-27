@@ -1,0 +1,1 @@
+%( tmplate => sub (%prm, %tml) { return "<p>fine</p>" }), )

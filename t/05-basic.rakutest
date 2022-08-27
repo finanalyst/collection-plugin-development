@@ -2,8 +2,10 @@ use v6.d;
 use Test;
 require Test::META <&meta-ok>;
 
-plan 1;
+plan 2;
 
 meta-ok :relaxed-name;
+
+use-ok "Test::Collection";
 
 done-testing;

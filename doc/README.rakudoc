@@ -9,9 +9,125 @@ The C<Collection> module makes extensive use of plugins. They need developing an
 The intention is for this distribution to be the repository for the files to develop plugins, and
 as a source for completed working plugins.
 
-A major milestone will be to have a GUI / command line utility to be distributed with C<Collection>
-so that updates can be detected for Collection systems. It is planned for a host to have multiple
-Collections and multiple Modes.
+=head1 Collection plugin specification
+
+All Collection plugins must conform to the following rules
+=item The plugin directory contains
+=item2 C<config.raku>, which is a file that evaluates to a Raku hash.
+=item2 README.rakudoc
+=item2 t/01-basic.rakutest
+=item The C<config.raku> must contain the following keys
+=item2 one or more of C<render setup report compilation completion>
+=item3 If render then
+=item4 the key may be a boolean
+=item4 the key C<custom-raku> must exists, but it may be empty, viz. C<custom-raku()>. Otherwise the key
+should point to a file name in the current directory with a Raku program that evaluates to an Array.
+
+=item4 the key C<template-raku> must exist, but it may be empty. Otherwise the value is a filename
+in the current directory that is a Raku program that evaluates to a Hash.
+
+=item3 If not render, then the value must point to a Raku program and evaluate to a callable.
+
+=item2 C<version>. This point to a Str in the format \d+\.\d+\.\d+ which matches the semantic version
+conventions.
+
+=item2 C<auth>. This points to a Str that is consistent with the Raku 'auth' conventions.
+=item2 C<license>. Points to a SPDX license type.
+=item2 C<authors>. This points to a sequence of names of people who are the authors of the plugin.
+=item2 I<Other key names>. If other keys are present, they must point to filenames in the
+current directory.
+
+=head1 Collection plugin tests
+
+This distribution contains the module C<Test::CollectionPlugins> with a single exported subroutine
+C<plugin-ok>. This subroutine verifies that the plugin rules are kept.
+
+Additional plugin specific tests should be included. For example, tests should be added that verify
+that the plugin callable accepts the correct parameters, and returns the correct object.
+
+=head1 Collection plugin management system
+
+It is planned to have GUI and a command line manager.
+
+The local computer may contain
+=item More than one collection, eg. a personal website and a Raku documentation collection
+=item Each Collection may have more than one Mode, eg., a HTML website, an epub producer.
+=item A collection/mode combination may rely on a previous API of a plugin, rather than an later API.
+=item A new plugin may have been written as a drop-in replacement for an older version, and the new
+plugin may have a different name, or auth, or version.
+
+So a plugin manager (whether command line or GUI) must be compliant with the following system:
+=item There is a I<release> directory to contain all Collection plugins, probably a clone of the
+githb repository.
+
+=item The semantic versioning scheme is mandated for Collection plugins. A version is
+C<v<major>.<minor>,<patch>>. Changes at the C< <patch> > level do not affect the plugin's functionality.
+Changes at the C< <minor> > level introduce new functionality, but are backward compatible.
+Changes at the C< <major> > level break backward compatibility.
+
+=item Each distributed plugin is contained in the release directory in a subdirectory
+named by the plugin name, the
+auth field, and the major version number (minor and patch numbers are not included because
+they should not by definition affect the API).
+=item Each Mode configuration only contains the name of the plugin (without the auth, or version names).
+=item The developer may define which name/version/auth of a released plugin is to be mapped
+to the plugin required in the Mode configuration. Thus
+=item2 changes in API can be frozen to earlier versions of the plugin for some concrete Mode.
+=item2 different plugin versions can be used for different collection/modes
+=item2 a differently named plugin can be mapped to a plugin required by a specific collection/mode.
+
+=item Consequently, all released plugins are defined for
+=item2 a Format (eg. html)
+=item2 a Major version
+=item2 an Auth name
+=item The mapping information from a released plugin to a Mode is contained in a file in the root
+of a Collection.
+
+=item When the plugins are updated
+=item2 all the latest versions for each Format/Name/Version/Auth are downloaded.
+=item2 a symlink is generated (or if the OS does not allow symlink, the whole directory is copyed)
+from the released version to the directory where
+each mode expects its plugins to be located.
+
+To implement this system
+=item Each Collection root directory (the directory containing the topmost C<config.raku> file)
+will contain the file C<plugin.raku>.
+=item C<plugin.raku> contains a hash with the following keys
+=item2 C<collection-plugin-root> This contains the name of a directory reachable from the Collection
+root directory where the latest versions of the plugins are downloaded.
+=item2 Every other key is interpreted as a Mode. It will point to a hash with the keys:
+=item3 C<format> Each mode may only contain plugins from one Format, eg., I<HTML>.
+=item3 Every other key must be a plugin name contained in the Mode's plugins-required configuration.
+=item3 There may be zero further keys, in which case the values are the defaults.
+=item3 If a key exists, it must contain one or two values:
+=item4 Major => the major number preceeded by 'v'
+=item4 Auth => the auth value, if missing, the default value is 'finanalyst'
+=item3 A plugin-key name without a Major key value is trapped as an error.
+=item3 A Major value is the maximum Major version permitted.
+=item3 If Auth points to any value other than 'finanalyst', without a Major key, then
+the specified auth value B<overides> I<finanalyst>, and the Major key is the highest available.
+=item3 If there is no distributed plugin for a specified C<auth>, then an error is thrown.
+
+For example,
+
+The Raku-Collection-Raku-Documentation, Website mode, requires the plugin C<Camelia>. The plugin exists
+as a HTML format. It has version 1.0.0, and an auth 'finanalyst'. It is distributed as
+C<html/camelia_auth_finanalyst__ver_1>. Suppose a version with a new API is created. Then
+two versions of the plugin will be distributed, including the new one
+C<html/camelia_auth_finanalyst__ver_2>.
+
+If no API freezing is specified, then the plugin available for Raku-Collection-Raku-Documentation,
+Website mode will be the latest one. A link will be made between the distributed directory
+C<html/camelias_auth_finanalyst__ver_2> and C<Website/plugins/camelia>
+
+If plugin.conf contains the following:
+C<Website => %( format<html>, camelia( %( major(1), ) ) >
+then the link will be between C<html/camelias_auth_finanalyst__ver_1> and C<Website/plugins/camelia>
+
+Suppose there is another valid C<auth> string B<raku-dev> and there is a distributed plugin
+I<html/camelia_auth_raku-dev__ver_2>, and suppose C<plugin.conf> contains the following:
+C<Website => %( format<html>, camelia( %( auth<raku-dev>, ) ) > then the link will be made
+between C<html/camelias_auth_raku-dev__ver_2> and C<Website/plugins/camelia>
 
 =head1 Currently
 

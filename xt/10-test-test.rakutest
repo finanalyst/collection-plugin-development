@@ -1,0 +1,40 @@
+use v6.d;
+use Test;
+use Test::Collection;
+use File::Directory::Tree;
+
+my $tp = 'xt/test-plugin';
+if $tp.IO ~~ :d {
+    empty-directory $tp
+}
+else {
+    mktree $tp
+}
+chdir $tp;
+
+plan *;
+
+$Test::Collection::TESTING = True;
+diag "Test internals of Test::Collection";
+
+'README.rakudoc'.IO.spurt: 'some text';
+#ok Test::Collection::check-file('README.rakudoc'), 'checks a file exists';
+#ok Test::Collection::check-license( %(:license<MIT>, ) ), 'verifies a license';
+#ok Test::Collection::check-authors( %(:authors<finanalyst coke>,)), 'authors test';
+#ok Test::Collection::check-version( %( :version<1.2.3>,) ), 'version test';
+'custom.raku'.IO.spurt: "[One Two Three]";
+ok Test::Collection::check-custom( %( :custom-blocks(),) ), 'no blocks is fine';
+ok Test::Collection::check-custom( %( :custom-blocks<custom.raku>,) ), 'custom test';
+'template.raku'.IO.spurt( '%( tmplate => sub (%prm, %tml) { return "<p>fine</p>" }), )' );
+ok Test::Collection::check-templates( %( :template-raku(),) ), 'null template is fine';
+ok Test::Collection::check-templates( %( :template-raku<template.raku>,) ), 'templates are returned';
+ok Test::Collection::check-auth( %( :auth<zef:finanalyst>,) ), 'auth field looks fine';
+ok Test::Collection::check-milestone( %( :render,) ), 'just render is fine';
+'a-callable.raku'.IO.spurt: "use v6.d; sub \{ say 'this is a dummy callable' }";
+ok Test::Collection::check-milestone( %( :render<a-callable.raku>,) ), 'render with filename must give a callable';
+ok Test::Collection::check-milestone( %( :collection<a-callable.raku>,) ), 'collection with filename must give a callable';
+nok Test::Collection::check-milestone( %( :collection(),) ), 'non-render milestone must have a callable';
+ok Test::Collection::check-otherkey( %( :css<README.raku>,) ), 'other keys, if they exist, should point to a filename';
+nok Test::Collection::check-otherkey( %( :css(),) ), 'other keys, if they exist, should point to a filename';
+
+done-testing;
