@@ -1,0 +1,11 @@
+use v6.d;
+use Test;
+use Test::CollectionPlugin;
+plan 4;
+
+ok Test::CollectionPlugin::check-license( %(:license<MIT>, ) ), 'verifies a license';
+ok Test::CollectionPlugin::check-authors( %(:authors<finanalyst coke>,)), 'authors test';
+ok Test::CollectionPlugin::check-version( %( :version<1.2.3>,) ), 'version test';
+ok Test::CollectionPlugin::check-auth( %( :auth<zef:finanalyst>,) ), 'auth field looks fine';
+
+done-testing;

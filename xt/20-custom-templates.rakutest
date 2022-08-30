@@ -1,0 +1,25 @@
+use v6.d;
+use Test;
+use Test::CollectionPlugin;
+
+plan 7;
+
+constant DIR = 'xt/test-dir';
+
+bail-out "{ DIR } must exist. Have check-file tests been run?"
+    unless DIR.IO ~~ :e & :d;
+$Test::CollectionPlugin::TESTING = True;
+chdir DIR;
+
+ok Test::CollectionPlugin::check-render-reqs( 'custom-raku', %( :custom-raku(),) ), 'custom-raku: no blocks is fine';
+nok Test::CollectionPlugin::check-render-reqs( 'custom-raku', %( :custom-raku<custom.raku>,)), 'custom-raku: traps required file';
+ok Test::CollectionPlugin::check-render-reqs( 'custom-raku', %( :custom-raku<custom.raku>, :generated<custom-blocks> ) ), 'custom-raku: with name and generated, but no file is fine';
+'custom.raku'.IO.spurt: "[<One Two Three>]";
+ok Test::CollectionPlugin::check-render-reqs( 'custom-raku', %( :custom-raku<custom.raku>,) ), 'custom-raku: with name and file works';
+nok Test::CollectionPlugin::check-render-reqs( 'template-raku', %( :template-raku<template.raku>,)), 'template-raku: traps required file';
+'template.raku'.IO.spurt( '%( template => sub (%prm, %tml) { return "<p>fine</p>" }, )' );
+ok Test::CollectionPlugin::check-render-reqs( 'template-raku', %( :template-raku(),) ), 'template-raku: null template is fine';
+ok Test::CollectionPlugin::check-render-reqs( 'template-raku', %( :template-raku<template.raku>,) ), 'template-raku: templates are returned';
+
+
+done-testing;

@@ -5,6 +5,7 @@
 [2022-08-11 v0.0.3](#2022-08-11-v003)  
 [2022-08-14 v0.0.4](#2022-08-14-v004)  
 [2022-08-14 v0.0.5](#2022-08-14-v005)  
+[2022-08-30 v0.0.6](#2022-08-30-v006)  
 
 ----
 # 2022-08-09 v0.0.2
@@ -29,15 +30,24 @@
 *  remove Graphiz example from TOC
 
 # 2022-08-14 v0.0.5
-
-
 *  new Latex plugin, uses CodeCogs online facility
 
 *  add-plugin generates README.rakudoc, not .pod6
+
+*  Add Test::CollectionPlugin to simplify testing plugins
+
+*  add transfer callables since Collection changed
+
+# 2022-08-30 v0.0.6
+
+
+*  completed Test::CollectionPlugin
+
+*  added tests for Test::CollectionPlugin
 
 
 
 
 
 ----
-Rendered from CHANGELOG at 2022-08-14T20:57:44Z
+Rendered from CHANGELOG at 2022-08-30T22:23:02Z

@@ -1,0 +1,17 @@
+use v6.d;
+use Test;
+use Test::CollectionPlugin;
+
+plan 2;
+
+constant DIR = 'xt/test-dir';
+
+bail-out "{ DIR } must exist. Have check-file tests been run?"
+    unless DIR.IO ~~ :e & :d;
+$Test::CollectionPlugin::TESTING = True;
+chdir DIR;
+
+ok Test::CollectionPlugin::check-otherkey( %( :css<README.rakudoc>,) ), 'other keys, if they exist, should point to a filename';
+nok Test::CollectionPlugin::check-otherkey( %( :css(),) ), 'other keys, traps not pointing to a filename';
+
+done-testing;

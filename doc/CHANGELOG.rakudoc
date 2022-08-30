@@ -22,5 +22,8 @@
 =item Add Test::CollectionPlugin to simplify testing plugins
 =item add transfer callables since Collection changed
 
+=head1 2022-08-30 v0.0.6
+=item completed Test::CollectionPlugin
+=item added tests for Test::CollectionPlugin
 
 =end pod

@@ -1,10 +1,7 @@
 use v6.d;
 use Test;
-require Test::META <&meta-ok>;
 
-plan 2;
-
-meta-ok :relaxed-name;
+plan 1;
 
 use-ok "Test::Collection";
 
