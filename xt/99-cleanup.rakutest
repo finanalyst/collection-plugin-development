@@ -9,9 +9,9 @@ if %*ENV<NoDelete> {
 }
 else {
     rmtree DIR;
-    rmtree 'config-test';
+    rmtree 'xt/config-test';
     nok DIR.IO ~~ :e, "test directory ｢{ DIR }｣ deleted";
-    nok 'config-test'.IO ~~ :e, "test directory ｢config-test｣ deleted";
+    nok 'xt/config-test'.IO ~~ :e, "test directory ｢xt/config-test｣ deleted";
 }
 
 done-testing;
