@@ -2,6 +2,7 @@ use v6.d;
 use Test;
 use Test::Run :runs_ok;
 use File::Directory::Tree;
+use RakuConfig;
 use ModConfig :MANDATORY;
 
 plan 9;
@@ -61,6 +62,7 @@ runs_ok(
 );
 my %new-conf;
 lives-ok {%new-conf = EVALFILE (DIR ~ "/Camelia/config.raku")}, 'new config compiles';
+
 cmp-ok %new-conf.keys, '(==)', (%plug-conf.keys, %ModConfig::defaults.keys).flat, 'config round trips';
 
 done-testing;

@@ -1,8 +1,8 @@
 #!/usr/bin/env raku
 use v6.d;
 use PrettyDump;
+use RakuConfig;
 unit module ModConfig;
-no precompilation;
 
 our %defaults is export(:MANDATORY) = %(
     :version<0.1.0>,
@@ -110,46 +110,4 @@ multi sub MAIN(|c) is export {
         -quiet, if present, will suppress prompts before config.raku is rewritten
     USAGE
 
-}
-
-#| format a config file for writing. Should be in RakuConfig
-multi sub format-config(%d, :$level = 1 --> Str) is export(:MANDATORY) {
-    my @r-lines;
-    for %d.sort.map(|*.kv) -> $key, $val {
-        given $val {
-            when Bool {
-                @r-lines.append: "\t" x $level ~ ":$key,"
-            }
-            when Associative {
-                @r-lines.append: "\t" x $level ~ ":$key\%(\n" ~ format-config($val, :level($level + 1))
-                    ~ "\n" ~ "\t" x $level ~ "),";
-            }
-            when Str:D {
-                @r-lines.append: "\t" x $level ~ ":$key\<$val>,"
-            }
-            when Num {
-                @r-lines.append: "\t" x $level ~ ":$key\($val),"
-            }
-            when Positional {
-                if .elems {
-                    @r-lines.append:
-                        "\t" x $level
-                            ~ ":$key\("
-                            ~ format-config($val, :level($level + 1))
-                            ~ "\n" ~ "\t" x $level ~ "),"
-                }
-                else {
-                    @r-lines.append: "\t" x $level ~ ":$key\(),"
-                }
-            }
-            default {
-                @r-lines.append: "\t" x $level ~ ":$key\(''),"
-            }
-        }
-    }
-    return @r-lines if $level > 1;
-    "%\(\n" ~ @r-lines.join("\n") ~ "\n)"
-}
-multi sub format-config(@a, :$level --> Str) is export(:MANDATORY) {
-    @a.map({ "\n" ~ "\t" x $level ~ "\"$_\"," }).join
 }
