@@ -6,6 +6,7 @@
   "authors": [
     "Richard Hainsworth, aka finanalyst"
   ],
+  "bin": [ "bin/modify-plugin-conf.raku" ],
   "auth": "github:finanalyst",
   "depends": [
     "Raku::Pod::Render",
@@ -19,7 +20,8 @@
     "min-templates.raku"
   ],
   "provides": {
-    "Test::CollectionPlugin": "lib/Test/CollectionPlugin.rakumod"
+    "Test::CollectionPlugin": "lib/Test/CollectionPlugin.rakumod",
+    "ModConfig": "lib/ModConfig.rakumod"
   },
   "support": {
     "bugtracker": "https://github.com/finanalyst/collection-plugins/issues",

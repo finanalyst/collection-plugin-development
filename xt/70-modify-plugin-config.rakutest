@@ -1,0 +1,66 @@
+use v6.d;
+use Test;
+use Test::Run :runs_ok;
+use File::Directory::Tree;
+use ModConfig :MANDATORY;
+
+plan 9;
+
+constant DIR = 'xt/config-test';
+if DIR.IO ~~ :e & :d {
+    rmtree DIR
+}
+
+runs_ok(
+    :args<<raku -I. bin/modify-plugin-config.raku -path={DIR} >>,
+    :err(/ 'is not a valid path' /)
+    :exitcode(1),
+    'directory does not exist'
+);
+
+mktree DIR;
+
+runs_ok(
+    :args<<raku -I. bin/modify-plugin-config.raku -path={DIR} >>,
+    :exitcode(1),
+    :err(/ 'Something is Wrong' /),
+    'No min conditions'
+);
+runs_ok(
+    :args<<raku -I. bin/modify-plugin-config.raku -path={DIR} -plugin='all' -defaults>>,
+    :exitcode(1),
+    :err(/ 'There are no potential plugin' /),
+    'No plugins'
+);
+runs_ok(
+    :args<<raku -I. bin/modify-plugin-config.raku -path={DIR} -plugin='Camelia' -defaults>>,
+    :exitcode(1),
+    :err(/ 'plugin sub-directory' /),
+    'No named plugin'
+);
+mktree DIR ~ '/Camelia';
+runs_ok(
+    :args<<raku -I. bin/modify-plugin-config.raku -path={DIR} -plugin='Camelia' -version='v0.2.0'>>,
+    :exitcode(1),
+    :err(/ 'wrong with version' /),
+    'Bad version'
+);
+runs_ok(
+    :args<<raku -I. bin/modify-plugin-config.raku -path={DIR} -plugin='Camelia' -v='0.2.0' -quiet>>,
+    :exitcode(1),
+    :err(/ 'not contain a config.raku' /),
+    'No config file'
+);
+my %plug-conf = %(:render, :custom-raku<custom.raku>, :template-raku(), :css<my.css>);
+(DIR ~ "/Camelia/config.raku").IO.spurt(format-config(%plug-conf));
+
+runs_ok(
+    :args<<raku -I. bin/modify-plugin-config.raku -path={DIR} -plugin='Camelia' -defaults -quiet>>,
+    :exitcode(0),
+    'Accepts config.raku'
+);
+my %new-conf;
+lives-ok {%new-conf = EVALFILE (DIR ~ "/Camelia/config.raku")}, 'new config compiles';
+cmp-ok %new-conf.keys, '(==)', (%plug-conf.keys, %ModConfig::defaults.keys).flat, 'config round trips';
+
+done-testing;

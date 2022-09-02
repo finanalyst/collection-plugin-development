@@ -2,14 +2,16 @@ use v6.d;
 use Test;
 use File::Directory::Tree;
 constant DIR = 'xt/test-dir';
-plan 1;
+plan 2;
 
 if %*ENV<NoDelete> {
-    skip 'NoDelete set in environment';
+    skip-rest 'NoDelete set in environment';
 }
 else {
     rmtree DIR;
+    rmtree 'config-test';
     nok DIR.IO ~~ :e, "test directory ｢{ DIR }｣ deleted";
+    nok 'config-test'.IO ~~ :e, "test directory ｢config-test｣ deleted";
 }
 
 done-testing;
