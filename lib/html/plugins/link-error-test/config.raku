@@ -1,9 +1,14 @@
 %(
-    :compilation<let-callable.raku>,
-    :render,
-    :template-raku<let-templates.raku>,
-    :custom-raku<let-blocks.raku>,
-    :css<let-styling.css>,
-    :!no-remote,
-);
-
+	:auth<finanalyst>,
+	:authors(
+		"finanalyst",
+	),
+	:compilation<let-callable.raku>,
+	:css<let-styling.css>,
+	:custom-raku<let-blocks.raku>,
+	:license<Artistic-2.0>,
+	:!no-remote,
+	:render,
+	:template-raku<let-templates.raku>,
+	:version<0.1.0>,
+)

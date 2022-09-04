@@ -1,6 +1,12 @@
 %(
-    :render,
-    :template-raku<filter-template.raku>,
-    :custom-raku<filter-blocks.raku>,
-    :jquery<filter-script.js>,
+	:auth<finanalyst>,
+	:authors(
+		"finanalyst",
+	),
+	:custom-raku<filter-blocks.raku>,
+	:jquery<filter-script.js>,
+	:license<Artistic-2.0>,
+	:render,
+	:template-raku<filter-template.raku>,
+	:version<0.1.0>,
 )

@@ -7,6 +7,10 @@
 [Introduction](#introduction)  
 [Collection plugin specification](#collection-plugin-specification)  
 [Collection plugin tests](#collection-plugin-tests)  
+[Collection utilities](#collection-utilities)  
+[add-collection-plugin](#add-collection-plugin)  
+[modify-collection-plugin](#modify-collection-plugin)  
+[test-all-collection-plugins](#test-all-collection-plugins)  
 [Collection plugin management system](#collection-plugin-management-system)  
 [Currently](#currently)  
 
@@ -100,9 +104,64 @@ All Collection plugins must conform to the following rules
 		*  This config key is intended only for plugin testing purposes.
 
 # Collection plugin tests
-This distribution contains the module `Test::CollectionPlugins` with a single exported subroutine `plugin-ok`. This subroutine verifies that the plugin rules are kept.
+This distribution contains the module `Test::CollectionPlugins` with a single exported subroutine `plugin-ok`. This subroutine verifies that the plugin rules are kept for the plugin.
 
-Additional plugin specific tests should be included. For example, tests should be added that verify that the plugin callable accepts the correct parameters, and returns the correct object.
+Additional plugin specific tests should be included.
+
+# Collection utilities
+Three utilities are provided to add a new plugin, modify an existing plugin's config file (eg. change the version number, and run the tests of all plugins.
+
+Each utility assumes the plugin directory is at `lib/<format>/plugins`, where the default format is `html`. An example of another format would be `markdown`.
+
+## add-collection-plugin
+The utility adds the necessary files (config.raku, README, a test file, and callables) for a milestone.
+
+Only a plugin name (eg. my-new-plugin) is required, and a new html format plugin with a `render` milestone is set up. Eg.
+
+```
+add-collection-plugin my-new-plugin
+```
+An error will be shown if an existing plugin with the same name is present in the `lib/html/plugins` directory.
+
+The config file will have the defaults of the other mandatory keys. See `modify-collection-plugin-config` for how to get the defaults.
+
+For different milestones set the option `-mile` to the milestone name and a callable stub is also created. At present only one milestone callable can be set. [TODO allow the mile option to have a list of milestones]. Eg for a setup milestone callable
+
+```
+add-collection-plugin -mile=setup my-new-plugin
+```
+If a new format is being developed, then set `-format` to the chosen format name, eg `markdown`. A plugin will then be added to `lib/markdown/plugins`. Eg. (for the default -mile=render)
+
+```
+add-collection-plugin -format=markdown my-new-markdown-plugin
+```
+## modify-collection-plugin
+This utility is intended to modify an existing plugin's config file, such as adding defaults if they are missing. To get a list of default attributes use
+
+```
+modify-collection-plugin-config -show-defaults
+```
+To modify a plugin specify the name with the option -plugin, eg.
+
+```
+modify-collection-plugin-config -plugin=an-existing-plugin -defaults
+```
+The plugin will be given defaults to all mandatory attributes, unless they already exist, in which case they are not changed.
+
+To modify a specific attribute for a plugin use, for example,
+
+```
+modify-collection-plugin-config -plugin=an-existing-plugin -version=0.1.2
+```
+To get help
+
+```
+modify-collection-plugin-config -help
+```
+[TODO] create a bump-version shortcut that bumps a plugin's _patch_ version number.
+
+## test-all-collection-plugins
+All plugins must have a `t/` directory and one test file. This utility runs all the test files of all the plugins, returning only minimal information if the tests pass, but more information if a test fails.
 
 # Collection plugin management system
 It is planned to have GUI and a command line manager.
@@ -261,4 +320,4 @@ The workflow is for changes to be made in Website, run Raku-Doc, inspect the res
 
 
 ----
-Rendered from README at 2022-08-30T22:24:41Z
+Rendered from README at 2022-09-04T18:36:52Z

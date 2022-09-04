@@ -1,7 +1,12 @@
-
 %(
-    :render,
-    :custom-raku<extra-blocks.raku>,
-    :template-raku<extra-templates.raku>,
-    :css<simple-extras.css>,
+	:auth<finanalyst>,
+	:authors(
+		"finanalyst",
+	),
+	:css<simple-extras.css>,
+	:custom-raku<extra-blocks.raku>,
+	:license<Artistic-2.0>,
+	:render,
+	:template-raku<extra-templates.raku>,
+	:version<0.1.0>,
 )

@@ -3,7 +3,7 @@ use Test;
 use Test::Run :runs_ok;
 use File::Directory::Tree;
 use RakuConfig;
-use ModConfig :MANDATORY;
+use Collection::ModConfig :MANDATORY;
 
 plan 9;
 
@@ -13,7 +13,7 @@ if DIR.IO ~~ :e & :d {
 }
 
 runs_ok(
-    :args<<raku -I. bin/modify-plugin-config.raku -path={DIR} >>,
+    :args<<raku -I. bin/modify-collection-plugin-config -path={DIR} >>,
     :err(/ 'is not a valid path' /)
     :exitcode(1),
     'directory does not exist'
@@ -22,32 +22,32 @@ runs_ok(
 mktree DIR;
 
 runs_ok(
-    :args<<raku -I. bin/modify-plugin-config.raku -path={DIR} >>,
+    :args<<raku -I. bin/modify-collection-plugin-config -path={DIR} >>,
     :exitcode(1),
     :err(/ 'Something is Wrong' /),
     'No min conditions'
 );
 runs_ok(
-    :args<<raku -I. bin/modify-plugin-config.raku -path={DIR} -plugin='all' -defaults>>,
+    :args<<raku -I. bin/modify-collection-plugin-config -path={DIR} -plugin='all' -defaults>>,
     :exitcode(1),
     :err(/ 'There are no potential plugin' /),
     'No plugins'
 );
 runs_ok(
-    :args<<raku -I. bin/modify-plugin-config.raku -path={DIR} -plugin='Camelia' -defaults>>,
+    :args<<raku -I. bin/modify-collection-plugin-config -path={DIR} -plugin='Camelia' -defaults>>,
     :exitcode(1),
     :err(/ 'plugin sub-directory' /),
     'No named plugin'
 );
 mktree DIR ~ '/Camelia';
 runs_ok(
-    :args<<raku -I. bin/modify-plugin-config.raku -path={DIR} -plugin='Camelia' -version='v0.2.0'>>,
+    :args<<raku -I. bin/modify-collection-plugin-config -path={DIR} -plugin='Camelia' -version='v0.2.0'>>,
     :exitcode(1),
     :err(/ 'wrong with version' /),
     'Bad version'
 );
 runs_ok(
-    :args<<raku -I. bin/modify-plugin-config.raku -path={DIR} -plugin='Camelia' -v='0.2.0' -quiet>>,
+    :args<<raku -I. bin/modify-collection-plugin-config -path={DIR} -plugin='Camelia' -v='0.2.0' -quiet>>,
     :exitcode(1),
     :err(/ 'not contain a config.raku' /),
     'No config file'
@@ -56,7 +56,7 @@ my %plug-conf = %(:render, :custom-raku<custom.raku>, :template-raku(), :css<my.
 (DIR ~ "/Camelia/config.raku").IO.spurt(format-config(%plug-conf));
 
 runs_ok(
-    :args<<raku -I. bin/modify-plugin-config.raku -path={DIR} -plugin='Camelia' -defaults -quiet>>,
+    :args<<raku -I. bin/modify-collection-plugin-config -path={DIR} -plugin='Camelia' -defaults -quiet>>,
     :exitcode(0),
     'Accepts config.raku'
 );

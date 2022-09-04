@@ -1,8 +1,13 @@
-use v6.d;
 %(
-    :render,
-    :compilation<listf-collator.raku>,
-    :template-raku<listf-templates.raku>,
-    :custom-raku<listf-blocks.raku>,
-    :css<listf-styling.css>
+	:auth<finanalyst>,
+	:authors(
+		"finanalyst",
+	),
+	:compilation<listf-collator.raku>,
+	:css<listf-styling.css>,
+	:custom-raku<listf-blocks.raku>,
+	:license<Artistic-2.0>,
+	:render,
+	:template-raku<listf-templates.raku>,
+	:version<0.1.0>,
 )

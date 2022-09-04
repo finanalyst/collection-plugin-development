@@ -26,4 +26,11 @@
 =item completed Test::CollectionPlugin
 =item added tests for Test::CollectionPlugin
 
+=head1 2022-09-04 v0.0.7
+=item added add-collection-plugin utility
+=item added modify-collection-plugin-config utility
+=item added test-all-collection-plugins utility
+=item added tests for add/modify utilities
+=item changed README
+
 =end pod

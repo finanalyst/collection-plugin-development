@@ -1,3 +1,0 @@
-#! /bin/bash
-cd ~/development/raku-collection-plugins/trial/Website
-prove6 t/03*

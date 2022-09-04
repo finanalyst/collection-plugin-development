@@ -1,0 +1,37 @@
+use v6.d;
+use Test;
+use Test::Run :runs_ok;
+use File::Directory::Tree;
+use RakuConfig;
+plan 5;
+
+my $dir = 'xt/make-test';
+if $dir.IO ~~ :e {
+    rmtree $dir
+}
+
+mktree $dir;
+mktree "$dir/old-plug";
+my @args =(<raku -I. bin/add-collection-plugin >,"-format=$dir", <-test old-plug >).flat;
+runs_ok(
+    :@args,
+    :err(/ 'already exists' /)
+    :exitcode(1),
+    'psuedo old-plugin exists'
+);
+@args =(<raku -I. bin/add-collection-plugin >,"-format=$dir", <-test new-plug >).flat;
+runs_ok(
+    :@args,
+    :exitcode(0),
+    'new-plugin created'
+);
+ok "$dir/new-plug/config.raku".IO ~~ :e & :f, 'new-plugin config file exists';
+@args =(<raku -I. bin/add-collection-plugin -mile=setup>,"-format=$dir", <-test setup-plug >).flat;
+runs_ok(
+    :@args,
+    :exitcode(0),
+    'setup-plugin created for milestone setup'
+);
+ok "$dir/setup-plug/setup-callable.raku".IO ~~ :e & :f, 'setup-plugin callable file exists';
+
+done-testing;

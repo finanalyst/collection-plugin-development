@@ -7,7 +7,7 @@ module Test::CollectionPlugin {
     # several subs are taken from Jonathan Stowe's Test::Meta module.
     our $TESTING = False;
 
-    sub test-plugin(:$relaxed) is export {
+    sub test-plugin is export {
         my %config;
         my @required = <version auth license authors>;
 

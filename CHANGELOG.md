@@ -6,6 +6,7 @@
 [2022-08-14 v0.0.4](#2022-08-14-v004)  
 [2022-08-14 v0.0.5](#2022-08-14-v005)  
 [2022-08-30 v0.0.6](#2022-08-30-v006)  
+[2022-09-04 v0.0.7](#2022-09-04-v007)  
 
 ----
 # 2022-08-09 v0.0.2
@@ -39,15 +40,26 @@
 *  add transfer callables since Collection changed
 
 # 2022-08-30 v0.0.6
-
-
 *  completed Test::CollectionPlugin
 
 *  added tests for Test::CollectionPlugin
+
+# 2022-09-04 v0.0.7
+
+
+*  added add-collection-plugin utility
+
+*  added modify-collection-plugin-config utility
+
+*  added test-all-collection-plugins utility
+
+*  added tests for add/modify utilities
+
+*  changed README
 
 
 
 
 
 ----
-Rendered from CHANGELOG at 2022-08-30T22:23:02Z
+Rendered from CHANGELOG at 2022-09-04T18:36:52Z

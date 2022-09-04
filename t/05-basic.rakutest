@@ -1,8 +1,10 @@
 use v6.d;
 use Test;
+plan 4;
 
-plan 1;
-
-use-ok "Test::Collection";
+use-ok "Test::CollectionPlugin";
+use-ok "Collection::AddPlugin";
+use-ok "Collection::ModConfig";
+use-ok "Collection::TestAllPlugins";
 
 done-testing;

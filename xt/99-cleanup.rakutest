@@ -1,17 +1,18 @@
 use v6.d;
 use Test;
 use File::Directory::Tree;
-constant DIR = 'xt/test-dir';
-plan 2;
+plan 3;
 
 if %*ENV<NoDelete> {
     skip-rest 'NoDelete set in environment';
 }
 else {
-    rmtree DIR;
+    rmtree 'xt/test-dir';
     rmtree 'xt/config-test';
-    nok DIR.IO ~~ :e, "test directory ｢{ DIR }｣ deleted";
+    rmtree 'xt/make-test';
+    nok 'xt/test-dir'.IO ~~ :e, "test directory ｢xt/test-dir｣ deleted";
     nok 'xt/config-test'.IO ~~ :e, "test directory ｢xt/config-test｣ deleted";
+    nok 'xt/make-test'.IO ~~ :e, "test directory ｢xt/make-test｣ deleted";
 }
 
 done-testing;

@@ -1,7 +1,13 @@
 %(
-    :render,
-    :template-raku<camelia-templates.raku>,
-    :custom-raku<camelia-blocks.raku>,
-    :css<camelia-styling.css>,
-    :images<images/camelia-404.png>,
+	:auth<finanalyst>,
+	:authors(
+		"finanalyst",
+	),
+	:css<camelia-styling.css>,
+	:custom-raku<camelia-blocks.raku>,
+	:images<images/camelia-404.png>,
+	:license<Artistic-2.0>,
+	:render,
+	:template-raku<camelia-templates.raku>,
+	:version<0.1.0>,
 )

@@ -1,5 +1,11 @@
 %(
-    :render,
+    :auth<finanalyst>,
+	:authors(
+		"finanalyst",
+	),
+	:license<Artistic-2.0>,
+	:version<0.1.0>,
+	:render,
     :template-raku<leaflet-templates.raku>,
     :custom-raku<leaflet-blocks.raku>,
     :css-link( q:to/CSS/ ),

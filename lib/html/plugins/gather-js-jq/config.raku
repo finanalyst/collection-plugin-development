@@ -1,8 +1,13 @@
-#!/usr/bin/env perl6
 %(
-    :render<js-collator.raku>,
-    :jquery-lib<https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js>,
-    :generated<template-raku>,
-    :template-raku<js-templates.raku>, # Will be written by js-collator
-    :custom-raku(), # no custom blocks
+	:auth<finanalyst>,
+	:authors(
+		"finanalyst",
+	),
+	:custom-raku(),
+	:generated<template-raku>,
+	:jquery-lib<https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js>,
+	:license<Artistic-2.0>,
+	:render<js-collator.raku>,
+	:template-raku<js-templates.raku>,
+	:version<0.1.0>,
 )

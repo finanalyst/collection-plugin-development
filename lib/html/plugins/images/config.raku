@@ -1,8 +1,13 @@
-#!/usr/bin/env perl6
 %(
-    :render<image-helper.raku>,
-    :template-raku<image-templates.raku>,
-    :custom-raku<image-blocks.raku>,
-    :css<image-styling.css>,
-    :transfer<image-collector.raku>,
-);
+	:auth<finanalyst>,
+	:authors(
+		"finanalyst",
+	),
+	:css<image-styling.css>,
+	:custom-raku<image-blocks.raku>,
+	:license<Artistic-2.0>,
+	:render<image-helper.raku>,
+	:template-raku<image-templates.raku>,
+	:transfer<image-collector.raku>,
+	:version<0.1.0>,
+)

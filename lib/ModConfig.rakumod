@@ -1,6 +1,5 @@
 #!/usr/bin/env raku
 use v6.d;
-use PrettyDump;
 use RakuConfig;
 unit module ModConfig;
 
@@ -10,10 +9,13 @@ our %defaults is export(:MANDATORY) = %(
     :authors('finanalyst',),
     :license('Artistic-2.0'),
 );
+sub modify-config(|c) is export(:CALLABLE) {
+    MAIN(|c)
+}
 
 multi sub MAIN(
-    Bool :$defaults = False,
-    Str:D :$plugin = '',
+    Bool :default(:$defaults) = False,
+    Str:D :plugins(:$plugin) = '',
     Str:D :v(:$version) = '',
     Str:D :$auth = '',
     Str:D :$authors = '',
@@ -87,11 +89,11 @@ multi sub MAIN(
         "$_/config.raku".IO.spurt($new-conf) if $write
     }
 }
-multi sub MAIN(:show-default($)!) is export {
+multi sub MAIN(:show-default(:show-defaults($))!) is export {
     say format-config(%defaults);
 }
 multi sub MAIN(|c) is export {
-    print qq:to/USAGE/;
+    say qq:to/USAGE/;
     The program ｢{ $*PROGRAM-NAME }｣
     - assumes that the current working directory has sub-directories named for plugins,
         unless -path=<route from current directory to plugin directories>
