@@ -57,9 +57,13 @@
 
 *  changed README
 
+*  eliminated errors found in existing plugins
+
+*  change name of :generated key in config to :information
+
 
 
 
 
 ----
-Rendered from CHANGELOG at 2022-09-04T18:36:52Z
+Rendered from CHANGELOG at 2022-09-04T20:32:49Z

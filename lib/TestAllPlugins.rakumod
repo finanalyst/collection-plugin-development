@@ -41,7 +41,7 @@ multi sub MAIN($path) is export {
             $done++;
         }
     }
-    for $path.IO.dir(test => /^ \w /).sort[^3] {
+    for $path.IO.dir(test => /^ \w /).sort {
         say "== $_";
         test-dir($_);
     }

@@ -32,5 +32,7 @@
 =item added test-all-collection-plugins utility
 =item added tests for add/modify utilities
 =item changed README
+=item eliminated errors found in existing plugins
+=item change name of :generated key in config to :information
 
 =end pod

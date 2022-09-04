@@ -5,9 +5,8 @@
 	),
 	:css<camelia-styling.css>,
 	:custom-raku<camelia-blocks.raku>,
-	:images<images/camelia-404.png>,
 	:license<Artistic-2.0>,
-	:render,
+	:render<move-images.raku>,
 	:template-raku<camelia-templates.raku>,
 	:version<0.1.0>,
 )

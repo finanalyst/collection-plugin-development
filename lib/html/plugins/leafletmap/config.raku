@@ -6,6 +6,7 @@
 	:license<Artistic-2.0>,
 	:version<0.1.0>,
 	:render,
+    :information<css-link js-link js-script id lat long zoom provider >,
     :template-raku<leaflet-templates.raku>,
     :custom-raku<leaflet-blocks.raku>,
     :css-link( q:to/CSS/ ),

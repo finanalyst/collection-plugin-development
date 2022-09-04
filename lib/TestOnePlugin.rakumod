@@ -140,14 +140,13 @@ module Test::CollectionPlugin {
                 }
             }
             else {
-                $rc = %config<generated>.defined and $component ~~ any(%config<generated>.list);
+                $rc = %config<information>.defined and $component ~~ any(%config<information>.list);
                 unless $rc {
                     my-diag(qq:to/ERROR/)
                         ｢config\{ $component \}｣ points to ｢{ %config{$component} }｣ which should be a file in the plugin directory
-                        Have you misspelt the filename, or missed out a \:generated key?
+                        Have you misspelt the filename, or missed out a \:information key?
                         ERROR
-
-                     }
+                 }
             }
         }
         $rc
@@ -174,7 +173,6 @@ module Test::CollectionPlugin {
                     my-diag(qq:to/ERROR/);
                         Config contains ｢:render｣ but does not contain both ｢:custom-raku｣ and ｢:template-raku｣
                         ERROR
-
                     return False
                 }
                 $rc = check-render-reqs('custom-raku', %config);
@@ -248,7 +246,7 @@ module Test::CollectionPlugin {
         $rc
     }
     our sub check-callable($key, %config, $regex, Bool :$relaxed) {
-        my $rc = check-file(%config{$key}, :extra("(in key ｢$key｣)"));
+        my $rc = check-file(%config{$key}, :extra("in key ｢$key｣"));
         return False unless $rc;
         my $call;
         try {
@@ -288,9 +286,10 @@ module Test::CollectionPlugin {
     our sub check-otherkey(%config --> Bool) {
         my Bool $rc = True;
         my @specified = <setup render compilation transfer report completion
-                version auth authors license custom-raku template-raku generated>;
+                version auth authors license custom-raku template-raku information>;
         for %config.keys.grep(none(@specified)) {
-            $rc &&= check-file(%config{$_}, :extra("(in key ｢$_｣)"));
+            next if $_ ~~ any( %config<information>.list );
+            $rc &&= check-file(%config{$_}, :extra("in key ｢$_｣"));
         }
         $rc
     }

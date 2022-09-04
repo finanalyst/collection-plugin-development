@@ -78,7 +78,7 @@ my %processed = %( afile => PodFile.new(:title('Good Title'), :subtitle('A subti
 );
 my $pr = ProcessedPod.new;
 $pr.add-data('listfiles', %config);
-&callable($pr, %processed);
+&callable($pr, %processed, {} );
 $rv = $pr.get-data('listfiles');
 ok $rv<meta>:exists, 'data added';
 is-deeply $rv<meta>.keys.sort, <afile bfile>, 'files  returned in correct place';
