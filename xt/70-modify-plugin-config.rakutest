@@ -5,7 +5,7 @@ use File::Directory::Tree;
 use RakuConfig;
 use Collection::ModConfig :MANDATORY;
 
-plan 9;
+plan 12;
 
 constant DIR = 'xt/config-test';
 if DIR.IO ~~ :e & :d {
@@ -64,5 +64,12 @@ my %new-conf;
 lives-ok {%new-conf = EVALFILE (DIR ~ "/Camelia/config.raku")}, 'new config compiles';
 
 cmp-ok %new-conf.keys, '(==)', (%plug-conf.keys, %Collection::ModConfig::defaults.keys).flat, 'config round trips';
+runs_ok(
+    :args<<raku -I. bin/modify-collection-plugin-config -path={DIR} -plugin='Camelia' -bump -quiet >>,
+    :exitcode(0),
+    'Bumps version in config.raku'
+);
+lives-ok {%new-conf = EVALFILE (DIR ~ "/Camelia/config.raku")}, 'config with new version compiles';
+is %new-conf<version>, '0.1.1', 'version is bumped';
 
 done-testing;

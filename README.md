@@ -125,10 +125,15 @@ An error will be shown if an existing plugin with the same name is present in th
 
 The config file will have the defaults of the other mandatory keys. See `modify-collection-plugin-config` for how to get the defaults.
 
-For different milestones set the option `-mile` to the milestone name and a callable stub is also created. At present only one milestone callable can be set. [TODO allow the mile option to have a list of milestones]. Eg for a setup milestone callable
+For different milestones set the option `-mile` to the milestone name and a callable stub is also created.
 
 ```
 add-collection-plugin -mile=setup my-new-plugin
+```
+The `-mile` option can take a list of milestones and form stubs for each, eg.
+
+```
+add-collection-plugin -mile='setup render compilation' my-new-plugin
 ```
 If a new format is being developed, then set `-format` to the chosen format name, eg `markdown`. A plugin will then be added to `lib/markdown/plugins`. Eg. (for the default -mile=render)
 
@@ -153,13 +158,16 @@ To modify a specific attribute for a plugin use, for example,
 ```
 modify-collection-plugin-config -plugin=an-existing-plugin -version=0.1.2
 ```
+To bumps a plugin's _patch_ version number, use
+
+```
+modify-collection-plugin-config -plugin=an-existing-plugin -bump
+```
 To get help
 
 ```
 modify-collection-plugin-config -help
 ```
-[TODO] create a bump-version shortcut that bumps a plugin's _patch_ version number.
-
 ## test-all-collection-plugins
 All plugins must have a `t/` directory and one test file. This utility runs all the test files of all the plugins, returning only minimal information if the tests pass, but more information if a test fails.
 
@@ -320,4 +328,4 @@ The workflow is for changes to be made in Website, run Raku-Doc, inspect the res
 
 
 ----
-Rendered from README at 2022-09-04T20:32:51Z
+Rendered from README at 2022-09-05T08:29:10Z

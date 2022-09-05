@@ -92,24 +92,44 @@ multi sub MAIN(
 multi sub MAIN(:show-default(:show-defaults($))!) is export {
     say format-config(%defaults);
 }
+multi sub MAIN(Bool :$bump!, Str:D :plugins(:$plugin) = '', Str:D :$path = '.',
+    Bool :$quiet = False ) {
+    my %config = get-config(:path("$path/$plugin/config.raku"));
+    my @v = %config<version>.split(/'.'/);
+    @v[2]++;
+    %config<version> = @v.join('.');
+    my $new-conf = format-config(%config);
+    my $write = True;
+    unless $quiet {
+        say "New value of config.raku is \n$new-conf";
+        my $resp = prompt "Is the new config correct (/n). \nIf 'N' or 'n', the plugin will not be changed.";
+        $write = ?($resp !~~ /:i 'n' /)
+    }
+    "$path/$plugin/config.raku".IO.spurt($new-conf) if $write
+}
 multi sub MAIN(|c) is export {
     say qq:to/USAGE/;
     The program ｢{ $*PROGRAM-NAME }｣
     - assumes that the current working directory has sub-directories named for plugins,
         unless -path=<route from current directory to plugin directories>
-    - Either requires
-        - -plugin='all' or -plugin=<name of a sub-directory>.
+    - Has two main option combinations variants:
+        (a)
+        -plugin=<name of a sub-directory> [-path=...]
         and
-        - -defaults or one of -version, -auth, -authors, -lisence
-    - Or -show-defaults
-    The options -defaults and -show-defaults are booleans by default False, so use them only
-    when needed.
-    The options -plugin, -auth, -lisence expect non-empty Strings.
+        (a1) -defaults
+        or
+        (a2) -bump
+        or
+        (a3) -version | -auth | -authors | -license
+
+    Or (b) -show-defaults
+
+    The options -plugin, -auth, -license expect non-empty Strings.
     The option -version expects a Str in the form <Major>.<Minor>.<Patch>, where these are all integers.
     The option -authors expects a comma separated list of names, eg.
         -authors='Arthur Conan-Doyle, Ernest Hemingway, J.R. Tolkien'
+    The option -bump will increase the <patch> part of the version string for the plugin
     ｢{ $*PROGRAM-NAME }｣ will prompt with the new config.raku before it is re-written.
         -quiet, if present, will suppress prompts before config.raku is rewritten
     USAGE
-
 }

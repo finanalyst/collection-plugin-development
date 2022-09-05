@@ -98,10 +98,13 @@ The config file will have the defaults of the other mandatory keys. See C<modify
 for how to get the defaults.
 
 For different milestones set the option C<-mile> to the milestone name and a callable stub is also
-created. At present only one milestone callable can be set. [TODO allow the mile option to have a list
-of milestones]. Eg for a setup milestone callable
+created.
 
     add-collection-plugin -mile=setup my-new-plugin
+
+The C<-mile> option can take a list of milestones and form stubs for each, eg.
+
+    add-collection-plugin -mile='setup render compilation' my-new-plugin
 
 If a new format is being developed, then set C<-format> to the chosen format name, eg C<markdown>.
 A plugin will then be added to C<lib/markdown/plugins>. Eg. (for the default -mile=render)
@@ -126,11 +129,13 @@ To modify a specific attribute for a plugin use, for example,
 
     modify-collection-plugin-config -plugin=an-existing-plugin -version=0.1.2
 
+To bumps a plugin's I<patch> version number, use
+
+    modify-collection-plugin-config -plugin=an-existing-plugin -bump
+
 To get help
 
     modify-collection-plugin-config -help
-
-[TODO] create a bump-version shortcut that bumps a plugin's I<patch> version number.
 
 =head2 test-all-collection-plugins
 

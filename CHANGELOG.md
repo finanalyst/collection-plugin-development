@@ -61,9 +61,15 @@
 
 *  change name of :generated key in config to :information
 
+*  begin work on refresh-collection-plugins
+
+*  implement mile as a list for modify-collection-plugins
+
+*  added -bump option to modify-plugin
+
 
 
 
 
 ----
-Rendered from CHANGELOG at 2022-09-04T20:32:49Z
+Rendered from CHANGELOG at 2022-09-05T08:29:10Z

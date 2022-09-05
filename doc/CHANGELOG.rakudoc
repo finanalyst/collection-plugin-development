@@ -34,5 +34,8 @@
 =item changed README
 =item eliminated errors found in existing plugins
 =item change name of :generated key in config to :information
+=item begin work on refresh-collection-plugins
+=item implement mile as a list for modify-collection-plugins
+=item added -bump option to modify-plugin
 
 =end pod
