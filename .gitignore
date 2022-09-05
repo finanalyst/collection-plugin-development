@@ -1,7 +1,6 @@
 # Default ignored files
 .precomp/
 lib/.precomp/
-raku-collection-plugins.iml
 .idea/
 xt/test-dir/
 trial/doc-cache/
@@ -9,3 +8,4 @@ trial/html/
 trial/Website/structure-cache/
 trial/Website/structure-cache/*
 *.css.map
+/raku-collection-plugin-development.iml

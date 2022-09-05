@@ -38,4 +38,7 @@
 =item implement mile as a list for modify-collection-plugins
 =item added -bump option to modify-plugin
 
+=head1 2022-09-05 v0.1.0
+=item rename repo and module to collection-plugin-development
+
 =end pod

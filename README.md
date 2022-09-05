@@ -1,9 +1,6 @@
-# README
->Plugins for Collection
-
-
+# Development of Collection Plugins
+>
 ## Table of Contents
-[Tite](#tite)  
 [Introduction](#introduction)  
 [Collection plugin specification](#collection-plugin-specification)  
 [Collection plugin tests](#collection-plugin-tests)  
@@ -15,14 +12,22 @@
 [Currently](#currently)  
 
 ----
-# TITE
-
-Readme
-
 # Introduction
 The `Collection` module makes extensive use of plugins. They need developing and maintaining.
 
-The intention is for this distribution to be the repository for the files to develop plugins, and as a source for completed working plugins.
+The intention is for this distribution (Collection-Plugin-Development) to be associated with the repository for the files to develop plugins, and the current working copies of plugins.
+
+Another repository (Collection-Plugins) will be the source for published / released Collection plugins.
+
+So, the work flow is
+
+*  new plugins are added, modified, developed in `Collection::Plugins`
+
+*  modified plugins are prepared for release & pushed to Collection::Plugins repo
+
+*  a release is created in git with new plugins
+
+*  a utility in Collection checks for new releases and downloads them, and refreshes a current collection
 
 # Collection plugin specification
 All Collection plugins must conform to the following rules
@@ -328,4 +333,4 @@ The workflow is for changes to be made in Website, run Raku-Doc, inspect the res
 
 
 ----
-Rendered from README at 2022-09-05T08:29:10Z
+Rendered from README at 2022-09-05T08:54:54Z

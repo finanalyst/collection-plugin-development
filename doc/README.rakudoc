@@ -1,13 +1,21 @@
 =begin pod
-=TITE Readme
-=SUBTITLE Plugins for Collection
+=TITLE Development of Collection Plugins
 
 =head1 Introduction
 
 The C<Collection> module makes extensive use of plugins. They need developing and maintaining.
 
-The intention is for this distribution to be the repository for the files to develop plugins, and
-as a source for completed working plugins.
+The intention is for this distribution (Collection-Plugin-Development)
+to be associated with the repository for the files to develop plugins, and the current working
+copies of plugins.
+
+Another repository (Collection-Plugins) will be the source for published / released Collection plugins.
+
+So, the work flow is
+=item new plugins are added, modified, developed in C<Collection::Plugins>
+=item modified plugins are prepared for release & pushed to Collection::Plugins repo
+=item a release is created in git with new plugins
+=item a utility in Collection checks for new releases and downloads them, and refreshes a current collection
 
 =head1 Collection plugin specification
 

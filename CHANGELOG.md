@@ -7,6 +7,7 @@
 [2022-08-14 v0.0.5](#2022-08-14-v005)  
 [2022-08-30 v0.0.6](#2022-08-30-v006)  
 [2022-09-04 v0.0.7](#2022-09-04-v007)  
+[2022-09-05 v0.1.0](#2022-09-05-v010)  
 
 ----
 # 2022-08-09 v0.0.2
@@ -45,8 +46,6 @@
 *  added tests for Test::CollectionPlugin
 
 # 2022-09-04 v0.0.7
-
-
 *  added add-collection-plugin utility
 
 *  added modify-collection-plugin-config utility
@@ -67,9 +66,14 @@
 
 *  added -bump option to modify-plugin
 
+# 2022-09-05 v0.1.0
+
+
+*  rename repo and module to collection-plugin-development
+
 
 
 
 
 ----
-Rendered from CHANGELOG at 2022-09-05T08:29:10Z
+Rendered from CHANGELOG at 2022-09-05T08:54:55Z
