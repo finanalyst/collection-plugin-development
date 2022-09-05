@@ -1,7 +1,7 @@
 #!/usr/bin/env raku
 use v6.d;
 use RakuConfig;
-unit module ModConfig;
+unit module Collection::ModConfig;
 
 our %defaults is export(:MANDATORY) = %(
     :version<0.1.0>,

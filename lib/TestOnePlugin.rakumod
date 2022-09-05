@@ -288,7 +288,7 @@ module Test::CollectionPlugin {
         my @specified = <setup render compilation transfer report completion
                 version auth authors license custom-raku template-raku information>;
         for %config.keys.grep(none(@specified)) {
-            next if $_ ~~ any( %config<information>.list );
+            next if %config<information> and $_ ~~ any( %config<information>.list );
             $rc &&= check-file(%config{$_}, :extra("in key ｢$_｣"));
         }
         $rc

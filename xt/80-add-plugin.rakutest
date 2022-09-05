@@ -3,7 +3,7 @@ use Test;
 use Test::Run :runs_ok;
 use File::Directory::Tree;
 use RakuConfig;
-plan 5;
+plan 10;
 
 my $dir = 'xt/make-test';
 if $dir.IO ~~ :e {
@@ -12,26 +12,40 @@ if $dir.IO ~~ :e {
 
 mktree $dir;
 mktree "$dir/old-plug";
-my @args =(<raku -I. bin/add-collection-plugin >,"-format=$dir", <-test old-plug >).flat;
+my @args = (<raku -I. bin/add-collection-plugin >, "-format=$dir", <-test old-plug >).flat;
 runs_ok(
     :@args,
     :err(/ 'already exists' /)
     :exitcode(1),
     'psuedo old-plugin exists'
-);
-@args =(<raku -I. bin/add-collection-plugin >,"-format=$dir", <-test new-plug >).flat;
+             );
+@args = (<raku -I. bin/add-collection-plugin >, "-format=$dir", <-test new-plug >).flat;
 runs_ok(
     :@args,
     :exitcode(0),
     'new-plugin created'
-);
+             );
 ok "$dir/new-plug/config.raku".IO ~~ :e & :f, 'new-plugin config file exists';
-@args =(<raku -I. bin/add-collection-plugin -mile=setup>,"-format=$dir", <-test setup-plug >).flat;
+@args = (<raku -I. bin/add-collection-plugin -mile=setup>, "-format=$dir", <-test setup-plug >).flat;
 runs_ok(
     :@args,
     :exitcode(0),
     'setup-plugin created for milestone setup'
-);
+             );
 ok "$dir/setup-plug/setup-callable.raku".IO ~~ :e & :f, 'setup-plugin callable file exists';
-
+my @miles = <setup compilation report>;
+@args = <raku -I. bin/add-collection-plugin>;
+@args.append: "-mile={ @miles }";
+@args.append: "-format=$dir";
+@args.append: <-test complex-plug >;
+runs_ok(
+    :@args,
+    :exitcode(0),
+    'multiple milestone callables created'
+             );
+my %config = get-config(:path($dir ~ '/complex-plug/config.raku'));
+cmp-ok @miles, '(<)', %config.keys, 'config has all callable keys';
+for @miles {
+    ok "$dir/complex-plug/$_\-callable.raku".IO ~~ :e & :f, "complex-plug $_ callable file exists";
+}
 done-testing;

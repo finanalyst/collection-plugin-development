@@ -2,7 +2,7 @@ use v6.d;
 use Test;
 use Test::CollectionPlugin;
 
-plan 2;
+plan 4;
 
 constant DIR = 'xt/test-dir';
 
@@ -13,5 +13,7 @@ chdir DIR;
 
 ok Test::CollectionPlugin::check-otherkey( %( :css<README.rakudoc>,) ), 'other keys, if they exist, should point to a filename';
 nok Test::CollectionPlugin::check-otherkey( %( :css(),) ), 'other keys, traps not pointing to a filename';
+ok Test::CollectionPlugin::check-otherkey( %( :css(), :information<css>) ), 'allow empty key if in information list';
+ok Test::CollectionPlugin::check-otherkey( %( :css("not a filename here"), :information<css>) ), 'dont check Str val of key if in information list';
 
 done-testing;

@@ -63,6 +63,6 @@ runs_ok(
 my %new-conf;
 lives-ok {%new-conf = EVALFILE (DIR ~ "/Camelia/config.raku")}, 'new config compiles';
 
-cmp-ok %new-conf.keys, '(==)', (%plug-conf.keys, %ModConfig::defaults.keys).flat, 'config round trips';
+cmp-ok %new-conf.keys, '(==)', (%plug-conf.keys, %Collection::ModConfig::defaults.keys).flat, 'config round trips';
 
 done-testing;

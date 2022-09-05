@@ -1,12 +1,12 @@
 #!/usr/bin/env perl6
 use RakuConfig;
-use Collection::ModConfig :CALLABLE;
+use Collection::ModConfig :MANDATORY;
 
 unit module Collection::AddPlugin;
 multi sub MAIN(Str:D $plug, :$mile = 'render', :$format = 'html', Bool :$test = False) is export {
-    my $path = $test?? $format !! "lib/$format/plugins";
+    my $path = $test ?? $format !! "lib/$format/plugins";
     exit note("A plugin called ｢$plug｣ already exists for format ｢$format｣. Try a new name")
-        if $plug ~~ any( $path.IO.dir>>.basename );
+    if $plug ~~ any($path.IO.dir>>.basename);
     my $p-path = "$path/$plug";
     $p-path.IO.mkdir;
     "$p-path/README.rakudoc".IO.spurt(qq:to/TEMP/);
@@ -21,6 +21,7 @@ multi sub MAIN(Str:D $plug, :$mile = 'render', :$format = 'html', Bool :$test = 
 
             \=end pod
             TEMP
+
     "$p-path/t".IO.mkdir;
     "$p-path/t/05-basic.rakutest".IO.spurt(q:to/TEST/);
         use v6.d;
@@ -29,31 +30,24 @@ multi sub MAIN(Str:D $plug, :$mile = 'render', :$format = 'html', Bool :$test = 
         test-plugin();
         done-testing
         TEST
-    if $mile eq 'render' {
-        "$p-path/config.raku".IO.spurt(q:to/TEMP/);
-            %(
+
+    my %config = %Collection::ModConfig::defaults;
+    for $mile.subst(/\'/,:g).split(/\s/) {
+        %config{$_} = "$_\-callable.raku" unless $_ eq 'render';
+        when 'render' {
+            %config ,= %(
                 :render,
                 :template-raku(),
                 :custom-raku(),
-            )
-            TEMP
-    }
-    else {
-        "$p-path/config.raku".IO.spurt(qq:to/TEMP/);
-            %(
-                :{ $mile }<{$mile}-callable.raku>,
-            )
-            TEMP
-    }
-    modify-config( :plugin($plug), :path($path), :defaults, :quiet);
-    given $mile {
+            );
+        }
         when 'setup' {
             "$p-path/$_\-callable.raku".IO.spurt(q:to/TEMP/);
-            use v6.d;
-            sub ( $source-cache, $mode-cache, Bool $full-render,  $source-root, $mode-root, %options ) {
-                # return nothing
-            }
-            TEMP
+                use v6.d;
+                sub ( $source-cache, $mode-cache, Bool $full-render,  $source-root, $mode-root, %options ) {
+                    # return nothing
+                }
+                TEMP
         }
         when 'compilation' {
             "$p-path/$_\-callable.raku".IO.spurt(q:to/TEMP/);
@@ -88,6 +82,7 @@ multi sub MAIN(Str:D $plug, :$mile = 'render', :$format = 'html', Bool :$test = 
                 # return nothing
             }
             TEMP
+            }
         }
-    }
+    "$p-path/config.raku".IO.spurt(format-config(%config))
 }

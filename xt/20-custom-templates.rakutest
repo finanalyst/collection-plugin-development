@@ -13,7 +13,7 @@ chdir DIR;
 
 ok Test::CollectionPlugin::check-render-reqs( 'custom-raku', %( :custom-raku(),) ), 'custom-raku: no blocks is fine';
 nok Test::CollectionPlugin::check-render-reqs( 'custom-raku', %( :custom-raku<custom.raku>,)), 'custom-raku: traps required file';
-ok Test::CollectionPlugin::check-render-reqs( 'custom-raku', %( :custom-raku<custom.raku>, :generated<custom-blocks> ) ), 'custom-raku: with name and generated, but no file is fine';
+ok Test::CollectionPlugin::check-render-reqs( 'custom-raku', %( :custom-raku<custom.raku>, :information<custom-blocks> ) ), 'custom-raku: with name and generated, but no file is fine';
 'custom.raku'.IO.spurt: "[<One Two Three>]";
 ok Test::CollectionPlugin::check-render-reqs( 'custom-raku', %( :custom-raku<custom.raku>,) ), 'custom-raku: with name and file works';
 nok Test::CollectionPlugin::check-render-reqs( 'template-raku', %( :template-raku<template.raku>,)), 'template-raku: traps required file';
