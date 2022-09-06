@@ -71,9 +71,17 @@
 
 *  rename repo and module to collection-plugin-development
 
+*  change name of path for plugins to plugin/$format
+
+*  change plugin auth default from 'finanalyst' to 'collection', changes to README and modify-collection-plugins
+
+*  added rule for naming of plugin, added tests to add-plugin, added to Test::CollectionPlugin
+
+*  RefreshPlugin added
+
 
 
 
 
 ----
-Rendered from CHANGELOG at 2022-09-05T08:54:55Z
+Rendered from CHANGELOG at 2022-09-06T20:15:58Z

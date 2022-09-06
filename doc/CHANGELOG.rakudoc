@@ -40,5 +40,9 @@
 
 =head1 2022-09-05 v0.1.0
 =item rename repo and module to collection-plugin-development
+=item change name of path for plugins to plugin/$format
+=item change plugin auth default from 'finanalyst' to 'collection', changes to README and modify-collection-plugins
+=item added rule for naming of plugin, added tests to add-plugin, added to Test::CollectionPlugin
+=item RefreshPlugin added
 
 =end pod

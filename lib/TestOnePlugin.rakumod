@@ -6,13 +6,15 @@ use License::SPDX;
 module Test::CollectionPlugin {
     # several subs are taken from Jonathan Stowe's Test::Meta module.
     our $TESTING = False;
+    my token fn is export(:MANDATORY) { <.alpha> <[\w] + [\-] - [\_]>+ };
 
     sub test-plugin is export {
         my %config;
         my @required = <version auth license authors>;
 
-        plan 9;
+        plan 10;
 
+        like $*CWD.basename, / <fn> /, 'plugin name matches naming rule';
         ok check-file('README.rakudoc'), 'README exists';
         if check-file('config.raku') {
             pass 'got ｢config.raku｣';

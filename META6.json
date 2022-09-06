@@ -36,7 +36,8 @@
     "bin/modify-collection-plugin-config",
     "bin/test-all-collection-plugins",
     "bin/add-collection-plugin",
-    "bin/refresh-collection-plugins"
+    "bin/refresh-collection-plugins",
+    "bin/map-to-repo"
   ],
   "source-type": "git"
 }

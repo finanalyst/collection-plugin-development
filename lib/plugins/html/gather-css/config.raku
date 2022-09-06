@@ -1,0 +1,13 @@
+%(
+	:auth<collection>,
+	:authors(
+		"finanalyst",
+	),
+	:custom-raku(),
+	:information<template-raku>,
+	:license<Artistic-2.0>,
+	:render<css-collator.raku>,
+	:template-raku<css-templates.raku>,
+	:transfer<cleanup.raku>,
+	:version<0.1.0>,
+)

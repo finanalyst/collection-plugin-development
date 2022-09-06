@@ -1,0 +1,9 @@
+%(
+	:auth<collection>,
+	:authors(
+		"finanalyst",
+	),
+	:completion<cro-run.raku>,
+	:license<Artistic-2.0>,
+	:version<0.1.0>,
+)

@@ -3,6 +3,8 @@
 
 =item create plugin management CLI
 
+=item rewrite Pod::To::HTML2 templates -> plugins
+
 =item look at implementing SCSS for plugins and updating
 
 =item Implement numbered lists for items.
@@ -12,5 +14,7 @@ B<UI rakudoc>
 This is needed to create page templates, so that titles, footnotes, tabs in the header
 can be defined as Rakudoc files, and hence have in different languages.
 =end item
+
+=item plugin to render raku versioning
 
 =end pod

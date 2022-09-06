@@ -1,0 +1,12 @@
+%(
+	:add-css<font-awesome.min.css>,
+	:auth<collection>,
+	:authors(
+		"finanalyst",
+	),
+	:custom-raku(),
+	:license<Artistic-2.0>,
+	:render<fa-assets.raku>,
+	:template-raku<fa-template.raku>,
+	:version<0.1.0>,
+)

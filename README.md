@@ -8,6 +8,8 @@
 [add-collection-plugin](#add-collection-plugin)  
 [modify-collection-plugin](#modify-collection-plugin)  
 [test-all-collection-plugins](#test-all-collection-plugins)  
+[sub map-to-repo( :$from = '../raku-collection-plugins', :$to = 'lib', :$format = 'html' )](#sub-map-to-repo-from--raku-collection-plugins-to--lib-format--html-)  
+[Naming of released plugin](#naming-of-released-plugin)  
 [Collection plugin management system](#collection-plugin-management-system)  
 [Currently](#currently)  
 
@@ -31,6 +33,16 @@ So, the work flow is
 
 # Collection plugin specification
 All Collection plugins must conform to the following rules
+
+*  The plugin name must:
+
+	*  start with a letter
+
+	*  followed by at least one \w or \-
+
+	*  not contain \_ or \.
+
+	*  thus a name matches / <alpha> <[\w] + [\-] - [\_]>+ /
 
 *  The plugin directory contains
 
@@ -176,6 +188,17 @@ modify-collection-plugin-config -help
 ## test-all-collection-plugins
 All plugins must have a `t/` directory and one test file. This utility runs all the test files of all the plugins, returning only minimal information if the tests pass, but more information if a test fails.
 
+## sub map-to-repo( :$from = '../raku-collection-plugins', :$to = 'lib', :$format = 'html' )
+Moves plugins that have a new version/author to released directory
+
+# Naming of released plugin
+The name of a working plugin must match `/^ <.alpha> <[\w] + [\-] - [\_]>+ $ /`.
+
+If a plugin `my-plug` has a config file with `:version<1.2.3>, :auth<collection> `, then the released name will be
+
+```
+my-plug_v1_auth_collection
+```
 # Collection plugin management system
 It is planned to have GUI and a command line manager.
 
@@ -247,7 +270,7 @@ The file `plugin.raku` contains a hash with the following keys:
 
 *  Every other toplevel key is interpreted as a Mode. It will point to a hash with the keys:
 
-	*  `FORMAT` Each mode may only contain plugins from one Format, eg., _HTML_.
+	*  `FORMAT` Each mode may only contain plugins from one Format, eg., _html_.
 
 	*  This implies that a _Mode_ may not be named `FORMAT`.
 
@@ -273,19 +296,19 @@ The file `plugin.raku` contains a hash with the following keys:
 
 		*  Auth => the auth value
 
-			*  the default value is 'finanalyst'
+			*  the default value is 'collection'
 
 	*  If there is no distributed plugin for a specified `auth`, then an error is thrown.
 
 Some examples:
 
-*  The Raku-Collection-Raku-Documentation, Website mode, requires the plugin `Camelia`. The plugin exists as a HTML format. It has version 1.0.0, and an auth 'finanalyst'. It is distributed as `html/camelia_auth_finanalyst__ver_1`. Suppose a version with a new API is created. Then two versions of the plugin will be distributed, including the new one `html/camelia_auth_finanalyst__ver_2`.
+*  The Raku-Collection-Raku-Documentation, Website mode, requires the plugin `Camelia`. The plugin exists as a HTML format. It has version 1.0.0, and an auth 'collection'. It is distributed as `html/camelia_v_1_auth_collection`. Suppose a version with a new API is created. Then two versions of the plugin will be distributed, including the new one `html/camelia_v_2_auth_collection`.
 
-If no key for camelia is in the hash for mode Website, then the defaults will be implimented and a link (or copy) will be made between the released directory `html/camelia_auth_finanalyst__ver_2` and `Website/plugins/camelia`
+If no key for camelia is in the hash for mode Website, then the defaults will be implimented and a link (or copy) will be made between the released directory `html/camelia_auth_collection__ver_2` and `Website/plugins/camelia`
 
 *  If plugin.conf contains the following: `Website =` %( :FORMA"> \{\{\{ contents }}}
 
-, :camelia( %( :major(1), ) ) > then the link will be between `html/camelia_auth_finanalyst__ver_1` and `Website/plugins/camelia`
+, :camelia( %( :major(1), ) ) > then the link will be between `html/camelia_auth_collection__ver_1` and `Website/plugins/camelia`
 
 *  Suppose there is another valid `auth` string **raku-dev** and there is a distributed plugin _html/camelia_auth_raku-dev__ver_2_, and suppose `plugin.conf` contains the following: `Website =` %( :FORMA"> \{\{\{ contents }}}
 
@@ -295,14 +318,14 @@ If no key for camelia is in the hash for mode Website, then the defaults will be
 
 , camelia( %( :name<new-camelia>, :auth<raku-dev>, ) ) > then a link (copy) is made between `html/new-camelia_auth_raku-dev__ver_2` and `Website/plugins/camelia`
 
-	*  Note how the auth must be given for a renaming if there is not a `finanalyst` version of the plugin
+	*  Note how the auth must be given for a renaming if there is not a `collection` version of the plugin
 
 # Currently
 The 'clean' directory structure is
 
 *  raku-collection-plugins/ # the root of the module
 
-	*  lib/html/plugins # location of plugin data
+	*  lib/plugins/html # location of plugin data
 
 	*  resources/ # a directory for the Module
 
@@ -333,4 +356,4 @@ The workflow is for changes to be made in Website, run Raku-Doc, inspect the res
 
 
 ----
-Rendered from README at 2022-09-05T08:54:54Z
+Rendered from README at 2022-09-06T20:15:57Z

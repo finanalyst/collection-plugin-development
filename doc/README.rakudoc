@@ -20,6 +20,11 @@ So, the work flow is
 =head1 Collection plugin specification
 
 All Collection plugins must conform to the following rules
+=item The plugin name must:
+=item2 start with a letter
+=item2 followed by at least one \w or \-
+=item2 not contain \_ or \.
+=item2 thus a name matches / <alpha> <[\w] + [\-] - [\_]>+ /
 =item The plugin directory contains
 =item2 C<config.raku>, which is a file that evaluates to a Raku hash.
 =item2 README.rakudoc
@@ -151,6 +156,19 @@ All plugins must have a C<t/> directory and one test file. This utility runs all
 files of all the plugins, returning only minimal information if the tests pass, but more
 information if a test fails.
 
+=head2 sub map-to-repo( :$from = '../raku-collection-plugins', :$to = 'lib', :$format = 'html' )
+
+Moves plugins that have a new version/author to released directory
+
+=head1 Naming of released plugin
+
+The name of a working plugin must match C</^ <.alpha> <[\w] + [\-] - [\_]>+ $ />.
+
+If a plugin C<my-plug> has a config file with C<:version<1.2.3>, :auth<collection> >,
+then the released name will be
+
+    my-plug_v1_auth_collection
+
 =head1 Collection plugin management system
 
 It is planned to have GUI and a command line manager.
@@ -217,7 +235,7 @@ The file C<plugin.raku> contains a hash with the following keys:
 root directory with the released plugins are downloaded.
 
 =item Every other toplevel key is interpreted as a Mode. It will point to a hash with the keys:
-=item2 C<FORMAT> Each mode may only contain plugins from one Format, eg., I<HTML>.
+=item2 C<FORMAT> Each mode may only contain plugins from one Format, eg., I<html>.
 =item2 This implies that a I<Mode> may not be named C<FORMAT>.
 =item2 Every other key at this level (meaning within the hash for a Mode and not FORMAT)
 must be a plugin name contained in the Mode's plugins-required configuration.
@@ -236,25 +254,25 @@ mode sub-directory
 =item4 the default value is the greatest released major value
 =item4 A Major value is the maximum Major version permitted, thus freezing at that version
 =item3 Auth => the auth value
-=item4 the default value is 'finanalyst'
+=item4 the default value is 'collection'
 =item2 If there is no distributed plugin for a specified C<auth>, then an error is thrown.
 
 Some examples:
 =begin item
 The Raku-Collection-Raku-Documentation, Website mode, requires the plugin C<Camelia>. The plugin exists
-as a HTML format. It has version 1.0.0, and an auth 'finanalyst'. It is distributed as
-C<html/camelia_auth_finanalyst__ver_1>. Suppose a version with a new API is created. Then
+as a HTML format. It has version 1.0.0, and an auth 'collection'. It is distributed as
+C<html/camelia_v_1_auth_collection>. Suppose a version with a new API is created. Then
 two versions of the plugin will be distributed, including the new one
-C<html/camelia_auth_finanalyst__ver_2>.
+C<html/camelia_v_2_auth_collection>.
 
 If no key for camelia is in the hash for mode Website, then the defaults will be implimented and
 a link (or copy) will be made between the released directory
-C<html/camelia_auth_finanalyst__ver_2> and C<Website/plugins/camelia>
+C<html/camelia_auth_collection__ver_2> and C<Website/plugins/camelia>
 =end item
 =begin item
 If plugin.conf contains the following:
 C<Website => %( :FORMAT<html>, :camelia( %( :major(1), ) ) >
-then the link will be between C<html/camelia_auth_finanalyst__ver_1> and C<Website/plugins/camelia>
+then the link will be between C<html/camelia_auth_collection__ver_1> and C<Website/plugins/camelia>
 =end item
 =begin item
 Suppose there is another valid C<auth> string B<raku-dev> and there is a distributed plugin
@@ -268,14 +286,14 @@ plugin.conf file may contain the following:
 C<Website => %( :FORMAT<html>, camelia( %( :name<new-camelia>, :auth<raku-dev>, ) ) > then
 a link (copy) is made between C<html/new-camelia_auth_raku-dev__ver_2> and C<Website/plugins/camelia>
 =end item
-=item2 Note how the auth must be given for a renaming if there is not a C<finanalyst> version
+=item2 Note how the auth must be given for a renaming if there is not a C<collection> version
 of the plugin
 
 =head1 Currently
 
 The 'clean' directory structure is
 =item raku-collection-plugins/ # the root of the module
-=item2 lib/html/plugins # location of plugin data
+=item2 lib/plugins/html # location of plugin data
 =item2 resources/ # a directory for the Module
 =item2 trial/ # the directory in which testing is run
 =item3 raku-docs/ # a small collection of Raku documentation docs

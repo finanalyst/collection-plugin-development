@@ -1,12 +1,15 @@
 #!/usr/bin/env perl6
 use RakuConfig;
 use Collection::ModConfig :MANDATORY;
+use Test::CollectionPlugin :MANDATORY;
 
 unit module Collection::AddPlugin;
 multi sub MAIN(Str:D $plug, :$mile = 'render', :$format = 'html', Bool :$test = False) is export {
-    my $path = $test ?? $format !! "lib/$format/plugins";
+    my $path = $test ?? $format !! "lib/plugins/$format";
     exit note("A plugin called ｢$plug｣ already exists for format ｢$format｣. Try a new name")
     if $plug ~~ any($path.IO.dir>>.basename);
+    exit note("Plugin name ｢$plug｣ does not match Collection plugin naming rules")
+        unless $plug ~~ / ^ <fn> $ /;
     my $p-path = "$path/$plug";
     $p-path.IO.mkdir;
     "$p-path/README.rakudoc".IO.spurt(qq:to/TEMP/);
@@ -32,7 +35,7 @@ multi sub MAIN(Str:D $plug, :$mile = 'render', :$format = 'html', Bool :$test = 
         TEST
 
     my %config = %Collection::ModConfig::defaults;
-    for $mile.subst(/\'/,:g).split(/\s/) {
+    for $mile.comb(/ <fn> /) {
         %config{$_} = "$_\-callable.raku" unless $_ eq 'render';
         when 'render' {
             %config ,= %(

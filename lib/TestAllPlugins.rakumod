@@ -1,7 +1,7 @@
 use v6.d;
 unit module Collection::TestAllPlugins;
 multi sub MAIN(:$format = 'html') is export {
-    MAIN("lib/$format/plugins")
+    MAIN("lib/plugins/$format")
 }
 multi sub MAIN($path) is export {
     say run(<raku --version>, :out).out.slurp.chomp;

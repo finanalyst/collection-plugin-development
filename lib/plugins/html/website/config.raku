@@ -1,0 +1,14 @@
+%(
+	:auth<collection>,
+	:authors(
+		"finanalyst",
+	),
+	:compilation<gatherpages.raku>,
+	:css<website-div-styling.css>,
+	:custom-raku<website-blocks.raku>,
+	:jquery<ws-filter-scripts.js>,
+	:license<Artistic-2.0>,
+	:render,
+	:template-raku<website-templates.raku>,
+	:version<0.1.0>,
+)

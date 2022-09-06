@@ -1,0 +1,72 @@
+use v6.d;
+use Test;
+
+use Test::Run :runs_ok;
+use File::Directory::Tree;
+use RakuConfig;
+use Collection::RefreshPlugins;
+
+plan 9;
+
+constant DIR = 'xt/refresh-test';
+if DIR.IO ~~ :e & :d {
+    rmtree DIR
+}
+constant TO = DIR ~ '/to';
+constant FROM = DIR ~ '/from';
+constant PLUG = FROM ~ '/plugins/html/plug';
+mktree TO ~ '/plugins/html';
+mktree PLUG ~ '/t';
+mktree PLUG ~ '/extra';
+
+for <one two three> {
+    (PLUG ~ "/$_").IO.spurt: "This is file $_";
+    (PLUG ~ "/t/$_").IO.spurt: "This is file t/$_";
+    (PLUG ~ "/extra/$_").IO.spurt: "This is file extra/$_";
+}
+
+lives-ok { copy-plugin(:from(PLUG), :to(TO ~ '/plugins/html/plug_v1')) }, 'copy-plugin lives';
+ok (TO ~ '/plugins/html/plug_v1').IO ~~ :e & :d , 'plug dir made';
+ok (TO ~ '/plugins/html/plug_v1/one').IO ~~ :e & :f, 'root file transfered';
+ok (TO ~ '/plugins/html/plug_v1/extra/one').IO ~~ :e & :f, 'sub-dir file transfered';
+
+#make configs
+(PLUG ~ "/config.raku").IO.spurt(q:to/CONF/);
+    %(
+        :compilation<a-callable.raku>,
+        :version<2.1.1>,
+        :auth<collection>,
+    )
+    CONF
+my @args = 'raku', '-I.', 'bin/map-to-repo', '-repo=' ~ TO, '-origin=' ~ FROM ;
+runs_ok(
+    :@args,
+    :exitcode(0),
+    :out(/'Transfering / refreshing'/),
+    'map-to-repo lives'
+);
+ok PLUG.IO.dir.map({ .basename }) (==) (TO ~ '/plugins/html/plug_v2_auth_collection').IO.dir.map({ .basename }), 'same files in to & from';
+runs_ok(
+    :@args,
+    :exitcode(0),
+    :out(/'Skipping copy'/),
+    'map-to-repo skips when versions the same'
+);
+(PLUG ~ "/config.raku").IO.spurt(q:to/CONF/);
+    %(
+        :compilation<a-callable.raku>,
+        :version<2.1.2>,
+        :auth<collection>,
+    )
+    CONF
+(PLUG ~ "/new-file.raku").IO.spurt(q:to/NEWF/);
+    say "Another file";
+    NEWF
+runs_ok(
+    :@args,
+    :exitcode(0),
+    :out(/'Release ｢' .+ '｣ exists.'/),
+    'map-to-repo copies when the version is different'
+);
+ok (TO ~ '/plugins/html/plug_v2_auth_collection/new-file.raku').IO ~~ :e & :f, 'new file transferred';
+done-testing;

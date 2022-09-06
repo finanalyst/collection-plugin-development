@@ -1,11 +1,12 @@
 #!/usr/bin/env raku
 use v6.d;
 use RakuConfig;
+use Test::CollectionPlugin :MANDATORY;
 unit module Collection::ModConfig;
 
 our %defaults is export(:MANDATORY) = %(
     :version<0.1.0>,
-    :auth<finanalyst>,
+    :auth<collection>,
     :authors('finanalyst',),
     :license('Artistic-2.0'),
 );
@@ -20,7 +21,7 @@ multi sub MAIN(
     Str:D :$auth = '',
     Str:D :$authors = '',
     Str:D :$license = '',
-    Str:D :$path = '.',
+    Str:D :$path = 'lib/plugins/html',
     Bool :$quiet = False
    ) is export {
     (exit note("｢$path｣ is not a valid path")) unless $path.IO ~~ :e & :d;
