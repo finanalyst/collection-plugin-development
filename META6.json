@@ -1,7 +1,7 @@
 {
   "name": "Collection-Plugin-Development",
   "description": "Development and working repository for Collection plugins",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "perl": "6.d",
   "authors": [
     "Richard Hainsworth, aka finanalyst"
@@ -18,7 +18,7 @@
   "provides": {
     "Collection::AddPlugin": "lib/AddPlugin.rakumod",
     "Collection::ModConfig": "lib/ModConfig.rakumod",
-    "Collection::RefreshPlugins": "lib/RefreshPlugins.rakumod",
+    "Collection::PreparePlugins": "lib/PreparePlugins.rakumod",
     "Collection::TestAllPlugins": "lib/TestAllPlugins.rakumod",
     "Test::CollectionPlugin": "lib/TestOnePlugin.rakumod"
   },

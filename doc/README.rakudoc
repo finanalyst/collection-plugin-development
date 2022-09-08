@@ -9,13 +9,19 @@ The intention is for this distribution (Collection-Plugin-Development)
 to be associated with the repository for the files to develop plugins, and the current working
 copies of plugins.
 
-Another repository (Collection-Plugins) will be the source for published / released Collection plugins.
+Another repository (Collection-Plugins) is the source for published / released Collection plugins.
 
 So, the work flow is
 =item new plugins are added, modified, developed in C<Collection::Plugins>
-=item modified plugins are prepared for release & pushed to Collection::Plugins repo
+=item modified plugins are prepared for release & pushed to Collection::Plugins using
+
+    prepare-plugins
+
 =item a release is created in git with new plugins
-=item a utility in Collection checks for new releases and downloads them, and refreshes a current collection
+=item a utility in Collection checks for new releases and downloads them,
+and refreshes a Collection in the Collection's root directory
+
+    refresh-plugins
 
 =head1 Collection plugin specification
 
@@ -87,10 +93,10 @@ C<plugin-ok>. This subroutine verifies that the plugin rules are kept for the pl
 
 Additional plugin specific tests should be included.
 
-=head1 Collection utilities
+=head1 Collection-Plugin-Development utilities
 
 Three utilities are provided to add a new plugin, modify an existing plugin's config file (eg.
-change the version number, and run the tests of all plugins.
+change the version number), run the tests of all plugins, and prepare plugins for release
 
 Each utility assumes the plugin directory is at C<lib/<format>/plugins>, where the default
 format is C<html>. An example of another format would be C<markdown>.
@@ -156,9 +162,12 @@ All plugins must have a C<t/> directory and one test file. This utility runs all
 files of all the plugins, returning only minimal information if the tests pass, but more
 information if a test fails.
 
-=head2 sub map-to-repo( :$from = '../raku-collection-plugins', :$to = 'lib', :$format = 'html' )
+=head2 sub prepare-plugins( :$from = '../raku-collection-plugins', :$to = 'lib', :$format = 'html' )
 
-Moves plugins that have a new version/author to released directory
+Moves plugins that have a new version/author to released directory.
+
+Verifies that there are no files in a working plugin directory that have newer content than in
+a release directory. Issues a suggestion to bump version if there is newer content.
 
 =head1 Naming of released plugin
 

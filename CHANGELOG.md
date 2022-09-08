@@ -8,6 +8,7 @@
 [2022-08-30 v0.0.6](#2022-08-30-v006)  
 [2022-09-04 v0.0.7](#2022-09-04-v007)  
 [2022-09-05 v0.1.0](#2022-09-05-v010)  
+[2022-09-08 v0.1.1](#2022-09-08-v011)  
 
 ----
 # 2022-08-09 v0.0.2
@@ -67,8 +68,6 @@
 *  added -bump option to modify-plugin
 
 # 2022-09-05 v0.1.0
-
-
 *  rename repo and module to collection-plugin-development
 
 *  change name of path for plugins to plugin/$format
@@ -79,9 +78,18 @@
 
 *  RefreshPlugin added
 
+# 2022-09-08 v0.1.1
+
+
+*  rename RefreshPlugins to PreparePlugins
+
+*  add code to prepare-plugins in order to compare released and working plugins, and suggest a version bump if files are changed in the working version are later than the released version with the same version number.
+
+*  add tests for compare code
+
 
 
 
 
 ----
-Rendered from CHANGELOG at 2022-09-06T20:15:58Z
+Rendered from CHANGELOG at 2022-09-08T18:24:34Z

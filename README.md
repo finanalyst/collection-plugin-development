@@ -4,11 +4,11 @@
 [Introduction](#introduction)  
 [Collection plugin specification](#collection-plugin-specification)  
 [Collection plugin tests](#collection-plugin-tests)  
-[Collection utilities](#collection-utilities)  
+[Collection-Plugin-Development utilities](#collection-plugin-development-utilities)  
 [add-collection-plugin](#add-collection-plugin)  
 [modify-collection-plugin](#modify-collection-plugin)  
 [test-all-collection-plugins](#test-all-collection-plugins)  
-[sub map-to-repo( :$from = '../raku-collection-plugins', :$to = 'lib', :$format = 'html' )](#sub-map-to-repo-from--raku-collection-plugins-to--lib-format--html-)  
+[sub prepare-plugins( :$from = '../raku-collection-plugins', :$to = 'lib', :$format = 'html' )](#sub-prepare-plugins-from--raku-collection-plugins-to--lib-format--html-)  
 [Naming of released plugin](#naming-of-released-plugin)  
 [Collection plugin management system](#collection-plugin-management-system)  
 [Currently](#currently)  
@@ -19,18 +19,24 @@ The `Collection` module makes extensive use of plugins. They need developing and
 
 The intention is for this distribution (Collection-Plugin-Development) to be associated with the repository for the files to develop plugins, and the current working copies of plugins.
 
-Another repository (Collection-Plugins) will be the source for published / released Collection plugins.
+Another repository (Collection-Plugins) is the source for published / released Collection plugins.
 
 So, the work flow is
 
 *  new plugins are added, modified, developed in `Collection::Plugins`
 
-*  modified plugins are prepared for release & pushed to Collection::Plugins repo
+*  modified plugins are prepared for release & pushed to Collection::Plugins using
 
+```
+prepare-plugins
+```
 *  a release is created in git with new plugins
 
-*  a utility in Collection checks for new releases and downloads them, and refreshes a current collection
+*  a utility in Collection checks for new releases and downloads them, and refreshes a Collection in the Collection's root directory
 
+```
+refresh-plugins
+```
 # Collection plugin specification
 All Collection plugins must conform to the following rules
 
@@ -125,8 +131,8 @@ This distribution contains the module `Test::CollectionPlugins` with a single ex
 
 Additional plugin specific tests should be included.
 
-# Collection utilities
-Three utilities are provided to add a new plugin, modify an existing plugin's config file (eg. change the version number, and run the tests of all plugins.
+# Collection-Plugin-Development utilities
+Three utilities are provided to add a new plugin, modify an existing plugin's config file (eg. change the version number), run the tests of all plugins, and prepare plugins for release
 
 Each utility assumes the plugin directory is at `lib/<format>/plugins`, where the default format is `html`. An example of another format would be `markdown`.
 
@@ -188,8 +194,10 @@ modify-collection-plugin-config -help
 ## test-all-collection-plugins
 All plugins must have a `t/` directory and one test file. This utility runs all the test files of all the plugins, returning only minimal information if the tests pass, but more information if a test fails.
 
-## sub map-to-repo( :$from = '../raku-collection-plugins', :$to = 'lib', :$format = 'html' )
-Moves plugins that have a new version/author to released directory
+## sub prepare-plugins( :$from = '../raku-collection-plugins', :$to = 'lib', :$format = 'html' )
+Moves plugins that have a new version/author to released directory.
+
+Verifies that there are no files in a working plugin directory that have newer content than in a release directory. Issues a suggestion to bump version if there is newer content.
 
 # Naming of released plugin
 The name of a working plugin must match `/^ <.alpha> <[\w] + [\-] - [\_]>+ $ /`.
@@ -356,4 +364,4 @@ The workflow is for changes to be made in Website, run Raku-Doc, inspect the res
 
 
 ----
-Rendered from README at 2022-09-06T20:15:57Z
+Rendered from README at 2022-09-08T18:24:33Z

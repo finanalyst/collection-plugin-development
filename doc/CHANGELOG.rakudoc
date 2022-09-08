@@ -45,4 +45,10 @@
 =item added rule for naming of plugin, added tests to add-plugin, added to Test::CollectionPlugin
 =item RefreshPlugin added
 
+=head1 2022-09-08 v0.1.1
+=item rename RefreshPlugins to PreparePlugins
+=item add code to prepare-plugins in order to compare released and working plugins, and suggest a version bump if files
+are changed in the working version are later than the released version with the same version number.
+
+=item add tests for compare code
 =end pod

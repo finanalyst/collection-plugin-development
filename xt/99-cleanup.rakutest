@@ -7,7 +7,7 @@ if %*ENV<NoDelete> {
     skip-rest 'NoDelete set in environment';
 }
 else {
-    my @dirs = <test-dir config-dir make-dir refresh-test>;
+    my @dirs = <test-dir config-test make-test refresh-test>;
     subtest 'finding & deleting expected test directories', {
     plan @dirs.elems + 1;
     for @dirs {

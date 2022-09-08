@@ -1,4 +1,4 @@
 #!/usr/bin/env raku
 use v6.d;
-use Collection::RefreshPlugins;
+use Collection::PreparePlugins;
 sub MAIN(|c) { map-to-repo( |c ) }

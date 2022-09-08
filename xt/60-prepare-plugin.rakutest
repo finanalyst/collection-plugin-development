@@ -4,9 +4,9 @@ use Test;
 use Test::Run :runs_ok;
 use File::Directory::Tree;
 use RakuConfig;
-use Collection::RefreshPlugins;
+use Collection::PreparePlugins;
 
-plan 9;
+plan 10;
 
 constant DIR = 'xt/refresh-test';
 if DIR.IO ~~ :e & :d {
@@ -25,7 +25,7 @@ for <one two three> {
     (PLUG ~ "/extra/$_").IO.spurt: "This is file extra/$_";
 }
 
-lives-ok { copy-plugin(:from(PLUG), :to(TO ~ '/plugins/html/plug_v1')) }, 'copy-plugin lives';
+lives-ok { copy-plugin(:node(PLUG.IO), :to(TO ~ '/plugins/html/plug_v1')) }, 'copy-plugin lives';
 ok (TO ~ '/plugins/html/plug_v1').IO ~~ :e & :d , 'plug dir made';
 ok (TO ~ '/plugins/html/plug_v1/one').IO ~~ :e & :f, 'root file transfered';
 ok (TO ~ '/plugins/html/plug_v1/extra/one').IO ~~ :e & :f, 'sub-dir file transfered';
@@ -38,20 +38,15 @@ ok (TO ~ '/plugins/html/plug_v1/extra/one').IO ~~ :e & :f, 'sub-dir file transfe
         :auth<collection>,
     )
     CONF
-my @args = 'raku', '-I.', 'bin/map-to-repo', '-repo=' ~ TO, '-origin=' ~ FROM ;
+my @args = 'raku', '-I.', 'bin/prepare-plugins', '-repo=' ~ TO, '-origin=' ~ FROM ;
 runs_ok(
     :@args,
     :exitcode(0),
-    :out(/'Transfering / refreshing'/),
+    :out(/'From' .+ 'to release' .+ 'Transferring to new release' /),
     'map-to-repo lives'
 );
 ok PLUG.IO.dir.map({ .basename }) (==) (TO ~ '/plugins/html/plug_v2_auth_collection').IO.dir.map({ .basename }), 'same files in to & from';
-runs_ok(
-    :@args,
-    :exitcode(0),
-    :out(/'Skipping copy'/),
-    'map-to-repo skips when versions the same'
-);
+
 (PLUG ~ "/config.raku").IO.spurt(q:to/CONF/);
     %(
         :compilation<a-callable.raku>,
@@ -65,8 +60,31 @@ runs_ok(
 runs_ok(
     :@args,
     :exitcode(0),
-    :out(/'Release ｢' .+ '｣ exists.'/),
+    :out(/'Release exists.' .+ 'Different versions'/),
     'map-to-repo copies when the version is different'
 );
 ok (TO ~ '/plugins/html/plug_v2_auth_collection/new-file.raku').IO ~~ :e & :f, 'new file transferred';
+
+runs_ok(
+    :@args,
+    :exitcode(0),
+    :out(/'Release exists.' .+ 'Same version' .+ 'No change'/),
+    'map-to-repo does not copy when the version is the same and no new files'
+);
+
+(PLUG ~ "/new-file.raku").IO.spurt(q:to/NEWF/);
+    say "this is new content";
+    NEWF
+runs_ok(
+    :@args,
+    :exitcode(0),
+    :out(/
+        'Release exists.'
+        .+ 'Same version'
+        .+ 'Changes in'
+        .+ 'new-file' .+ 'was modified'
+    /),
+    'map-to-repo warns when the version is the same, but working has new content'
+);
+
 done-testing;
