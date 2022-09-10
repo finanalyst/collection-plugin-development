@@ -87,5 +87,6 @@ multi sub MAIN(Str:D $plug, :$mile = 'render', :$format = 'html', Bool :$test = 
             TEMP
             }
         }
-    "$p-path/config.raku".IO.spurt(format-config(%config))
+    "$p-path/config.raku".IO.spurt(format-config(%config));
+    say "Successfully created: ｢$plug｣ in ｢$path｣"
 }

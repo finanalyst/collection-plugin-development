@@ -51,4 +51,8 @@
 are changed in the working version are later than the released version with the same version number.
 
 =item add tests for compare code
+
+=head1 2022-09-08 v0.1.2
+=item add final message to AddPlugin
+
 =end pod
