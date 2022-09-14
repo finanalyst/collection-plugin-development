@@ -1,25 +1,17 @@
 use v6.d;
 use Test;
 use File::Directory::Tree;
-plan 2;
+plan 1;
 
 if %*ENV<NoDelete> {
     skip-rest 'NoDelete set in environment';
 }
 else {
-    my @dirs = <test-dir config-test make-test refresh-test>;
-    subtest 'finding & deleting expected test directories', {
-    plan @dirs.elems + 1;
-    for @dirs {
-        ok "xt/$_".IO ~~ :e, "found test directory ｢xt/$_｣ to delete it";
-        rmtree "xt/$_";
-        }
-    }
+    rmtree "xt/$_" for <test-dir config-test make-test prepare-test>;
     my @xt = 'xt'.IO.dir.grep({ $_ ~~ :e & :d });
     ok @xt.elems == 0, @xt.elems
         ?? ('sub-directories of ｢xt/｣ not all deleted, still got: ' ~ @xt>>.Str)
         !! 'all sub-directories of ｢xt/｣ deleted';
-    done-testing
 }
 
 done-testing;

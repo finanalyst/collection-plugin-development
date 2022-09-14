@@ -14,34 +14,39 @@ mktree $dir;
 
 my @args;
 
-@args = (<raku -I. bin/add-collection-plugin >, "-format=$dir", <-test old-plug_v1_auth_collection >).flat;
+@args = <raku -I. bin/add-collection-plugin -test >;
+@args.append: "-format=$dir";
+# operating plugin name rules prohibit _
+@args.append: 'old-plug_v1_auth_collection';
 runs_ok(
     :@args,
     :err(/ 'plugin naming rules' /)
     :exitcode(1),
     'plugin naming rules broken'
 );
-@args = (<raku -I. bin/add-collection-plugin >, "-format=$dir", <-test old-plug >).flat;
+@args.pop;
+@args.append: 'old-plug';
 runs_ok(
     :@args,
     :exitcode(0),
     'plugin naming rules kept'
 );
-@args = (<raku -I. bin/add-collection-plugin >, "-format=$dir", <-test old-plug >).flat;
 runs_ok(
     :@args,
     :err(/ 'already exists' /)
     :exitcode(1),
     'psuedo old-plugin exists'
 );
-@args = (<raku -I. bin/add-collection-plugin >, "-format=$dir", <-test new-plug >).flat;
+@args.pop;
+@args.append: 'new-plug';
 runs_ok(
     :@args,
     :exitcode(0),
     'new-plugin created'
 );
 ok "$dir/new-plug/config.raku".IO ~~ :e & :f, 'new-plugin config file exists';
-@args = (<raku -I. bin/add-collection-plugin -mile=setup>, "-format=$dir", <-test setup-plug >).flat;
+@args.pop;
+@args.append: <-mile=setup setup-plug >;
 runs_ok(
     :@args,
     :exitcode(0),
@@ -49,10 +54,10 @@ runs_ok(
 );
 ok "$dir/setup-plug/setup-callable.raku".IO ~~ :e & :f, 'setup-plugin callable file exists';
 my @miles = <setup compilation report>;
-@args = <raku -I. bin/add-collection-plugin>;
+@args.pop;
+@args.pop;
 @args.append: "-mile={ @miles }";
-@args.append: "-format=$dir";
-@args.append: <-test complex-plug >;
+@args.append: 'complex-plug';
 runs_ok(
     :@args,
     :exitcode(0),

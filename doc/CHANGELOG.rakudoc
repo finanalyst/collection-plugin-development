@@ -54,5 +54,14 @@ are changed in the working version are later than the released version with the 
 
 =head1 2022-09-08 v0.1.2
 =item add final message to AddPlugin
+=item add manifest.rakon, which is a manifest of the files in the repository.
+=item adding to README about manifest.rakon and changing the behaviour of the PMS
+=item changing all mentions of C<plugins.conf> to C<plugins.rakuon>
+=item changing xt/9* to only one test after removing all directories.
+
+=head1 2022-09-12 v0.2.0
+=item fix test broken by v0.1.2
+=item add file 'manifest.rakuon' to root of released-dir in prepare-plugins
+=item add functionality to prepare :rebuild makes new manifest.rakuon
 
 =end pod

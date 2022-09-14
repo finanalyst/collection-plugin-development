@@ -17,11 +17,23 @@ So, the work flow is
 
     prepare-plugins
 
-=item a release is created in git with new plugins
-=item a utility in Collection checks for new releases and downloads them,
-and refreshes a Collection in the Collection's root directory
+It can be called with
+=item C<-repo> pointing to where the released plugins are kept. The default is C<-repo=~/.local/lib/Collection> and
+=item C<-origin> pointing to where the working verions of plugins are kept. The default is C<-origin=lib>
 
-    refresh-plugins
+Alternatively
+
+    prepare-plugins :rebuild
+
+This creates a C<manifest.rakuon> file in the C<-repo> default.
+
+The program can be called with C<-repo> as specified above.
+
+The program
+=item creates a manifest.rakuon file in the root of C<:repo>.
+=item creates a release version for new / changed plugins in C<:repo>
+
+It is left to the developer to git add/commit/push the files.
 
 =head1 Collection plugin specification
 
@@ -50,7 +62,7 @@ All Collection plugins must conform to the following rules
 =item5 if it has a Str value and the key C<:information> does contain C<custom-raku> then it is treated
 as if C<custom-raku> is empty
 
-=item5 if it has a Str value and the key C<:generate> does NOT contain C<custom-raku> then
+=item5 if it has a Str value and the key C<:information> does NOT contain C<custom-raku> then
 the Str value should
 
 =item6 point to a file name in the current directory
@@ -152,6 +164,8 @@ To bumps a plugin's I<patch> version number, use
 
     modify-collection-plugin-config -plugin=an-existing-plugin -bump
 
+To modify the I<Major> and I<Minor> numbers use the C<-version> option
+
 To get help
 
     modify-collection-plugin-config -help
@@ -164,19 +178,20 @@ information if a test fails.
 
 =head2 sub prepare-plugins( :$from = '../raku-collection-plugins', :$to = 'lib', :$format = 'html' )
 
-Moves plugins that have a new version/author to released directory.
-
-Verifies that there are no files in a working plugin directory that have newer content than in
-a release directory. Issues a suggestion to bump version if there is newer content.
+The subroutine
+=item Moves plugins that have a new version/author to release directory.
+=item Verifies that there are no files in a working plugin directory that have newer content than in
+a release directory.
+=item Issues a suggestion to bump version if there is newer content.
+=item creates a file C<manifest.rakuon> in the release directory (see later for specification of
+files).
 
 =head1 Naming of released plugin
 
 The name of a working plugin must match C</^ <.alpha> <[\w] + [\-] - [\_]>+ $ />.
 
 If a plugin C<my-plug> has a config file with C<:version<1.2.3>, :auth<collection> >,
-then the released name will be
-
-    my-plug_v1_auth_collection
+then the released name will be B<my-plug_v1_auth_collection>
 
 =head1 Collection plugin management system
 
@@ -221,20 +236,22 @@ to the plugin required in the Mode configuration. Thus
 of a Collection.
 
 =item When the plugins are updated
-=item2 all the latest versions for each Format/Name/Version/Auth are downloaded.
+=item2 all the latest versions for each I<relevant> Format/Name/Version/Auth are downloaded.
 =item2 a symlink is generated (or if the OS does not allow symlink, the whole directory is copied)
 from the released version to the directory where
 each mode expects its plugins to be located.
+=item2 The meaning of I<relevant> is determined by the PMS. It could be all plugins in the github
+repository, or only those needed by a specific Collection, or set of Collections.
 
 To implement this system
 =item Each Collection root directory (the directory containing the topmost C<config.raku> file)
-will contain the file C<plugin.conf>.
+will contain the file C<plugins.rakuon>.
 =item The plugin management tool (PMT)
 =item2 runs through the plugins-required
 =item2 for each distinct plugin verifies whether
-=item3 the plugin has an entry in C<plugin.conf>, in which case
+=item3 the plugin has an entry in C<plugins.rakuon>, in which case
 =item4 the PMT maps the released plugin name/auth/ver to the plugin-required name using the rules
-of C<plugin.conf> as given below
+of C<plugins.rakuon> as given below
 =item3 the released version matches the plugin version (the full major.minor.patch version)
 =item2 if a released version has larger minor/patch values, then the new directory is linked
 (copied) to the Mode's plugin name
@@ -279,39 +296,55 @@ a link (or copy) will be made between the released directory
 C<html/camelia_auth_collection__ver_2> and C<Website/plugins/camelia>
 =end item
 =begin item
-If plugin.conf contains the following:
+If plugins.rakuon contains the following:
 C<Website => %( :FORMAT<html>, :camelia( %( :major(1), ) ) >
 then the link will be between C<html/camelia_auth_collection__ver_1> and C<Website/plugins/camelia>
 =end item
 =begin item
 Suppose there is another valid C<auth> string B<raku-dev> and there is a distributed plugin
-I<html/camelia_auth_raku-dev__ver_2>, and suppose C<plugin.conf> contains the following:
+I<html/camelia_auth_raku-dev__ver_2>, and suppose C<plugins.rakuon> contains the following:
 C<Website => %( :FORMAT<html>, :camelia( %( :auth<raku-dev>, ) ) > then the link will be made
 between C<html/camelia_auth_raku-dev__ver_2> and C<Website/plugins/camelia>
 =end item
 =begin item
-Suppose a different icon is developed called C<new-camelia> by C<auth> B<raku-dev>, then the
-plugin.conf file may contain the following:
+Suppose a different icon is developed called C<new-camelia> by C<auth> B<raku-dev>, then
+C<plugins.rakuon> may contain the following:
 C<Website => %( :FORMAT<html>, camelia( %( :name<new-camelia>, :auth<raku-dev>, ) ) > then
 a link (copy) is made between C<html/new-camelia_auth_raku-dev__ver_2> and C<Website/plugins/camelia>
 =end item
 =item2 Note how the auth must be given for a renaming if there is not a C<collection> version
 of the plugin
 
+=head1 Specification of manifest.rakuon file
+
+C<manifest.rakuon> evaluates to a Hash.
+
+The keys of the Hash match the directory structure until the plugin names. Then there is a
+full version number. For example,
+
+    %( plugins => %(
+        html => %(
+            camelia_V0_auth_collection => %(
+                version => '0.1.0'
+            ),
+        ),
+    )
+
+
 =head1 Currently
 
 The 'clean' directory structure is
-=item raku-collection-plugins/ # the root of the module
-=item2 lib/plugins/html # location of plugin data
-=item2 resources/ # a directory for the Module
+=item plugins-for-release/ # the directory / repository for released plugins
+=item2 lib/plugins # location of operating plugins
 =item2 trial/ # the directory in which testing is run
 =item3 raku-docs/ # a small collection of Raku documentation docs
 =item3 Website/ # the directory containing the website mode configuration/plugins
-=item4 plugins/ # a link pointing to /lib/html/plugins
+=item4 plugins/ # a link pointing to /lib/plugins + format
 =item4 structure-sources/collections-examples.rakudoc # demo file for all user-facing plugins
 =item3 config.raku # the configuration file for trial/Website/
-=item2 add-new-plugin # adds a new plugin
-=item2 test-plugins # tests each plugin and the templates
+=item2 bin/add-new-plugin # adds a new plugin
+=item2 bin/test-all-collection-plugins # tests each plugin and the templates
+=item2 bin/prepare-plugins # moves plugins from operating directory to release directory
 =item2 updateCSS # a bash file to run SCSS files in selected plugins
 
 The workflow is for changes to be made in Website, run Raku-Doc,

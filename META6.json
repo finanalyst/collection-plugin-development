@@ -1,7 +1,7 @@
 {
   "name": "Collection-Plugin-Development",
   "description": "Development and working repository for Collection plugins",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "perl": "6.d",
   "authors": [
     "Richard Hainsworth, aka finanalyst"
@@ -33,10 +33,10 @@
   "license": "Artistic-2.0",
   "source-url": "git://github.com/finanalyst/collection-plugin-development.git",
   "bin": [
-    "bin/modify-collection-plugin-config",
-    "bin/test-all-collection-plugins",
     "bin/add-collection-plugin",
-    "bin/refresh-collection-plugins"
+    "bin/modify-collection-plugin-config",
+    "bin/prepare-plugins",
+    "bin/test-all-collection-plugins"
   ],
   "source-type": "git"
 }

@@ -11,6 +11,7 @@
 [sub prepare-plugins( :$from = '../raku-collection-plugins', :$to = 'lib', :$format = 'html' )](#sub-prepare-plugins-from--raku-collection-plugins-to--lib-format--html-)  
 [Naming of released plugin](#naming-of-released-plugin)  
 [Collection plugin management system](#collection-plugin-management-system)  
+[Specification of manifest.rakuon file](#specification-of-manifestrakuon-file)  
 [Currently](#currently)  
 
 ----
@@ -30,13 +31,29 @@ So, the work flow is
 ```
 prepare-plugins
 ```
-*  a release is created in git with new plugins
+It can be called with
 
-*  a utility in Collection checks for new releases and downloads them, and refreshes a Collection in the Collection's root directory
+*  `-repo` pointing to where the released plugins are kept. The default is `-repo=~/.local/lib/Collection` and
+
+*  `-origin` pointing to where the working verions of plugins are kept. The default is `-origin=lib`
+
+Alternatively
 
 ```
-refresh-plugins
+prepare-plugins :rebuild
 ```
+This creates a `manifest.rakuon` file in the `-repo` default.
+
+The program can be called with `-repo` as specified above.
+
+The program
+
+*  creates a manifest.rakuon file in the root of `:repo`.
+
+*  creates a release version for new / changed plugins in `:repo`
+
+It is left to the developer to git add/commit/push the files.
+
 # Collection plugin specification
 All Collection plugins must conform to the following rules
 
@@ -84,7 +101,7 @@ All Collection plugins must conform to the following rules
 
 				*  if it has a Str value and the key `:information` does contain `custom-raku` then it is treated as if `custom-raku` is empty
 
-				*  if it has a Str value and the key `:generate` does NOT contain `custom-raku` then the Str value should
+				*  if it has a Str value and the key `:information` does NOT contain `custom-raku` then the Str value should
 
 					*  point to a file name in the current directory
 
@@ -186,6 +203,8 @@ To bumps a plugin's _patch_ version number, use
 ```
 modify-collection-plugin-config -plugin=an-existing-plugin -bump
 ```
+To modify the _Major_ and _Minor_ numbers use the `-version` option
+
 To get help
 
 ```
@@ -195,18 +214,21 @@ modify-collection-plugin-config -help
 All plugins must have a `t/` directory and one test file. This utility runs all the test files of all the plugins, returning only minimal information if the tests pass, but more information if a test fails.
 
 ## sub prepare-plugins( :$from = '../raku-collection-plugins', :$to = 'lib', :$format = 'html' )
-Moves plugins that have a new version/author to released directory.
+The subroutine
 
-Verifies that there are no files in a working plugin directory that have newer content than in a release directory. Issues a suggestion to bump version if there is newer content.
+*  Moves plugins that have a new version/author to release directory.
+
+*  Verifies that there are no files in a working plugin directory that have newer content than in a release directory.
+
+*  Issues a suggestion to bump version if there is newer content.
+
+*  creates a file `manifest.rakuon` in the release directory (see later for specification of files).
 
 # Naming of released plugin
 The name of a working plugin must match `/^ <.alpha> <[\w] + [\-] - [\_]>+ $ /`.
 
-If a plugin `my-plug` has a config file with `:version<1.2.3>, :auth<collection> `, then the released name will be
+If a plugin `my-plug` has a config file with `:version<1.2.3>, :auth<collection> `, then the released name will be **my-plug_v1_auth_collection**
 
-```
-my-plug_v1_auth_collection
-```
 # Collection plugin management system
 It is planned to have GUI and a command line manager.
 
@@ -250,13 +272,15 @@ So a plugin manager (whether command line or GUI) must be compliant with the fol
 
 *  When the plugins are updated
 
-	*  all the latest versions for each Format/Name/Version/Auth are downloaded.
+	*  all the latest versions for each _relevant_ Format/Name/Version/Auth are downloaded.
 
 	*  a symlink is generated (or if the OS does not allow symlink, the whole directory is copied) from the released version to the directory where each mode expects its plugins to be located.
 
+	*  The meaning of _relevant_ is determined by the PMS. It could be all plugins in the github repository, or only those needed by a specific Collection, or set of Collections.
+
 To implement this system
 
-*  Each Collection root directory (the directory containing the topmost `config.raku` file) will contain the file `plugin.conf`.
+*  Each Collection root directory (the directory containing the topmost `config.raku` file) will contain the file `plugins.rakuon`.
 
 *  The plugin management tool (PMT)
 
@@ -264,9 +288,9 @@ To implement this system
 
 	*  for each distinct plugin verifies whether
 
-		*  the plugin has an entry in `plugin.conf`, in which case
+		*  the plugin has an entry in `plugins.rakuon`, in which case
 
-			*  the PMT maps the released plugin name/auth/ver to the plugin-required name using the rules of `plugin.conf` as given below
+			*  the PMT maps the released plugin name/auth/ver to the plugin-required name using the rules of `plugins.rakuon` as given below
 
 		*  the released version matches the plugin version (the full major.minor.patch version)
 
@@ -314,28 +338,40 @@ Some examples:
 
 If no key for camelia is in the hash for mode Website, then the defaults will be implimented and a link (or copy) will be made between the released directory `html/camelia_auth_collection__ver_2` and `Website/plugins/camelia`
 
-*  If plugin.conf contains the following: `Website =` %( :FORMA"> \{\{\{ contents }}}
+*  If plugins.rakuon contains the following: `Website =` %( :FORMA"> \{\{\{ contents }}}
 
 , :camelia( %( :major(1), ) ) > then the link will be between `html/camelia_auth_collection__ver_1` and `Website/plugins/camelia`
 
-*  Suppose there is another valid `auth` string **raku-dev** and there is a distributed plugin _html/camelia_auth_raku-dev__ver_2_, and suppose `plugin.conf` contains the following: `Website =` %( :FORMA"> \{\{\{ contents }}}
+*  Suppose there is another valid `auth` string **raku-dev** and there is a distributed plugin _html/camelia_auth_raku-dev__ver_2_, and suppose `plugins.rakuon` contains the following: `Website =` %( :FORMA"> \{\{\{ contents }}}
 
 , :camelia( %( :auth<raku-dev>, ) ) > then the link will be made between `html/camelia_auth_raku-dev__ver_2` and `Website/plugins/camelia`
 
-*  Suppose a different icon is developed called `new-camelia` by `auth` **raku-dev**, then the plugin.conf file may contain the following: `Website =` %( :FORMA"> \{\{\{ contents }}}
+*  Suppose a different icon is developed called `new-camelia` by `auth` **raku-dev**, then `plugins.rakuon` may contain the following: `Website =` %( :FORMA"> \{\{\{ contents }}}
 
 , camelia( %( :name<new-camelia>, :auth<raku-dev>, ) ) > then a link (copy) is made between `html/new-camelia_auth_raku-dev__ver_2` and `Website/plugins/camelia`
 
 	*  Note how the auth must be given for a renaming if there is not a `collection` version of the plugin
 
+# Specification of manifest.rakuon file
+`manifest.rakuon` evaluates to a Hash.
+
+The keys of the Hash match the directory structure until the plugin names. Then there is a full version number. For example,
+
+```
+%( plugins => %(
+    html => %(
+        camelia_V0_auth_collection => %(
+            version => '0.1.0'
+        ),
+    ),
+)
+```
 # Currently
 The 'clean' directory structure is
 
-*  raku-collection-plugins/ # the root of the module
+*  plugins-for-release/ # the directory / repository for released plugins
 
-	*  lib/plugins/html # location of plugin data
-
-	*  resources/ # a directory for the Module
+	*  lib/plugins # location of operating plugins
 
 	*  trial/ # the directory in which testing is run
 
@@ -343,15 +379,17 @@ The 'clean' directory structure is
 
 		*  Website/ # the directory containing the website mode configuration/plugins
 
-			*  plugins/ # a link pointing to /lib/html/plugins
+			*  plugins/ # a link pointing to /lib/plugins + format
 
 			*  structure-sources/collections-examples.rakudoc # demo file for all user-facing plugins
 
 		*  config.raku # the configuration file for trial/Website/
 
-	*  add-new-plugin # adds a new plugin
+	*  bin/add-new-plugin # adds a new plugin
 
-	*  test-plugins # tests each plugin and the templates
+	*  bin/test-all-collection-plugins # tests each plugin and the templates
+
+	*  bin/prepare-plugins # moves plugins from operating directory to release directory
 
 	*  updateCSS # a bash file to run SCSS files in selected plugins
 
@@ -364,4 +402,4 @@ The workflow is for changes to be made in Website, run Raku-Doc, inspect the res
 
 
 ----
-Rendered from README at 2022-09-08T18:24:33Z
+Rendered from README at 2022-09-14T19:27:55Z

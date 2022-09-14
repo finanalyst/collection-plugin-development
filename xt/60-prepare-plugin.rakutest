@@ -1,14 +1,15 @@
 use v6.d;
 use Test;
+use Test::Deeply::Relaxed;
 
 use Test::Run :runs_ok;
 use File::Directory::Tree;
 use RakuConfig;
 use Collection::PreparePlugins;
 
-plan 10;
+plan 19;
 
-constant DIR = 'xt/refresh-test';
+constant DIR = 'xt/prepare-test';
 if DIR.IO ~~ :e & :d {
     rmtree DIR
 }
@@ -25,11 +26,11 @@ for <one two three> {
     (PLUG ~ "/extra/$_").IO.spurt: "This is file extra/$_";
 }
 
-lives-ok { copy-plugin(:node(PLUG.IO), :to(TO ~ '/plugins/html/plug_v1')) }, 'copy-plugin lives';
-ok (TO ~ '/plugins/html/plug_v1').IO ~~ :e & :d , 'plug dir made';
-ok (TO ~ '/plugins/html/plug_v1/one').IO ~~ :e & :f, 'root file transfered';
-ok (TO ~ '/plugins/html/plug_v1/extra/one').IO ~~ :e & :f, 'sub-dir file transfered';
-
+lives-ok { copy-plugin(:node(PLUG.IO), :to(TO ~ '/plugins/html/plug_v1_auth_collection')) }, 'copy-plugin lives';
+ok (TO ~ '/plugins/html/plug_v1_auth_collection').IO ~~ :e & :d , 'plug dir made';
+ok (TO ~ '/plugins/html/plug_v1_auth_collection/one').IO ~~ :e & :f, 'root file transfered';
+ok (TO ~ '/plugins/html/plug_v1_auth_collection/extra/one').IO ~~ :e & :f, 'sub-dir file transfered';
+empty-directory TO; # plug has no config
 #make configs
 (PLUG ~ "/config.raku").IO.spurt(q:to/CONF/);
     %(
@@ -86,5 +87,84 @@ runs_ok(
     /),
     'map-to-repo warns when the version is the same, but working has new content'
 );
+
+#test manifest.rakuon
+empty-directory TO;
+runs_ok(
+    :@args,
+    :exitcode(0),
+    :out(/'From' .+ 'to release' .+ 'Transferring to new release' /),
+    'prepare runs on empty TO'
+);
+my %manifest;
+lives-ok { %manifest = EVALFILE TO ~ '/manifest.rakuon' }, 'gets manifest';
+is-deeply-relaxed
+    %manifest,
+    %( :plugins( %( :html( %( :plug_v2_auth_collection<2.1.2> ) ) ) ) ),
+    'manifest is as expected';
+(PLUG ~ "/config.raku").IO.spurt(q:to/CONF/);
+    %(
+        :compilation<a-callable.raku>,
+        :version<2.2.2>,
+        :auth<collection>,
+    )
+    CONF
+runs_ok(
+    :@args,
+    :exitcode(0),
+    :out(/'Release exists.' .+ 'Different versions'/),
+    'prepare runs when new version'
+);
+%manifest = EVALFILE TO ~ '/manifest.rakuon';
+is-deeply-relaxed
+    %manifest,
+    %( :plugins( %(
+        :html( %(
+            :plug_v2_auth_collection<2.2.2>
+            ) ),
+        ) ),
+    ),
+    'manifest updated';
+
+(PLUG ~ "/config.raku").IO.spurt(q:to/CONF/);
+    %(
+        :compilation<a-callable.raku>,
+        :version<3.3.4>,
+        :auth<collection>,
+    )
+    CONF
+runs_ok(
+    :@args,
+    :exitcode(0),
+    :out(/'From' .+ 'to release' .+ 'Transferring to new release' /),
+    'moves new version'
+);
+%manifest = EVALFILE TO ~ '/manifest.rakuon';
+is-deeply-relaxed
+    %manifest,
+    %(
+    :plugins( %(
+        :html( %(
+            :plug_v2_auth_collection<2.2.2>,
+            :plug_v3_auth_collection<3.3.4>,
+            ) )
+        ) )
+    ),
+    'manifest has new plugin';
+
+# test rebuild
+@args.pop;
+@args.append: '-rebuild';
+runs_ok(
+    :@args,
+    :exitcode(0),
+    :out(/'Rebuilt ｢' .+ '/manifest.rakuon｣' /),
+    'moves new version'
+);
+my %new-manifest = EVALFILE TO ~ '/manifest.rakuon';
+is-deeply-relaxed
+    %manifest,
+    %new-manifest,
+    'rebuild manifest the same as before';
 
 done-testing;

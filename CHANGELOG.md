@@ -10,6 +10,7 @@
 [2022-09-05 v0.1.0](#2022-09-05-v010)  
 [2022-09-08 v0.1.1](#2022-09-08-v011)  
 [2022-09-08 v0.1.2](#2022-09-08-v012)  
+[2022-09-12 v0.2.0](#2022-09-12-v020)  
 
 ----
 # 2022-08-09 v0.0.2
@@ -87,13 +88,28 @@
 *  add tests for compare code
 
 # 2022-09-08 v0.1.2
-
-
 *  add final message to AddPlugin
+
+*  add manifest.rakon, which is a manifest of the files in the repository.
+
+*  adding to README about manifest.rakon and changing the behaviour of the PMS
+
+*  changing all mentions of `plugins.conf` to `plugins.rakuon`
+
+*  changing xt/9* to only one test after removing all directories.
+
+# 2022-09-12 v0.2.0
+
+
+*  fix test broken by v0.1.2
+
+*  add file 'manifest.rakuon' to root of released-dir in prepare-plugins
+
+*  add functionality to prepare :rebuild makes new manifest.rakuon
 
 
 
 
 
 ----
-Rendered from CHANGELOG at 2022-09-10T09:16:25Z
+Rendered from CHANGELOG at 2022-09-14T19:27:56Z
