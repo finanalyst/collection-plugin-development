@@ -5,5 +5,6 @@
 	),
 	:completion<cro-run.raku>,
 	:license<Artistic-2.0>,
+	:name<cro-app>,
 	:version<0.1.0>,
 )

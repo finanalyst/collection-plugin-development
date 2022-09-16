@@ -18,8 +18,8 @@ So, the work flow is
     prepare-plugins
 
 It can be called with
-=item C<-repo> pointing to where the released plugins are kept. The default is C<-repo=~/.local/lib/Collection> and
-=item C<-origin> pointing to where the working verions of plugins are kept. The default is C<-origin=lib>
+=item C<-repo> pointing to where the released plugins are kept. The default is C<-repo=~/.local/share/Collection> and
+=item C<-origin> pointing to where the working versions of plugins are kept. The default is C<-origin=lib>
 
 Alternatively
 
@@ -47,7 +47,17 @@ All Collection plugins must conform to the following rules
 =item2 C<config.raku>, which is a file that evaluates to a Raku hash.
 =item2 README.rakudoc
 =item2 t/01-basic.rakutest
-=item The C<config.raku> must contain the following keys
+=item The C<config.raku> file must contain the following keys
+=item2 C<name>. This is the released name of the plugin. It will be possible for a new plugin to have the same
+functionality as another, while extending or changing the output. For more detail, see L<Collection plugin management system>.
+Typically, the name of the plugin will match the name of the sub-directory it is in.
+
+=item2 C<version>. This point to a Str in the format \d+\.\d+\.\d+ which matches the semantic version
+conventions.
+
+=item2 C<auth>. This points to a Str that is consistent with the Raku 'auth' conventions.
+=item2 C<license>. Points to a SPDX license type.
+=item2 C<authors>. This points to a sequence of names of people who are the authors of the plugin.
 =item2 one or more of C<render setup report compilation completion>
 =item3 If render then
 =item4 the render key may be a boolean
@@ -79,15 +89,7 @@ the Str value should
 
 =item6 point to a file name in the current directory
 =item6 and the filename should contain a Raku program that evaluates to a Hash.
-
 =item3 If not render, then the value must point to a Raku program and evaluate to a callable.
-
-=item2 C<version>. This point to a Str in the format \d+\.\d+\.\d+ which matches the semantic version
-conventions.
-
-=item2 C<auth>. This points to a Str that is consistent with the Raku 'auth' conventions.
-=item2 C<license>. Points to a SPDX license type.
-=item2 C<authors>. This points to a sequence of names of people who are the authors of the plugin.
 =item2 I<Other key names>. If other keys are present, they must point to filenames in the
 current directory.
 
@@ -145,7 +147,11 @@ A plugin will then be added to C<lib/markdown/plugins>. Eg. (for the default -mi
 =head2 modify-collection-plugin
 
 This utility is intended to modify an existing plugin's config file, such as adding defaults
-if they are missing. To get a list of default attributes use
+if they are missing.
+
+The utility cannot be used to modify a plugin's C<name> key. It will add the directory name if a name key is missing.
+
+To get a list of default attributes use
 
     modify-collection-plugin-config -show-defaults
 
@@ -236,16 +242,18 @@ to the plugin required in the Mode configuration. Thus
 of a Collection.
 
 =item When the plugins are updated
-=item2 all the latest versions for each I<relevant> Format/Name/Version/Auth are downloaded.
+=item2 all the latest versions for each I<relevant> Format/Name/Version-Major/Auth are downloaded.
 =item2 a symlink is generated (or if the OS does not allow symlink, the whole directory is copied)
 from the released version to the directory where
 each mode expects its plugins to be located.
 =item2 The meaning of I<relevant> is determined by the PMS. It could be all plugins in the github
 repository, or only those needed by a specific Collection, or set of Collections.
 
-To implement this system
-=item Each Collection root directory (the directory containing the topmost C<config.raku> file)
+=head2 System implementation
+
+Each Collection root directory (the directory containing the topmost C<config.raku> file)
 will contain the file C<plugins.rakuon>.
+
 =item The plugin management tool (PMT)
 =item2 runs through the plugins-required
 =item2 for each distinct plugin verifies whether
@@ -263,25 +271,30 @@ root directory with the released plugins are downloaded.
 =item Every other toplevel key is interpreted as a Mode. It will point to a hash with the keys:
 =item2 C<FORMAT> Each mode may only contain plugins from one Format, eg., I<html>.
 =item2 This implies that a I<Mode> may not be named C<FORMAT>.
-=item2 Every other key at this level (meaning within the hash for a Mode and not FORMAT)
+=item2 Every other key at this level (meaning within the hash for a Mode and not equal to C<FORMAT>)
 must be a plugin name contained in the Mode's plugins-required configuration.
 
-=item2 There may be zero other keys at this level
-=item2 If a plugin in the plugins-required configuration list does not have an entry
-at this level, then the values for that plugin are the defaults.
+=item3 The C<plugins-required> hash has plugins for each milestone, when a plugin may have a callable
+for several milestones. So only unique plugin names are implied here.
 
-=item2 If a key exists, it must point to a Hash, which must contain at least one of the following keys
-=item3 Name => the name of the plugin
+=item2 There may be zero other keys at this level
+=item2 If a plugin in the plugins-required configuration list does B<not> have an entry
+at this level, then the plugin has just been added to the plugins-required list and needs to be
+downloaded.
+
+=item2 If a plugin key exists, it must point to a Hash, which must contain
+=item3 the version number of the existing plugin, or '' if it needs downloading
+=item2 The plugin Hash may also contain one of the following keys
+=item3 Name => the name of an alternative plugin
 =item4 the default name is the plugin-required's name
 =item4 if a different name is given, a released plugin is mapped to the required directory in the
 mode sub-directory
 
-=item3 Major => the major number preceeded by 'v'
+=item3 Major => the major number of a full version preceeded by 'v'
 =item4 the default value is the greatest released major value
 =item4 A Major value is the maximum Major version permitted, thus freezing at that version
 =item3 Auth => the auth value
 =item4 the default value is 'collection'
-=item2 If there is no distributed plugin for a specified C<auth>, then an error is thrown.
 
 Some examples:
 =begin item
@@ -291,7 +304,8 @@ C<html/camelia_v_1_auth_collection>. Suppose a version with a new API is created
 two versions of the plugin will be distributed, including the new one
 C<html/camelia_v_2_auth_collection>.
 
-If no key for camelia is in the hash for mode Website, then the defaults will be implimented and
+If the key for camelia in the hash for mode Website only contains an empty C<version> key,
+then the defaults will be implied and
 a link (or copy) will be made between the released directory
 C<html/camelia_auth_collection__ver_2> and C<Website/plugins/camelia>
 =end item

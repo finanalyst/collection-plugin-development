@@ -5,6 +5,7 @@
 	),
 	:custom-raku(),
 	:license<Artistic-2.0>,
+	:name<typegraph>,
 	:render,
 	:template-raku(),
 	:version<0.1.0>,

@@ -8,6 +8,7 @@
 	:custom-raku<website-blocks.raku>,
 	:jquery<ws-filter-scripts.js>,
 	:license<Artistic-2.0>,
+	:name<website>,
 	:render,
 	:template-raku<website-templates.raku>,
 	:version<0.1.0>,

@@ -43,7 +43,7 @@ my @args = 'raku', '-I.', 'bin/prepare-plugins', '-repo=' ~ TO, '-origin=' ~ FRO
 runs_ok(
     :@args,
     :exitcode(0),
-    :out(/'From' .+ 'to release' .+ 'Transferring to new release' /),
+    :out(/'From' .+ 'to release' .+ 'Transferring' /),
     'map-to-repo lives'
 );
 ok PLUG.IO.dir.map({ .basename }) (==) (TO ~ '/plugins/html/plug_v2_auth_collection').IO.dir.map({ .basename }), 'same files in to & from';
@@ -82,7 +82,7 @@ runs_ok(
     :out(/
         'Release exists.'
         .+ 'Same version'
-        .+ 'Changes in'
+        .+ 'Changes'
         .+ 'new-file' .+ 'was modified'
     /),
     'map-to-repo warns when the version is the same, but working has new content'
@@ -93,7 +93,7 @@ empty-directory TO;
 runs_ok(
     :@args,
     :exitcode(0),
-    :out(/'From' .+ 'to release' .+ 'Transferring to new release' /),
+    :out(/'From' .+ 'to release' .+ 'Transferring' /),
     'prepare runs on empty TO'
 );
 my %manifest;
@@ -136,7 +136,7 @@ is-deeply-relaxed
 runs_ok(
     :@args,
     :exitcode(0),
-    :out(/'From' .+ 'to release' .+ 'Transferring to new release' /),
+    :out(/'From' .+ 'to release' .+ 'Transferring' /),
     'moves new version'
 );
 %manifest = EVALFILE TO ~ '/manifest.rakuon';

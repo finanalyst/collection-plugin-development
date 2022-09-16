@@ -6,6 +6,7 @@
 	:css<raku-default-styling.css>,
 	:custom-raku(),
 	:license<Artistic-2.0>,
+	:name<raku-styling>,
 	:render<move-images-in-css.raku>,
 	:scss<raku-default-styling.scss>,
 	:template-raku(),

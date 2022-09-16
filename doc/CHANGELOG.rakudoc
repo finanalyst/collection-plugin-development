@@ -63,5 +63,7 @@ are changed in the working version are later than the released version with the 
 =item fix test broken by v0.1.2
 =item add file 'manifest.rakuon' to root of released-dir in prepare-plugins
 =item add functionality to prepare :rebuild makes new manifest.rakuon
+=item add C<name> to the list of required key in a plugin's C<config.raku>
+=item added colour to output of prepare plugins.
 
 =end pod

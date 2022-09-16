@@ -46,7 +46,7 @@ multi sub MAIN(
     else {
         (exit note("The plugin sub-directory ｢$path/$plugin｣ is not valid"))
         unless "$path/$plugin".IO ~~ :e & :d;
-        @plugins = ("$path/$plugin",)
+        @plugins = ("$path/$plugin".IO,)
     }
     my %conf;
     if $defaults {
@@ -68,24 +68,23 @@ multi sub MAIN(
             %conf<version> = $version
         }
     }
+    my $prompt = $quiet;
     for @plugins {
         say "Trying plugin ｢$_｣." unless $quiet;
-        my Bool $conf-present = "$_/config.raku".IO ~~ :e & :f;
-        unless $conf-present {
-            my $resp = '';
-            note "plugin directory ｢$_｣ does not contain a config.raku file";
-            prompt "(C)ontinue / something else to Exit" unless $quiet;
-            exit(1) unless $resp ~~ /:i $ 'C' /;
-            next
-        }
-        my %plug-conf = EVALFILE "$_/config.raku";
-        %plug-conf ,= %conf;
+        my %plug-conf = get-config( .Str );
+        %plug-conf<name> = .basename unless %plug-conf<name>:exists;
+        %plug-conf ,= %conf; # keys in %conf over-write those in %plug-conf
         my $new-conf = format-config(%plug-conf);
         my $write = True;
-        unless $quiet {
+        unless $prompt {
             say "New value of config.raku is \n$new-conf";
-            my $resp = prompt "Is the new config correct (/n). \nIf 'N' or 'n', the plugin will not be changed.";
-            $write = ?($resp !~~ /:i 'n' /)
+            my $resp = prompt q:to/PROMPT/;
+                Is the new config correct (/n/q).
+                If 'n', the plugin will not be changed.
+                If 'q', remaining plugins written without prompt.
+                PROMPT
+            $write = ?($resp !~~ /:i 'n' /);
+            $prompt = True if $resp ~~ /:i 'q' /
         }
         "$_/config.raku".IO.spurt($new-conf) if $write
     }

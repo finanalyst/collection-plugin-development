@@ -6,6 +6,7 @@
 	:custom-raku(),
 	:information<template-raku>,
 	:license<Artistic-2.0>,
+	:name<gather-css>,
 	:render<css-collator.raku>,
 	:template-raku<css-templates.raku>,
 	:transfer<cleanup.raku>,

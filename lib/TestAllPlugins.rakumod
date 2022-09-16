@@ -1,5 +1,7 @@
 use v6.d;
 unit module Collection::TestAllPlugins;
+# the code is adapted from Liz's runtests routine in Rak.
+
 multi sub MAIN(:$format = 'html') is export {
     MAIN("lib/plugins/$format")
 }

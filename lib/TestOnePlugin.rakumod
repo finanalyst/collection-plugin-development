@@ -6,19 +6,23 @@ use License::SPDX;
 module Test::CollectionPlugin {
     # several subs are taken from Jonathan Stowe's Test::Meta module.
     our $TESTING = False;
-    my token fn is export(:MANDATORY) { <.alpha> <[\w] + [\-] - [\_]>+ };
+    my token fn is export(:MANDATORY) {
+        <.alpha> <[\w] + [\-] - [\_]>+
+    };
 
     sub test-plugin is export {
         my %config;
-        my @required = <version auth license authors>;
+        my @required = <name version auth license authors>;
 
-        plan 10;
+        plan 11;
 
-        like $*CWD.basename, / <fn> /, 'plugin name matches naming rule';
+        like $*CWD.basename, / <fn> /, 'plugin directory name matches naming rule';
         ok check-file('README.rakudoc'), 'README exists';
         if check-file('config.raku') {
             pass 'got ｢config.raku｣';
             lives-ok { %config = get-config(:@required) }, 'config exists with mandatory keys';
+            bail-out('Could not get configuration') unless +%config.keys;
+            ok check-name(%config), 'name is valid';
             ok check-license(%config), 'license confirmed';
             ok check-authors(%config), 'authors included';
             ok check-version(%config), 'plugin version acceptible';
@@ -38,24 +42,41 @@ module Test::CollectionPlugin {
         diag $mess unless $TESTING;
     }
 
-    our sub check-authors(%config --> Bool) {
-        my Bool $rc = True;
-        if %config<authors>.elems == 0 {
-            $rc = False;
-            my-diag "No authors are listed, there shoule be at least one.";
+    our sub check-name(%config --> Bool) {
+        with %config<name> {
+            unless .match(/ <fn> /) {
+                my-diag("Plugin name ｢$_｣ is not a valid Collection plugin name");
+                return False
+            }
         }
-        $rc;
+        else {
+            my-diag("No name field in config");
+            return False
+        }
+        return True
+    }
+    our sub check-authors(%config --> Bool) {
+        with %config<authors> {
+            if .elems == 0 {
+                my-diag "No authors are listed, there should be at least one.";
+                return False
+            }
+        }
+        else {
+            my-diag("No authors field in config");
+            return False
+        }
+        True
     }
 
     our sub check-license(%config --> Bool) {
-        my Bool $rc = True;
-        if %config<license>:exists {
+        with %config<license> {
             my $licence-list = License::SPDX.new;
             my $licence = $licence-list.get-license(%config<license>);
             if !$licence.defined {
                 if %config<license> eq any('NOASSERTION', 'NONE') {
                     my-diag "NOTICE! License is %config<license>. This is valid, but licenses are prefered.";
-                    $rc = True;
+                    return True;
                 }
                 else {
                     my-diag qq:to/END/;
@@ -63,7 +84,7 @@ module Test::CollectionPlugin {
                         please use use one of the identifiers from https://spdx.org/licenses/
                         END
 
-                    $rc = False;
+                    return False;
                 }
             }
             elsif $licence.is-deprecated-license {
@@ -71,26 +92,41 @@ module Test::CollectionPlugin {
                     the licence ‘%config<license>()’ is valid but deprecated, you may want to use another license.
                     END
 
+                return True
             }
         }
-        $rc;
+        else {
+            my-diag("No license field in config");
+            return False
+        }
+        True
     }
     our sub check-version(%config --> Bool) {
-        my Bool $rc = True;
-        unless %config<version> ~~ / ^ \d+ \. \d+ \. \d+ $ / {
-            $rc = False;
-            my-diag 'version must be in three parts dd.dd.dd but got '
-                ~ %config<version>
+        with %config<version> {
+            unless .match(/ ^ \d+ \. \d+ \. \d+ $ /) {
+                my-diag('version must be in three parts dd.dd.dd but got '
+                    ~ %config<version>);
+                return False
+            }
         }
-        $rc
+        else {
+            my-diag("No version field in config");
+            return False
+        }
+        True
     }
     our sub check-auth(%config --> Bool) {
-        my Bool $rc = True;
-        unless %config<auth> ~~ Str:D {
-            my-diag("The auth key of the config must be a String");
-            $rc = False
+        with %config<auth> {
+            unless %config<auth> ~~ Str:D {
+                my-diag("The auth key of the config must be a String");
+                return False
+            }
         }
-        $rc
+        else {
+            my-diag("No auth field in config");
+            return False
+        }
+        True
     }
     our sub check-render-reqs(Str:D $component where *~~ one(<custom-raku template-raku>), %config --> Bool) {
         my Bool $rc = True;
@@ -148,7 +184,8 @@ module Test::CollectionPlugin {
                         ｢config\{ $component \}｣ points to ｢{ %config{$component} }｣ which should be a file in the plugin directory
                         Have you misspelt the filename, or missed out a \:information key?
                         ERROR
-                 }
+
+                     }
             }
         }
         $rc
@@ -175,6 +212,7 @@ module Test::CollectionPlugin {
                     my-diag(qq:to/ERROR/);
                         Config contains ｢:render｣ but does not contain both ｢:custom-raku｣ and ｢:template-raku｣
                         ERROR
+
                     return False
                 }
                 $rc = check-render-reqs('custom-raku', %config);
@@ -287,10 +325,13 @@ module Test::CollectionPlugin {
     }
     our sub check-otherkey(%config --> Bool) {
         my Bool $rc = True;
-        my @specified = <setup render compilation transfer report completion
-                version auth authors license custom-raku template-raku information>;
+        my @specified = <
+            setup render compilation transfer report completion
+            name version auth authors license
+            custom-raku template-raku information
+        >;
         for %config.keys.grep(none(@specified)) {
-            next if %config<information> and $_ ~~ any( %config<information>.list );
+            next if %config<information> and $_ ~~ any(%config<information>.list);
             $rc &&= check-file(%config{$_}, :extra("in key ｢$_｣"));
         }
         $rc

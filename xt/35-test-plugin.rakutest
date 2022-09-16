@@ -13,6 +13,7 @@ chdir DIR;
         :auth<finanalyst>,
         :authors<finanalyst coke>,
         :license("MIT"),
+        :name<setup-test>
     )
     CONFIG
 

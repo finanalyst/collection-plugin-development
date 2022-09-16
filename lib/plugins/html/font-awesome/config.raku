@@ -6,6 +6,7 @@
 	),
 	:custom-raku(),
 	:license<Artistic-2.0>,
+	:name<font-awesome>,
 	:render<fa-assets.raku>,
 	:template-raku<fa-template.raku>,
 	:version<0.1.0>,

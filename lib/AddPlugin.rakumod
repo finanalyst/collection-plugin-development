@@ -35,6 +35,7 @@ multi sub MAIN(Str:D $plug, :$mile = 'render', :$format = 'html', Bool :$test = 
         TEST
 
     my %config = %Collection::ModConfig::defaults;
+    %config<name> = $plug;
     for $mile.comb(/ <fn> /) {
         %config{$_} = "$_\-callable.raku" unless $_ eq 'render';
         when 'render' {

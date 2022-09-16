@@ -6,6 +6,7 @@
 	:css<latex-render.css>,
 	:custom-raku<latex-block.raku>,
 	:license<Artistic-2.0>,
+	:name<latex-render>,
 	:render,
 	:template-raku<latex-template.raku>,
 	:version<0.1.0>,
