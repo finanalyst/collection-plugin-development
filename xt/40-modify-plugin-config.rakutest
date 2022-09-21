@@ -3,7 +3,7 @@ use Test;
 use Test::Run :runs_ok;
 use File::Directory::Tree;
 use RakuConfig;
-use Collection::ModConfig :MANDATORY;
+use Collection::Entities;
 
 plan 12;
 
@@ -63,7 +63,7 @@ runs_ok(
 my %new-conf;
 lives-ok {%new-conf = EVALFILE (DIR ~ "/Camelia/config.raku")}, 'new config compiles';
 
-cmp-ok %new-conf.keys, '(==)', (%plug-conf.keys, 'name', %Collection::ModConfig::defaults.keys).flat, 'config round trips';
+cmp-ok %new-conf.keys, '(==)', (%plug-conf.keys, 'name', %collection-defaults.keys).flat, 'config round trips';
 runs_ok(
     :args<<raku -I. bin/modify-collection-plugin-config -path={DIR} -plugin='Camelia' -bump -quiet >>,
     :exitcode(0),

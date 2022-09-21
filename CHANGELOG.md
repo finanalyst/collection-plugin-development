@@ -10,7 +10,7 @@
 [2022-09-05 v0.1.0](#2022-09-05-v010)  
 [2022-09-08 v0.1.1](#2022-09-08-v011)  
 [2022-09-08 v0.1.2](#2022-09-08-v012)  
-[2022-09-12 v0.2.0](#2022-09-12-v020)  
+[2022-09-16 v0.2.0](#2022-09-16-v020)  
 
 ----
 # 2022-08-09 v0.0.2
@@ -98,7 +98,7 @@
 
 *  changing xt/9* to only one test after removing all directories.
 
-# 2022-09-12 v0.2.0
+# 2022-09-16 v0.2.0
 
 
 *  fix test broken by v0.1.2
@@ -107,9 +107,15 @@
 
 *  add functionality to prepare :rebuild makes new manifest.rakuon
 
+*  add `name` to the list of required key in a plugin's `config.raku`
+
+*  added colour to output of prepare plugins.
+
+*  move all entities used in several modules to Collection::Entities
+
 
 
 
 
 ----
-Rendered from CHANGELOG at 2022-09-14T19:27:56Z
+Rendered from CHANGELOG at 2022-09-21T20:51:16Z

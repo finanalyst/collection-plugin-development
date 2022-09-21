@@ -264,67 +264,73 @@ of C<plugins.rakuon> as given below
 =item2 if a released version has larger minor/patch values, then the new directory is linked
 (copied) to the Mode's plugin name
 
-The file C<plugin.raku> contains a hash with the following keys:
-=item C<collection-plugin-root> This contains the name of a directory reachable from the Collection
+The file C<plugins.rakuon> contains a hash with the following keys:
+=item C<METADATA>. Contains a hash with data for the C<refresh> functionality.
+=item2 C<collection-plugin-root> This contains the name of a directory reachable from the Collection
 root directory with the released plugins are downloaded.
+=item2 C<update-behaviour> Defines what happens when a new released plugin has an increased
+Major number. Possible values are:
+
+=item3 I<auto> All relevant plugin names are updated to the new version, a message is issued
+=item3 I<conserve> Plugins are not updated to the new version, a warning is issued,
+updating is then plugin by plugin with a C<-force> flag set.
 
 =item Every other toplevel key is interpreted as a Mode. It will point to a hash with the keys:
-=item2 C<FORMAT> Each mode may only contain plugins from one Format, eg., I<html>.
-=item2 This implies that a I<Mode> may not be named C<FORMAT>.
-=item2 Every other key at this level (meaning within the hash for a Mode and not equal to C<FORMAT>)
-must be a plugin name contained in the Mode's plugins-required configuration.
+=item2 C<_mode_format> Each mode may only contain plugins from one Format, eg., I<html>.
+=item2 By the plugin naming rules, a I<plugin> may not be named C<_mode_format>.
+=item2 In a file with sorted keys, C<_mode_format> will come first.
+=item2 Every other key in a mode hash must be a plugin name contained
+in the Mode's plugins-required configuration.
 
-=item3 The C<plugins-required> hash has plugins for each milestone, when a plugin may have a callable
-for several milestones. So only unique plugin names are implied here.
+=item2 There may be zero plugin keys
 
-=item2 There may be zero other keys at this level
-=item2 If a plugin in the plugins-required configuration list does B<not> have an entry
-at this level, then the plugin has just been added to the plugins-required list and needs to be
-downloaded.
+=item2 If a plugin in the plugins-required configuration list does not have an entry
+at this level, then it has not been mapped to a sub-directory of the C<released-directory>.
 
-=item2 If a plugin key exists, it must point to a Hash, which must contain
-=item3 the version number of the existing plugin, or '' if it needs downloading
-=item2 The plugin Hash may also contain one of the following keys
-=item3 Name => the name of an alternative plugin
-=item4 the default name is the plugin-required's name
+=item2 A plugin key that exists must point to a Hash, which must at least contain:
+=item3 mapped => the name of the released plugin
+=item2 The plugin hash may also point to one or more of:
+=item3 name => the name of the alternate released plugin
+=item4 the default name (if the key is absent) is the plugin-required's name
 =item4 if a different name is given, a released plugin is mapped to the required directory in the
 mode sub-directory
 
-=item3 Major => the major number of a full version preceeded by 'v'
-=item4 the default value is the greatest released major value
-=item4 A Major value is the maximum Major version permitted, thus freezing at that version
-=item3 Auth => the auth value
-=item4 the default value is 'collection'
+=item3 major => the major number preceeded by 'v'
+=item4 the default value (if the key is absent) is the greatest released major value
+=item4 A major value is the maximum major value of the full version permitted, thus freezing at that version
+=item3 auth => the auth value
+=item4 the default value (if the key is absent) is 'collection'
+=item2 If there is no distributed plugin for a specified C<auth | major | name >, then an error is thrown.
 
 Some examples:
 =begin item
 The Raku-Collection-Raku-Documentation, Website mode, requires the plugin C<Camelia>. The plugin exists
 as a HTML format. It has version 1.0.0, and an auth 'collection'. It is distributed as
-C<html/camelia_v_1_auth_collection>. Suppose a version with a new API is created. Then
+C<html/camelia_v1_auth_collection>. Suppose a version with a new API is created. Then
 two versions of the plugin will be distributed, including the new one
-C<html/camelia_v_2_auth_collection>.
+C<html/camelia_v2_auth_collection>.
 
 If the key for camelia in the hash for mode Website only contains an empty C<version> key,
 then the defaults will be implied and
 a link (or copy) will be made between the released directory
-C<html/camelia_auth_collection__ver_2> and C<Website/plugins/camelia>
+C<html/camelia_v2_auth_collection> and C<Website/plugins/camelia>
 =end item
 =begin item
 If plugins.rakuon contains the following:
 C<Website => %( :FORMAT<html>, :camelia( %( :major(1), ) ) >
-then the link will be between C<html/camelia_auth_collection__ver_1> and C<Website/plugins/camelia>
+then the link will be between C<html/camelia_v1_auth_collection> and C<Website/plugins/camelia>
 =end item
 =begin item
 Suppose there is another valid C<auth> string B<raku-dev> and there is a distributed plugin
-I<html/camelia_auth_raku-dev__ver_2>, and suppose C<plugins.rakuon> contains the following:
+I<html/camelia_v2_auth_raku-dev>, and suppose C<plugins.rakuon> contains the following:
 C<Website => %( :FORMAT<html>, :camelia( %( :auth<raku-dev>, ) ) > then the link will be made
-between C<html/camelia_auth_raku-dev__ver_2> and C<Website/plugins/camelia>
+between C<html/camelia_v2_auth_raku-dev> and C<Website/plugins/camelia>
 =end item
 =begin item
 Suppose a different icon is developed called C<new-camelia> by C<auth> B<raku-dev>, then
 C<plugins.rakuon> may contain the following:
 C<Website => %( :FORMAT<html>, camelia( %( :name<new-camelia>, :auth<raku-dev>, ) ) > then
-a link (copy) is made between C<html/new-camelia_auth_raku-dev__ver_2> and C<Website/plugins/camelia>
+a link (copy) is made between C<html/new-camelia_v2_auth_raku-dev> and C<Website/plugins/camelia>
 =end item
 =item2 Note how the auth must be given for a renaming if there is not a C<collection> version
 of the plugin

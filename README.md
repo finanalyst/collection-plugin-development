@@ -11,6 +11,7 @@
 [sub prepare-plugins( :$from = '../raku-collection-plugins', :$to = 'lib', :$format = 'html' )](#sub-prepare-plugins-from--raku-collection-plugins-to--lib-format--html-)  
 [Naming of released plugin](#naming-of-released-plugin)  
 [Collection plugin management system](#collection-plugin-management-system)  
+[System implementation](#system-implementation)  
 [Specification of manifest.rakuon file](#specification-of-manifestrakuon-file)  
 [Currently](#currently)  
 
@@ -33,9 +34,9 @@ prepare-plugins
 ```
 It can be called with
 
-*  `-repo` pointing to where the released plugins are kept. The default is `-repo=~/.local/lib/Collection` and
+*  `-repo` pointing to where the released plugins are kept. The default is `-repo=~/.local/share/Collection` and
 
-*  `-origin` pointing to where the working verions of plugins are kept. The default is `-origin=lib`
+*  `-origin` pointing to where the working versions of plugins are kept. The default is `-origin=lib`
 
 Alternatively
 
@@ -75,7 +76,17 @@ All Collection plugins must conform to the following rules
 
 	*  t/01-basic.rakutest
 
-*  The `config.raku` must contain the following keys
+*  The `config.raku` file must contain the following keys
+
+	*  `name`. This is the released name of the plugin. It will be possible for a new plugin to have the same functionality as another, while extending or changing the output. For more detail, see [Collection plugin management system](Collection plugin management system.md). Typically, the name of the plugin will match the name of the sub-directory it is in.
+
+	*  `version`. This point to a Str in the format \d+\.\d+\.\d+ which matches the semantic version conventions.
+
+	*  `auth`. This points to a Str that is consistent with the Raku 'auth' conventions.
+
+	*  `license`. Points to a SPDX license type.
+
+	*  `authors`. This points to a sequence of names of people who are the authors of the plugin.
 
 	*  one or more of `render setup report compilation completion`
 
@@ -125,14 +136,6 @@ All Collection plugins must conform to the following rules
 
 		*  If not render, then the value must point to a Raku program and evaluate to a callable.
 
-	*  `version`. This point to a Str in the format \d+\.\d+\.\d+ which matches the semantic version conventions.
-
-	*  `auth`. This points to a Str that is consistent with the Raku 'auth' conventions.
-
-	*  `license`. Points to a SPDX license type.
-
-	*  `authors`. This points to a sequence of names of people who are the authors of the plugin.
-
 	*  _Other key names_. If other keys are present, they must point to filenames in the current directory.
 
 	*  `information`. This key does not need to exist.
@@ -181,7 +184,11 @@ If a new format is being developed, then set `-format` to the chosen format name
 add-collection-plugin -format=markdown my-new-markdown-plugin
 ```
 ## modify-collection-plugin
-This utility is intended to modify an existing plugin's config file, such as adding defaults if they are missing. To get a list of default attributes use
+This utility is intended to modify an existing plugin's config file, such as adding defaults if they are missing.
+
+The utility cannot be used to modify a plugin's `name` key. It will add the directory name if a name key is missing.
+
+To get a list of default attributes use
 
 ```
 modify-collection-plugin-config -show-defaults
@@ -272,15 +279,14 @@ So a plugin manager (whether command line or GUI) must be compliant with the fol
 
 *  When the plugins are updated
 
-	*  all the latest versions for each _relevant_ Format/Name/Version/Auth are downloaded.
+	*  all the latest versions for each _relevant_ Format/Name/Version-Major/Auth are downloaded.
 
 	*  a symlink is generated (or if the OS does not allow symlink, the whole directory is copied) from the released version to the directory where each mode expects its plugins to be located.
 
 	*  The meaning of _relevant_ is determined by the PMS. It could be all plugins in the github repository, or only those needed by a specific Collection, or set of Collections.
 
-To implement this system
-
-*  Each Collection root directory (the directory containing the topmost `config.raku` file) will contain the file `plugins.rakuon`.
+## System implementation
+Each Collection root directory (the directory containing the topmost `config.raku` file) will contain the file `plugins.rakuon`.
 
 *  The plugin management tool (PMT)
 
@@ -296,59 +302,73 @@ To implement this system
 
 	*  if a released version has larger minor/patch values, then the new directory is linked (copied) to the Mode's plugin name
 
-The file `plugin.raku` contains a hash with the following keys:
+The file `plugins.rakuon` contains a hash with the following keys:
 
-*  `collection-plugin-root` This contains the name of a directory reachable from the Collection root directory with the released plugins are downloaded.
+*  `METADATA`. Contains a hash with data for the `refresh` functionality.
+
+	*  `collection-plugin-root` This contains the name of a directory reachable from the Collection root directory with the released plugins are downloaded.
+
+	*  `update-behaviour` Defines what happens when a new released plugin has an increased Major number. Possible values are:
+
+		*  _auto_ All relevant plugin names are updated to the new version, a message is issued
+
+		*  _conserve_ Plugins are not updated to the new version, a warning is issued, updating is then plugin by plugin with a `-force` flag set.
 
 *  Every other toplevel key is interpreted as a Mode. It will point to a hash with the keys:
 
-	*  `FORMAT` Each mode may only contain plugins from one Format, eg., _html_.
+	*  `_mode_format` Each mode may only contain plugins from one Format, eg., _html_.
 
-	*  This implies that a _Mode_ may not be named `FORMAT`.
+	*  By the plugin naming rules, a _plugin_ may not be named `_mode_format`.
 
-	*  Every other key at this level (meaning within the hash for a Mode and not FORMAT) must be a plugin name contained in the Mode's plugins-required configuration.
+	*  In a file with sorted keys, `_mode_format` will come first.
 
-	*  There may be zero other keys at this level
+	*  Every other key in a mode hash must be a plugin name contained in the Mode's plugins-required configuration.
 
-	*  If a plugin in the plugins-required configuration list does not have an entry at this level, then the values for that plugin are the defaults.
+	*  There may be zero plugin keys
 
-	*  If a key exists, it must point to a Hash, which must contain at least one of the following keys
+	*  If a plugin in the plugins-required configuration list does not have an entry at this level, then it has not been mapped to a sub-directory of the `released-directory`.
 
-		*  Name => the name of the plugin
+	*  A plugin key that exists must point to a Hash, which must at least contain:
 
-			*  the default name is the plugin-required's name
+		*  mapped => the name of the released plugin
+
+	*  The plugin hash may also point to one or more of:
+
+		*  name => the name of the alternate released plugin
+
+			*  the default name (if the key is absent) is the plugin-required's name
 
 			*  if a different name is given, a released plugin is mapped to the required directory in the mode sub-directory
 
-		*  Major => the major number preceeded by 'v'
+		*  major => the major number preceeded by 'v'
 
-			*  the default value is the greatest released major value
+			*  the default value (if the key is absent) is the greatest released major value
 
-			*  A Major value is the maximum Major version permitted, thus freezing at that version
+			*  A major value is the maximum major value of the full version permitted, thus freezing at that version
 
-		*  Auth => the auth value
+		*  auth => the auth value
 
-			*  the default value is 'collection'
+			*  the default value (if the key is absent) is 'collection'
 
-	*  If there is no distributed plugin for a specified `auth`, then an error is thrown.
+	*  If there is no distributed plugin for a specified `auth | major | name `, then an error is thrown.
 
 Some examples:
 
-*  The Raku-Collection-Raku-Documentation, Website mode, requires the plugin `Camelia`. The plugin exists as a HTML format. It has version 1.0.0, and an auth 'collection'. It is distributed as `html/camelia_v_1_auth_collection`. Suppose a version with a new API is created. Then two versions of the plugin will be distributed, including the new one `html/camelia_v_2_auth_collection`.
+*  The Raku-Collection-Raku-Documentation, Website mode, requires the plugin `Camelia`. The plugin exists as a HTML format. It has version 1.0.0, and an auth 'collection'. It is distributed as `html/camelia_v1_auth_collection`. Suppose a version with a new API is created. Then two versions of the plugin will be distributed, including the new one `html/camelia_v2_auth_collection`.
 
-If no key for camelia is in the hash for mode Website, then the defaults will be implimented and a link (or copy) will be made between the released directory `html/camelia_auth_collection__ver_2` and `Website/plugins/camelia`
+If the key for camelia in the hash for mode Website only contains an empty `version` key, then the defaults will be implied and a link (or copy) will be made between the released directory `html/camelia_v2_auth_collection` and `Website/plugins/camelia`
 
 *  If plugins.rakuon contains the following: `Website =` %( :FORMA"> \{\{\{ contents }}}
 
-, :camelia( %( :major(1), ) ) > then the link will be between `html/camelia_auth_collection__ver_1` and `Website/plugins/camelia`
+, :camelia( %( :major(1), ) ) > then the link will be between `html/camelia_v1_auth_collection` and `Website/plugins/camelia`
 
-*  Suppose there is another valid `auth` string **raku-dev** and there is a distributed plugin _html/camelia_auth_raku-dev__ver_2_, and suppose `plugins.rakuon` contains the following: `Website =` %( :FORMA"> \{\{\{ contents }}}
+*  Suppose there is another valid `auth` string **raku-dev** and there is a distributed plugin _html/camelia_v2_auth_raku-dev_, and suppose `plugins.rakuon` contains the following: `Website =` %( :FORMA"> \{\{\{ contents }}}
 
-, :camelia( %( :auth<raku-dev>, ) ) > then the link will be made between `html/camelia_auth_raku-dev__ver_2` and `Website/plugins/camelia`
+, :camelia( %( :auth<raku-dev>, ) ) > then the link will be made between `html/camelia_v2_auth_raku-dev` and `Website/plugins/camelia`
 
 *  Suppose a different icon is developed called `new-camelia` by `auth` **raku-dev**, then `plugins.rakuon` may contain the following: `Website =` %( :FORMA"> \{\{\{ contents }}}
 
-, camelia( %( :name<new-camelia>, :auth<raku-dev>, ) ) > then a link (copy) is made between `html/new-camelia_auth_raku-dev__ver_2` and `Website/plugins/camelia`
+, camelia( %( :name<new-camelia>, :auth<raku-dev>, ) ) > then a link (copy) is made between `html/new-camelia_v2_auth_raku-dev` and `Website/plugins/camelia`
 
 	*  Note how the auth must be given for a renaming if there is not a `collection` version of the plugin
 
@@ -402,4 +422,4 @@ The workflow is for changes to be made in Website, run Raku-Doc, inspect the res
 
 
 ----
-Rendered from README at 2022-09-14T19:27:55Z
+Rendered from README at 2022-09-21T20:51:19Z

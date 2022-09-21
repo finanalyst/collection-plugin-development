@@ -2,13 +2,11 @@ use v6.d;
 use Test;
 use RakuConfig;
 use License::SPDX;
+use Collection::Entities;
 
 module Test::CollectionPlugin {
     # several subs are taken from Jonathan Stowe's Test::Meta module.
     our $TESTING = False;
-    my token fn is export(:MANDATORY) {
-        <.alpha> <[\w] + [\-] - [\_]>+
-    };
 
     sub test-plugin is export {
         my %config;
@@ -16,7 +14,7 @@ module Test::CollectionPlugin {
 
         plan 11;
 
-        like $*CWD.basename, / <fn> /, 'plugin directory name matches naming rule';
+        like $*CWD.basename, / <plugin-name> /, 'plugin directory name matches naming rule';
         ok check-file('README.rakudoc'), 'README exists';
         if check-file('config.raku') {
             pass 'got ｢config.raku｣';
@@ -44,7 +42,7 @@ module Test::CollectionPlugin {
 
     our sub check-name(%config --> Bool) {
         with %config<name> {
-            unless .match(/ <fn> /) {
+            unless .match(/ <plugin-name> /) {
                 my-diag("Plugin name ｢$_｣ is not a valid Collection plugin name");
                 return False
             }

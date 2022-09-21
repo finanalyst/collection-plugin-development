@@ -1,7 +1,7 @@
 use v6.d;
 use RakuConfig;
 use File::Directory::Tree;
-use Test::CollectionPlugin :MANDATORY;
+use Collection::Entities;
 use Terminal::ANSIColor;
 
 unit module RefreshPlugins;
@@ -41,7 +41,7 @@ multi sub prepare(Str:D :$repo = "$*HOME/.local/share/Collection",
             for $format.dir -> $plug {
                 next unless $plug ~~ :d;
                 my %config = get-config( $plug.relative );
-                %manifest{ $type.basename }{ $format.basename }{ $plug.basename }
+                %manifest{ $type.basename }{ $format.basename }{ $plug.basename }<version>
                     = %config<version>
             }
         }

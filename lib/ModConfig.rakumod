@@ -1,15 +1,9 @@
 #!/usr/bin/env raku
 use v6.d;
 use RakuConfig;
-use Test::CollectionPlugin :MANDATORY;
+use Collection::Entities;
 unit module Collection::ModConfig;
 
-our %defaults is export(:MANDATORY) = %(
-    :version<0.1.0>,
-    :auth<collection>,
-    :authors('finanalyst',),
-    :license('Artistic-2.0'),
-);
 sub modify-config(|c) is export(:CALLABLE) {
     MAIN(|c)
 }
@@ -50,7 +44,7 @@ multi sub MAIN(
     }
     my %conf;
     if $defaults {
-        %conf = %defaults
+        %conf = %collection-defaults
     }
     else {
         my @authors;
@@ -90,7 +84,7 @@ multi sub MAIN(
     }
 }
 multi sub MAIN(:show-default(:show-defaults($))!) is export {
-    say format-config(%defaults);
+    say format-config(%collection-defaults);
 }
 multi sub MAIN(Bool :$bump!, Str:D :plugins(:$plugin) = '', Str:D :$path = '.',
     Bool :$quiet = False ) {

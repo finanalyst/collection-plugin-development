@@ -59,11 +59,12 @@ are changed in the working version are later than the released version with the 
 =item changing all mentions of C<plugins.conf> to C<plugins.rakuon>
 =item changing xt/9* to only one test after removing all directories.
 
-=head1 2022-09-12 v0.2.0
+=head1 2022-09-16 v0.2.0
 =item fix test broken by v0.1.2
 =item add file 'manifest.rakuon' to root of released-dir in prepare-plugins
 =item add functionality to prepare :rebuild makes new manifest.rakuon
 =item add C<name> to the list of required key in a plugin's C<config.raku>
 =item added colour to output of prepare plugins.
+=item move all entities used in several modules to Collection::Entities
 
 =end pod

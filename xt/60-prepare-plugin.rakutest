@@ -100,7 +100,7 @@ my %manifest;
 lives-ok { %manifest = EVALFILE TO ~ '/manifest.rakuon' }, 'gets manifest';
 is-deeply-relaxed
     %manifest,
-    %( :plugins( %( :html( %( :plug_v2_auth_collection<2.1.2> ) ) ) ) ),
+    %( :plugins( %( :html( %( :plug_v2_auth_collection( %( :version<2.1.2>, ) ), ) ), ) ), ),
     'manifest is as expected';
 (PLUG ~ "/config.raku").IO.spurt(q:to/CONF/);
     %(
@@ -120,7 +120,9 @@ is-deeply-relaxed
     %manifest,
     %( :plugins( %(
         :html( %(
-            :plug_v2_auth_collection<2.2.2>
+            :plug_v2_auth_collection(%(
+                :version<2.2.2>,
+                ) )
             ) ),
         ) ),
     ),
@@ -145,8 +147,12 @@ is-deeply-relaxed
     %(
     :plugins( %(
         :html( %(
-            :plug_v2_auth_collection<2.2.2>,
-            :plug_v3_auth_collection<3.3.4>,
+                :plug_v2_auth_collection(%(
+                    :version<2.2.2>,
+                ) ),
+                :plug_v3_auth_collection(%(
+                    :version<3.3.4>,
+                ) ),
             ) )
         ) )
     ),
