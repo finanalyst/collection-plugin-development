@@ -66,5 +66,6 @@ are changed in the working version are later than the released version with the 
 =item add C<name> to the list of required key in a plugin's C<config.raku>
 =item added colour to output of prepare plugins.
 =item move all entities used in several modules to Collection::Entities
+=item add Camelia images to examples
 
 =end pod

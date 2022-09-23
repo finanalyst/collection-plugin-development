@@ -46,6 +46,28 @@ with different CSS assets.
 
 The following are Custom user-facing Pod::Blocks that come with C<Collection-Raku-Documentation>
 
+=head1 Camelia icon headers with images
+
+For Raku files, a special block was created for the various types of Camelia image.
+They normally float on the right-hand side. In order to contain them before
+the next set of texts, they are included in an HTML5 C<flex-box>, which is
+created using a template for C<para>.
+
+The following code
+=begin code
+=begin para :template<flex-container>
+=Camelia
+=CameliaShadow
+=CameliaFaded
+=end para
+=end code
+yields
+=begin para :template<flex-container>
+=Camelia
+=CameliaShadow
+=CameliaFaded
+=end para
+
 =head1 Adding new templates for existing Pod::Blocks
 
 Suppose you want a different template to act on an existing block, like Para,

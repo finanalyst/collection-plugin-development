@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+if [ $# -eq 0 ]
+  then
+    echo "No arguments supplied"
+    exit
+fi
+echo lib/plugins/html/$1
+sass --update --no-source-map lib/plugins/html/$1:lib/plugins/html/$1

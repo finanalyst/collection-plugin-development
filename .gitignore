@@ -3,8 +3,8 @@
 lib/.precomp/
 .idea/
 xt/test-dir/
-trial/doc-cache/
-trial/html/
+trial/doc_cache/
+trial/rendered_html/
 trial/Website/structure-cache/
 trial/Website/structure-cache/*
 *.css.map

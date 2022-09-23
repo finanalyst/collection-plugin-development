@@ -1,1 +1,1 @@
-<Camelia camelia CameliaShadow Cameliashadow cameliashadow FadedCamelia fadedcamelia Fadedcamelia>
+<Camelia camelia CameliaShadow Cameliashadow cameliashadow CameliaFaded cameliafaded Cameliafaded>

@@ -9,5 +9,5 @@
 	:name<simple-extras>,
 	:render,
 	:template-raku<extra-templates.raku>,
-	:version<0.1.0>,
+	:version<0.1.1>,
 )

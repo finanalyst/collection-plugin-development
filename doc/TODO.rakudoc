@@ -1,8 +1,6 @@
 =begin pod
 =TITLE A list of Plugins to be implemented, or change in templates
 
-=item create plugin management CLI
-
 =item rewrite Pod::To::HTML2 templates -> plugins
 
 =item look at implementing SCSS for plugins and updating

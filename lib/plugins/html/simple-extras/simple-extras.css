@@ -1,4 +1,4 @@
-hr.bluish-dots, .yellowish-dots, .greenish-dots {
+hr.bluish-dots, .yellowish-dots, .greenish-dots, .reddish-dots {
   border: none;
   margin: 0 3em;
   padding: 0;
@@ -21,6 +21,10 @@ hr.greenish-dots {
   background-image: radial-gradient(#76ed87 30%, transparent 30%);
 }
 
+hr.reddish-dots {
+  background-image: radial-gradient(#ff4000 30%, transparent 30%);
+}
+
 p.quotation {
   margin-left: 10vh;
 }
@@ -33,4 +37,6 @@ p.quotation .citation {
   font-style: italic;
 }
 
-/*# sourceMappingURL=simple-extras.css.map */
+div.flex-container {
+  display: flex;
+}

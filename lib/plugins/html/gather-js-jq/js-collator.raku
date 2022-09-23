@@ -27,30 +27,30 @@ sub ( $pp, %options ) {
             }
             # handle higher order parameters.
             when $_ ~~ 'js-script' and $data{$_} ~~ Positional {
-                ( note "ignoring invalid config data ｢{ $data{$_}[0] }｣ or ｢{ $data{$_}[1] }｣" ) and next
-                    unless ($data{$_}[0] ~~ Str:D and $data{$_}[1] ~~ Int:D);
-                @js.push( ($data{$_}[0], $plug, $data{$_}[1] ) )
+                ( note "[{$?FILE.IO.basename}] ignoring invalid 'js-script' config data from ｢$plug｣, viz. ｢{ $data{$_}[0] }｣ or ｢{ $data{$_}[1] }｣" ) and next
+                    unless ($data{$_}[0] ~~ Str:D and +$data{$_}[1] ~~ Int:D);
+                @js.push( ($data{$_}[0], $plug, +$data{$_}[1] ) )
             }
             when $_ ~~ 'js-link' and $data{$_} ~~ Positional {
-                ( note "ignoring invalid config data ｢{ $data{$_}[0] }｣ or ｢{ $data{$_}[1] }｣" ) and next
-                unless ($data{$_}[0] ~~ Str:D and $data{$_}[1] ~~ Int:D);
-                @js.push( ($data{$_}[0], '', $data{$_}[1] ) )
+                ( note "[{$?FILE.IO.basename}] ignoring invalid 'js-link' config data from ｢$plug｣, viz. ｢{ $data{$_}[0] }｣ or ｢{ $data{$_}[1] }｣" ) and next
+                unless ($data{$_}[0] ~~ Str:D and +$data{$_}[1] ~~ Int:D);
+                @js.push( ($data{$_}[0], '', +$data{$_}[1] ) )
             }
             when $_ ~~ 'js-bottom' and $data{$_} ~~ Positional {
-                ( note "ignoring invalid config data ｢{ $data{$_}[0] }｣ or ｢{ $data{$_}[1] }｣" ) and next
-                unless ($data{$_}[0] ~~ Str:D and $data{$_}[1] ~~ Int:D);
-                @js-bottom.push(( $data{$_}[0], $plug, $data{$_}[1] ));
+                ( note "[{$?FILE.IO.basename}] ignoring invalid 'js-bottom' config data from ｢$plug｣, viz. ｢{ $data{$_}[0] }｣ or ｢{ $data{$_}[1] }｣" ) and next
+                unless ($data{$_}[0] ~~ Str:D and +$data{$_}[1] ~~ Int:D);
+                @js-bottom.push(( $data{$_}[0], $plug, +$data{$_}[1] ));
             }
             when $_ ~~ 'jquery' and $data{$_} ~~ Positional {
-                ( note "ignoring invalid config data ｢{ $data{$_}[0] }｣ or ｢{ $data{$_}[1] }｣" ) and next
-                unless ($data{$_}[0] ~~ Str:D and $data{$_}[1] ~~ Int:D);
-                @js.push(( $data{$_}[0], $plug, $data{$_}[1] ));
+                ( note "[{$?FILE.IO.basename}] ignoring invalid 'jquery' config data from ｢$plug｣, viz. ｢{ $data{$_}[0] }｣ or ｢{ $data{$_}[1] }｣" ) and next
+                unless ($data{$_}[0] ~~ Str:D and +$data{$_}[1] ~~ Int:D);
+                @js.push(( $data{$_}[0], $plug, +$data{$_}[1] ));
                 $loadjq-lib = True
             }
             when $_ ~~ 'jquery-link' and $data{$_} ~~ Positional {
-                ( note "ignoring invalid config data ｢{ $data{$_}[0] }｣ or ｢{ $data{$_}[1] }｣" ) and next
-                unless ($data{$_}[0] ~~ Str:D and $data{$_}[1] ~~ Int:D);
-                @js.push( ($data{$_}[0], '', $data{$_}[1] ) );
+                ( note "[{$?FILE.IO.basename}] ignoring invalid 'jquery-link' config data from ｢$plug｣, viz. ｢{ $data{$_}[0] }｣ or ｢{ $data{$_}[1] }｣" ) and next
+                unless ($data{$_}[0] ~~ Str:D and +$data{$_}[1] ~~ Int:D);
+                @js.push( ($data{$_}[0], '', +$data{$_}[1] ) );
                 $loadjq-lib = True
             }
         }

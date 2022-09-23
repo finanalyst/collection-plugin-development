@@ -1,0 +1,7 @@
+#!/usr/bin/env raku
+use v6.d;
+use Collection;
+# do not run refresh
+sub MAIN(|c) {
+    indir 'trial', { collect(|c) };
+}

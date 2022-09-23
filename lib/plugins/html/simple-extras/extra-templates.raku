@@ -18,6 +18,9 @@ use v6.d;
         qq:to/QUOT/;
             \<p class="quotation">{ $data ~ $auth ~ $cita }\</p>
             QUOT
+    },
+    flex-container => sub (%prm, %tml) {
+        '<div class="flex-container">' ~ %prm<contents> ~ '</div>'
     }
 );
 
