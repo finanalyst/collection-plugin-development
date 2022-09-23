@@ -68,4 +68,7 @@ are changed in the working version are later than the released version with the 
 =item move all entities used in several modules to Collection::Entities
 =item add Camelia images to examples
 
+=head1 2022-09-23 v0.3.0
+=item remove old files/directories from released plugins when deleted from working copies
+
 =end pod

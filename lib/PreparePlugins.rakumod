@@ -93,6 +93,7 @@ sub map-to-repo(
         copy-plugin(:$node, :$to);
     }
     say "Processed $count plugins";
+    say "Now update the remote repository";
 }
 sub copy-plugin(IO :$node!, Str:D :$to!) is export {
     $to.IO.mkdir unless $to.IO ~~ :e & :d;
@@ -102,6 +103,12 @@ sub copy-plugin(IO :$node!, Str:D :$to!) is export {
         }
         else {
             $_.copy($to ~ '/' ~ $_.basename)
+        }
+    }
+    # remove deleted files
+    for $to.IO.dir {
+        unless "$node/{ .basename }".IO ~~ :e {
+            rmtree "$node/{ .basename }"
         }
     }
 }

@@ -9,5 +9,5 @@
 	:name<camelia>,
 	:render<move-images.raku>,
 	:template-raku<camelia-templates.raku>,
-	:version<0.1.1>,
+	:version<0.2.0>,
 )

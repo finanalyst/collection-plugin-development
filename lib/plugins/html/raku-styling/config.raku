@@ -10,5 +10,5 @@
 	:render<move-images-in-css.raku>,
 	:scss<raku-default-styling.scss>,
 	:template-raku(),
-	:version<0.1.0>,
+	:version<0.2.0>,
 )

@@ -6,5 +6,5 @@
 	:license<Artistic-2.0>,
 	:name<raku-doc-setup>,
 	:setup<raku-doc-change-routes.raku>,
-	:version<0.1.0>,
+	:version<0.2.0>,
 )
