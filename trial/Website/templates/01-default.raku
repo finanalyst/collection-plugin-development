@@ -38,14 +38,14 @@ use ProcessedPod;
         ~ '</dd>'
     },
     'dlist-end' => sub ( %prm, %tml ) { "\n</dl>" },
-    'format-b' => gen-closure-template('strong'),
-    'format-c' => gen-closure-template('code'),
-    'format-i' => gen-closure-template('em'),
-    'format-k' => gen-closure-template('kbd'),
-    'format-r' => gen-closure-template('var'),
-    'format-t' => gen-closure-template('samp'),
-    'format-u' => gen-closure-template('u'),
-    'para' => gen-closure-template('p'),
+    'format-b' => sub ( %prm, %tml ) { '<strong>' ~ %prm<contents> ~ '</strong>'},
+    'format-c' => sub ( %prm, %tml ) { '<code>' ~ %prm<contents> ~ '</code>'},
+    'format-i' => sub ( %prm, %tml ) { '<em>' ~ %prm<contents> ~ '</em>'},
+    'format-k' => sub ( %prm, %tml ) { '<kbd>' ~ %prm<contents> ~ '</kbd>'},
+    'format-r' => sub ( %prm, %tml ) { '<var>' ~ %prm<contents> ~ '</var>'},
+    'format-t' => sub ( %prm, %tml ) { '<samp>' ~ %prm<contents> ~ '</samp>'},
+    'format-u' => sub ( %prm, %tml ) { '<u>' ~ %prm<contents> ~ '</u>'},
+    'para' => sub ( %prm, %tml ) { '<p>' ~ %prm<contents> ~ '</p>'},
     'format-l' => sub ( %prm, %tml ) {
         # transform a local file with an internal target
         my $trg = %prm<target>;
@@ -295,7 +295,8 @@ use ProcessedPod;
                 ~ '<a href="/programs.html"><div class="menu-item">Programs</div></a>'
                 ~ '<a href="https://modules.raku.org/"><div class="menu-item">Modules</div></a>'
                 ~ '<a href="https://docs.raku.org/"><div class="menu-item">Official site</div></a>'
-                ~ "</div></header>\n"
+                ~ "</div>
+        </header>\n"
     },
     'footer' => sub ( %prm, %tml ) {
         "\n"

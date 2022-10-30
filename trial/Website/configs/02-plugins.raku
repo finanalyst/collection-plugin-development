@@ -1,5 +1,4 @@
 %(
-    no-code-escape => True, # must use this when using highlighter
     plugins => 'plugins',
     plugins-required => %(
         :setup<raku-doc-setup>,

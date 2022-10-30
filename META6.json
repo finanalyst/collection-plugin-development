@@ -6,7 +6,7 @@
   "authors": [
     "Richard Hainsworth, aka finanalyst"
   ],
-  "auth": "github:finanalyst",
+  "auth": "zef:finanalyst",
   "depends": [
     "Raku::Pod::Render",
     "Pod::From::Cache",
@@ -23,9 +23,7 @@
     "Collection::TestAllPlugins": "lib/TestAllPlugins.rakumod",
     "Test::CollectionPlugin": "lib/TestOnePlugin.rakumod"
   },
-  "resources": [
-    "min-templates.raku"
-  ],
+  "resources": [],
   "support": {
     "bugtracker": "https://github.com/finanalyst/collection-plugin-development/issues",
     "email": "richard@hainsworth.wales",
