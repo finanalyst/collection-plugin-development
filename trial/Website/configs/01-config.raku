@@ -1,8 +1,10 @@
 %(
+    :plugin-format<html>,
     :no-refresh, # do not call the refresh step after the first run
     :no-preserve-state,# do not archive
     :!recompile, # if true, force a recompilation of the source files when refresh is called
     :!full-render, # force rendering of all output files
+    :without-processing,
     :without-report, # do not make a report - default is False, but set True
     :!without-completion, # we want the Cro app to start
     :mode-sources<structure-sources>, # content for the website structure
@@ -22,6 +24,6 @@
     :templates<templates>,
     completion-options => %(
         :port<30000>,
-        :host<0.0.0.0>,
+        :host<192.168.0.11>,
     ),
 )

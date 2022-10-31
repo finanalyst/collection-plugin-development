@@ -115,7 +115,7 @@ use ProcessedPod;
                 ~ %prm<items>.join
                 ~ "</ul>\n"
     },
-    'named' => sub ( %prm, %tml ) {
+    'unknown-name' => sub ( %prm, %tml ) {
         "<section>\n<h"
                 ~ (%prm<level> // '1') ~ ' id="'
                 ~ %tml<escaped>(%prm<target>) ~ '"><a href="#'

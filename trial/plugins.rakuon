@@ -1,0 +1,9 @@
+%(
+	:Website( %(
+		:_mode_format<html>,
+	)),
+	:_metadata_( %(
+		:collection-plugin-root<../lib>,
+		:update-behaviour<auto>,
+	)),
+)

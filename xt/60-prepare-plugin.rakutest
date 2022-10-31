@@ -39,7 +39,7 @@ empty-directory TO; # plug has no config
         :auth<collection>,
     )
     CONF
-my @args = 'raku', '-I.', 'bin/prepare-plugins', '-repo=' ~ TO, '-origin=' ~ FROM ;
+my @args = 'raku', '-I.', 'bin/prepare-plugins', '-test', '-repo=' ~ TO, '-origin=' ~ FROM;
 runs_ok(
     :@args,
     :exitcode(0),

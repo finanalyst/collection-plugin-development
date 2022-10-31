@@ -11,6 +11,8 @@
 [2022-09-08 v0.1.1](#2022-09-08-v011)  
 [2022-09-08 v0.1.2](#2022-09-08-v012)  
 [2022-09-16 v0.2.0](#2022-09-16-v020)  
+[2022-09-23 v0.3.0](#2022-09-23-v030)  
+[2022-10-31 v0.4.0](#2022-10-31-v040)  
 
 ----
 # 2022-08-09 v0.0.2
@@ -99,8 +101,6 @@
 *  changing xt/9* to only one test after removing all directories.
 
 # 2022-09-16 v0.2.0
-
-
 *  fix test broken by v0.1.2
 
 *  add file 'manifest.rakuon' to root of released-dir in prepare-plugins
@@ -113,9 +113,23 @@
 
 *  move all entities used in several modules to Collection::Entities
 
+*  add Camelia images to examples
+
+# 2022-09-23 v0.3.0
+*  remove old files/directories from released plugins when deleted from working copies
+
+# 2022-10-31 v0.4.0
+
+
+*  create a new directory (default `working`) as the source for Collection-Plugins
+
+*  change prepare-plugins to automatically create `working` by cloning from Collection-Plugins
+
+*  if `working` exists, then git pull into directory
+
 
 
 
 
 ----
-Rendered from CHANGELOG at 2022-09-21T20:51:16Z
+Rendered from CHANGELOG at 2022-10-31T10:16:12Z

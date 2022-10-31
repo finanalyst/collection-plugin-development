@@ -1,8 +1,6 @@
 =begin pod
 =TITLE A list of Plugins to be implemented, or change in templates
 
-=item rewrite Pod::To::HTML2 templates -> plugins : done
-
 =item look at implementing SCSS for plugins and updating
 
 =item Implement numbered lists for items.
