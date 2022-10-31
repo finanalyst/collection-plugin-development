@@ -13,11 +13,31 @@ class BadPlugin is Exception {
     }
 }
 
-multi sub prepare(Str:D :$repo = "$*HOME/.local/share/Collection",
-            Str:D :$origin = "lib"
-            ) is export {
-    (exit note("｢$repo｣ does not exist. Create git repo directory and point at Collection-plugins"))
-    unless $repo.IO ~~ :e & :d;
+multi sub prepare(Str:D :$repo = 'working',
+        Str:D :$origin = "lib",
+        Bool :$test = False
+    ) is export {
+    if $repo.IO ~~ :e & :d {
+        if "$repo/.git".IO ~~ :e & :d {
+            my $proc = run <<git -C $repo pull -q>>, :err;
+            if $proc.exitcode {
+                exit note $proc.err.slurp(:close)
+            }
+            else {
+                say "Plugin repo refreshed"
+            }
+        }
+        else {
+            exit note "Failure: Directory $repo exists but is not a git repo."
+                unless $test
+        }
+    }
+    else {
+        my $resp = prompt "Plugin repo not in ｢$repo｣. Create it? (Y/n) ";
+        (exit note "Create repo manually in $repo") if $resp and $resp !~~ /:i 'Y' /;
+        my $proc = run <<git clone https://github.com/finanalyst/collection-plugins.git $repo -q>>, :err;
+        $proc.err.slurp(:close).say;
+    }
     (exit note("｢$origin/plugins｣ does not exist."))
     unless "$origin/plugins".IO ~~ :e & :d;
     mktree("$repo/plugins") unless "$repo/plugins".IO ~~ :e & :d;
@@ -28,11 +48,12 @@ multi sub prepare(Str:D :$repo = "$*HOME/.local/share/Collection",
     }
     prepare(:$repo, :rebuild );
 }
-multi sub prepare(Str:D :$repo = "$*HOME/.local/share/Collection",
-            Bool :rebuild($)!
-            ) is export {
+multi sub prepare(Str:D :$repo = 'working',
+        Bool :rebuild($)!,
+        Bool :$test = False
+        ) is export {
     (exit note("｢$repo｣ does not exist. Create git repo directory and point at Collection-plugins"))
-    unless $repo.IO ~~ :e & :d;
+        unless $repo.IO ~~ :e & :d;
     my %manifest;
     for $repo.IO.dir -> $type {
         next unless $type ~~ :d and $type.basename ~~ / ^ \w /;

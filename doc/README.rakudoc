@@ -11,15 +11,24 @@ copies of plugins.
 
 Another repository (Collection-Plugins) is the source for published / released Collection plugins.
 
+Typically for a developer, there will be
+=item the default directory C<~/.local/share/Collection>
+for the installed modules, which is syncronised with Collection-Plugins.
+
+=item a working directory (default C< working/> ) that is used for preparing plugins
+from new sources to be later uploaded to Collection-PLugins.
+
 So, the work flow is
-=item new plugins are added, modified, developed in C<Collection::Plugins>
+=item new plugins are added, modified, developed, tested in C<lib/plugins>
 =item modified plugins are prepared for release & pushed to Collection::Plugins using
 
     prepare-plugins
 
-It can be called with
-=item C<-repo> pointing to where the released plugins are kept. The default is C<-repo=~/.local/share/Collection> and
-=item C<-origin> pointing to where the working versions of plugins are kept. The default is C<-origin=lib>
+This utility can be called with
+=item C<-repo> pointing to where the released plugins are prepared for uploading. The default is
+C<-repo=working/>
+=item C<-origin> pointing to where the modified versions of plugins are kept.
+The default is C<-origin=lib>
 
 Alternatively
 

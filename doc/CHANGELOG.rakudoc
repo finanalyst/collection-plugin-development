@@ -71,4 +71,9 @@ are changed in the working version are later than the released version with the 
 =head1 2022-09-23 v0.3.0
 =item remove old files/directories from released plugins when deleted from working copies
 
+=head1 2022-10-31 v0.4.0
+=item create a new directory (default C<working>) as the source for Collection-Plugins
+=item change prepare-plugins to automatically create C<working> by cloning from Collection-Plugins
+=item if C<working> exists, then git pull into directory
+
 =end pod

@@ -23,20 +23,26 @@ The intention is for this distribution (Collection-Plugin-Development) to be ass
 
 Another repository (Collection-Plugins) is the source for published / released Collection plugins.
 
+Typically for a developer, there will be
+
+*  the default directory `~/.local/share/Collection` for the installed modules, which is syncronised with Collection-Plugins.
+
+*  a working directory (default `working/` ) that is used for preparing plugins from new sources to be later uploaded to Collection-PLugins.
+
 So, the work flow is
 
-*  new plugins are added, modified, developed in `Collection::Plugins`
+*  new plugins are added, modified, developed, tested in `lib/plugins`
 
 *  modified plugins are prepared for release & pushed to Collection::Plugins using
 
 ```
 prepare-plugins
 ```
-It can be called with
+This utility can be called with
 
-*  `-repo` pointing to where the released plugins are kept. The default is `-repo=~/.local/share/Collection` and
+*  `-repo` pointing to where the released plugins are prepared for uploading. The default is `-repo=working/`
 
-*  `-origin` pointing to where the working versions of plugins are kept. The default is `-origin=lib`
+*  `-origin` pointing to where the modified versions of plugins are kept. The default is `-origin=lib`
 
 Alternatively
 
@@ -422,4 +428,4 @@ The workflow is for changes to be made in Website, run Raku-Doc, inspect the res
 
 
 ----
-Rendered from README at 2022-09-21T20:51:19Z
+Rendered from README at 2022-10-31T10:16:15Z
