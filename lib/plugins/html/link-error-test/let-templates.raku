@@ -62,7 +62,7 @@ use PrettyDump;
                     }
                     when $type eq 'unknown' {
                         for $resp.list -> %info {
-                            $rv ~= '<div class="let-link-text">' ~ %tml<escaped>( %info<link> ) ~ '</div>'
+                            $rv ~= '<div class="let-link-text">' ~ %tml<escaped>( %info<link-label> ) ~ '</div>'
                                 ~ '<div class="let-links">'
                                 ~ %tml<escaped>(%info<url>)
                                 ~ '</div>'
@@ -71,7 +71,7 @@ use PrettyDump;
                     }
                     when $type eq 'remote' {
                         for $resp.list -> %info {
-                            $rv ~='<div class="let-link-text">' ~ %tml<escaped>( %info<link> ) ~ '</div>'
+                            $rv ~='<div class="let-link-text">' ~ %tml<escaped>( %info<link-label> ) ~ '</div>'
                                 ~  '<div class="let-links">'
                                 ~ %tml<escaped>( %info<url> )
                                 ~ '<div class="let-response">'
@@ -82,7 +82,7 @@ use PrettyDump;
                     }
                     when $type eq 'no-target' {
                         for $resp.list -> %info {
-                            $rv ~= '<div class="let-link-text">' ~ %tml<escaped>( %info<link> )
+                            $rv ~= '<div class="let-link-text">' ~ %tml<escaped>( %info<link-label> )
                                 ~ '<div class="let-link-file"><div>'
                                 ~ %tml<escaped>( %info<file> )
                                 ~ '<a class="let-clickable" href="' ~ %tml<escaped>( %info<file> ) ~ '.html" target="_blank" rel="noopener noreferrer">Clickable</a></div>'

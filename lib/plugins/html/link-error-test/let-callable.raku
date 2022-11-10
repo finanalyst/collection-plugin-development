@@ -1,6 +1,5 @@
 #!/usr/bin/env perl6
 use LibCurl::HTTP;
-use PrettyDump;
 
 sub ($pr, %processed, %options) {
     my regex htmlcode {
@@ -64,9 +63,10 @@ sub ($pr, %processed, %options) {
         # format of podf.links Str entry -> :location :target
         # entry is not needed, but keeps the pair together
         # filter out remote schemas
+        # ProcessedPod v0.4 has target/link-label/type/place, not target/location/link
         %links{$fn} = %(gather for $podf.links {
-            if .value<location> eq 'external' {
-                push @remote-links, [$fn, .value<target>, .value<link>]
+            if .value<type> eq 'external' {
+                push @remote-links, [$fn, .value<target>, .value<link-label>]
             }
             else {
                 take $_
@@ -109,7 +109,7 @@ sub ($pr, %processed, %options) {
     # all data collected
     for %links.kv -> $fn, %spec {
         for %spec.kv -> $link, %registered {
-            given %registered<location> {
+            given %registered<type> {
                 when 'local' {
                     if %registered<target> ~~ / ^ <-[#]>+ $ / {
                         # filter out local schema without #
@@ -121,7 +121,7 @@ sub ($pr, %processed, %options) {
                         $missing{$file}++;
                         %errors<no-file>{$fn}.push(%(
                             :$file,
-                            link => %registered<link>
+                            link-label => %registered<link-label>
                         ))
                     }
                     elsif %registered<target> ~~ / ^ (<-[#]>+) '#' (.+) $ / {
@@ -132,7 +132,7 @@ sub ($pr, %processed, %options) {
                             $missing{$file}++;
                             %errors<no-file>{$fn}.push(%(
                                 :$file,
-                                link => %registered<link>
+                                link-label => %registered<link-label>
                             ));
                             next
                         }
@@ -143,7 +143,7 @@ sub ($pr, %processed, %options) {
                         %errors<no-target>{$fn}.push(%(
                             :$file,
                             targets => @failed,
-                            link => %registered<link>
+                            link-label => %registered<link-label>
                         ))
                     }
                     # otherwise no action for matches
@@ -155,12 +155,12 @@ sub ($pr, %processed, %options) {
                     %errors<no-target>{$fn}.push(%(
                         file => $fn,
                         targets => @failed,
-                        link => %registered<link>
+                        link-label => %registered<link-label>
                     ))
                 }
                 default {
                     %errors<unknown>{$fn}.push(%(
-                        link => %registered<link>,
+                        link-label => %registered<link-label>,
                         url => %registered<target>
                     ))
                 }

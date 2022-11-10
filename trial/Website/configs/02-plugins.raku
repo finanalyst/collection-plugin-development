@@ -1,5 +1,6 @@
 %(
-    plugins => 'plugins',
+    :plugin-format<html>,
+    :plugins<plugins>,
     plugins-required => %(
         :setup<raku-doc-setup>,
         :render<
