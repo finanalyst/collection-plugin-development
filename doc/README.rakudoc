@@ -13,10 +13,10 @@ Another repository (Collection-Plugins) is the source for published / released C
 
 Typically for a developer, there will be
 =item the default directory C<~/.local/share/Collection>
-for the installed modules, which is syncronised with Collection-Plugins.
+for the installed modules, which is synchronised with Collection-Plugins.
 
 =item a working directory (default C< working/> ) that is used for preparing plugins
-from new sources to be later uploaded to Collection-PLugins.
+from new sources to be later uploaded to Collection-Plugins.
 
 So, the work flow is
 =item new plugins are added, modified, developed, tested in C<lib/plugins>
@@ -43,6 +43,12 @@ The program
 =item creates a release version for new / changed plugins in C<:repo>
 
 It is left to the developer to git add/commit/push the files.
+
+=head1 Test new plugins
+
+There is a directory C<trial> with a Website. The plugins are symlinked to C<lib/plugins/html>. To
+test the plugins, use C<raku bin/run-collection-trial>. This does not attempt to refresh
+the plugins from Collection::Plugins.
 
 =head1 Collection plugin specification
 
@@ -376,7 +382,7 @@ The 'clean' directory structure is
 =item2 bin/prepare-plugins # moves plugins from operating directory to release directory
 =item2 updateCSS # a bash file to run SCSS files in selected plugins
 
-The workflow is for changes to be made in Website, run Raku-Doc,
-inspect the result in C<localhost:3000>, and iterate.
+The workflow is for changes to be made in Website, run C<run-collection-plugin>,
+inspect the result in C<localhost:30000>, and iterate.
 
 =end pod

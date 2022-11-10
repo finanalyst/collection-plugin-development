@@ -2,6 +2,7 @@
 >
 ## Table of Contents
 [Introduction](#introduction)  
+[Test new plugins](#test-new-plugins)  
 [Collection plugin specification](#collection-plugin-specification)  
 [Collection plugin tests](#collection-plugin-tests)  
 [Collection-Plugin-Development utilities](#collection-plugin-development-utilities)  
@@ -25,9 +26,9 @@ Another repository (Collection-Plugins) is the source for published / released C
 
 Typically for a developer, there will be
 
-*  the default directory `~/.local/share/Collection` for the installed modules, which is syncronised with Collection-Plugins.
+*  the default directory `~/.local/share/Collection` for the installed modules, which is synchronised with Collection-Plugins.
 
-*  a working directory (default `working/` ) that is used for preparing plugins from new sources to be later uploaded to Collection-PLugins.
+*  a working directory (default `working/` ) that is used for preparing plugins from new sources to be later uploaded to Collection-Plugins.
 
 So, the work flow is
 
@@ -60,6 +61,9 @@ The program
 *  creates a release version for new / changed plugins in `:repo`
 
 It is left to the developer to git add/commit/push the files.
+
+# Test new plugins
+There is a directory `trial` with a Website. The plugins are symlinked to `lib/plugins/html`. To test the plugins, use `raku bin/run-collection-trial`. This does not attempt to refresh the plugins from Collection::Plugins.
 
 # Collection plugin specification
 All Collection plugins must conform to the following rules
@@ -419,7 +423,7 @@ The 'clean' directory structure is
 
 	*  updateCSS # a bash file to run SCSS files in selected plugins
 
-The workflow is for changes to be made in Website, run Raku-Doc, inspect the result in `localhost:3000`, and iterate.
+The workflow is for changes to be made in Website, run `run-collection-plugin`, inspect the result in `localhost:30000`, and iterate.
 
 
 
@@ -428,4 +432,4 @@ The workflow is for changes to be made in Website, run Raku-Doc, inspect the res
 
 
 ----
-Rendered from README at 2022-10-31T10:16:15Z
+Rendered from README at 2022-11-09T11:17:11Z

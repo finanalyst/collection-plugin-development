@@ -75,5 +75,6 @@ are changed in the working version are later than the released version with the 
 =item create a new directory (default C<working>) as the source for Collection-Plugins
 =item change prepare-plugins to automatically create C<working> by cloning from Collection-Plugins
 =item if C<working> exists, then git pull into directory
+=item make consistent with raku-pod-render 4
 
 =end pod
