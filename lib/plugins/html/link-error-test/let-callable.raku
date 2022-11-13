@@ -60,8 +60,8 @@ sub ($pr, %processed, %options) {
     for %processed.kv -> $fn, $podf {
         # not all files have links, but may be targets, so store filenames
         $files{"/$fn"}++;
-        # format of podf.links Str entry -> :location :target
-        # entry is not needed, but keeps the pair together
+        # format of podf.links Str entry -> :place :target :link-label :type
+        # entry is not needed, but keeps the data together
         # filter out remote schemas
         # ProcessedPod v0.4 has target/link-label/type/place, not target/location/link
         %links{$fn} = %(gather for $podf.links {
@@ -76,7 +76,10 @@ sub ($pr, %processed, %options) {
         %targets{"/$fn"} = [$podf.targets.keys];
     }
     # External tests
-    unless %config<no-remote>:exists and %config<no-remote> {
+    if %config<no-remote>:exists and %config<no-remote> {
+        %errors<remote><no_test> = True;
+    }
+    else {
         my $num = @remote-links.elems;
         my $starting = $num;
         my $tail = $num ~ " / $starting links  ";
@@ -85,7 +88,7 @@ sub ($pr, %processed, %options) {
         print  $head ~ $tail unless %options<no-status>;
         my $http = LibCurl::HTTP.new;
         my $start = now;
-        for @remote-links -> ($fn, $url, $link) {
+        for @remote-links -> ($fn, $url, $link-label) {
             my $resp;
             try {
                 $resp = $http.HEAD($url).perform.response-code;
@@ -100,7 +103,8 @@ sub ($pr, %processed, %options) {
             # any numerical response code indicates http link is live
             next if ($resp ~~ / \:\s(\d\d\d) / and +$0 != 404);
             # failures with non 404 ok as well.
-            %errors<remote>{$fn}.push(%( :$url, :$resp, :$link));
+            %errors<remote><no_test> = False without %errors<remote><no_test>;
+            %errors<remote>{$fn}.push(%( :$url, :$resp, :$link-label));
         }
         my $elap = (now - $start ).Int;
         say "\b" x $head.chars ~ $rev ~ "Collected responses on $starting links in { $elap div 60 } mins { $elap % 60 } secs"

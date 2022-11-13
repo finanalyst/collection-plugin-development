@@ -1,18 +1,9 @@
 %(
-    :plugin-format<html>,
-    :no-refresh, # do not call the refresh step after the first run
-    :no-preserve-state,# do not archive
-    :!recompile, # if true, force a recompilation of the source files when refresh is called
-    :!full-render, # force rendering of all output files
-    :without-processing,
-    :without-report, # do not make a report - default is False, but set True
-    :!without-completion, # we want the Cro app to start
     :mode-sources<structure-sources>, # content for the website structure
     :mode-cache<structure-cache>, # cache for the above
     :mode-ignore( 'custom-ui.rakudoc', ), # no files to ignore
     :mode-obtain(), # not a remote repository
     :mode-refresh(), # ditto
-    :!collection-info, # show milestone data
     :mode-extensions<rakudoc pod6>, # only use these for content
     :no-code-escape, # must use this when using highlighter
     :external-highlighter, # do not use build time highlighting, as browser side is expected
@@ -24,6 +15,6 @@
     :templates<templates>,
     completion-options => %(
         :port<30000>,
-        :host<192.168.0.11>,
+        :host<0.0.0.0>,
     ),
 )

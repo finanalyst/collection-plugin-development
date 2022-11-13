@@ -8,7 +8,16 @@ use v6.d;
     #| the array of strings run to refresh the sources, eg. git pull
     #| assumes CWD set to the directory of sources
     :source-refresh(), #git -C raku-docs/ pull --quiet>,
+    # processing options independent of Mode
     :!no-status, # show progress
+    :no-refresh, # do not call the refresh step after the first run
+    :no-preserve-state,# do not archive
+    :!recompile, # if true, force a recompilation of the source files when refresh is called
+    :!full-render, # force rendering of all output files
+    :!without-processing,
+    :!without-report, # do not make a report - default is False, but set True
+    :!without-completion, # we want the Cro app to start
+    :!collection-info, # show milestone data
     :mode<Website>, # the default mode, which must exist
     :ignore< 404 HomePage >,
     :extensions< rakudoc pod pod6 p6 pm pm6 >,
