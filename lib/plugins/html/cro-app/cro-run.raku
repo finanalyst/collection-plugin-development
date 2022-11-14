@@ -1,11 +1,15 @@
 use Cro::HTTP::Router;
 use Cro::HTTP::Server;
 use Cro::HTTP::Log::File;
+use RakuConfig;
 
-sub ( $destination, $landing, $ext, %config, %options ) {
+sub ( $destination, $landing, $ext, %p-config, %options ) {
     if (try require Cro::HTTP::Router) === Nil {
         exit note "Cro::HTTP needs to be installed"
     }
+    my %config = get-config;
+    my $host = %p-config<cro-app><host> // %config<host>;
+    my $port = %p-config<cro-app><port> // %config<port>;
     my $app = route {
         get -> *@path {
             static "$destination", @path,:indexes( "$landing\.$ext", );
@@ -13,14 +17,13 @@ sub ( $destination, $landing, $ext, %config, %options ) {
     }
     my Cro::Service $http = Cro::HTTP::Server.new(
     http => <1.1>,
-    host => %config<host> // 'localhost',
-    port => %config<port> // 30000,
+    :$host, :$port,
     application => $app,
     after => [
         Cro::HTTP::Log::File.new(logs => $*OUT, errors => $*ERR)
     ]
     );
-    say "Serving $landing on %config<host>\:%config<port>" unless %options<no-status>;
+    say "Serving $landing on $host\:$port" unless %options<no-status>;
     $http.start;
     react {
         whenever signal(SIGINT) {

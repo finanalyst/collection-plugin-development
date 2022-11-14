@@ -5,8 +5,8 @@ sub (%processed, @plugins-used, $processedpod, %options --> Array ) {
     for %processed.kv -> $fn, $podf {
         next unless $podf.links and +$podf.links.keys;
         @report.append: "$fn contains links";
-        for $podf.links.kv -> $entry, (:$target, :$location, :$link) {
-            @report.append: "\t｢$link｣ points to $location target at ｢$target｣"
+        for $podf.links.kv -> $entry, (:$target, :$place, :$link-label, :$type) {
+            @report.append: "\t｢$link-label｣ labels a ｢$type｣ link that points to ｢{ $place // 'top' }｣ in target ｢$target｣"
         }
     }
     my @plugs = "Plugin report" , ;

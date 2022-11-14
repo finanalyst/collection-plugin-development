@@ -1,6 +1,6 @@
 %(
-    :plugin-format<html>,
     :plugins<plugins>,
+    :plugin-format<html>,
     plugins-required => %(
         :setup<raku-doc-setup>,
         :render<
@@ -9,8 +9,7 @@
             link-error-test
             gather-js-jq gather-css
         >,
-        :transfer<gather-js-jq gather-css>,
-        :report(),
+        :report<images link-plugin-assets-report>,
         :compilation<website listfiles link-error-test>,
         :completion<cro-app>,
     ),

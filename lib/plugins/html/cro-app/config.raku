@@ -6,5 +6,7 @@
 	:completion<cro-run.raku>,
 	:license<Artistic-2.0>,
 	:name<cro-app>,
-	:version<0.2.0>,
+	:host<localhost>,
+	:port<30000>,
+	:version<0.3.0>,
 )
