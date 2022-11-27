@@ -15,7 +15,7 @@ sub ($pr, %processed, %options) {
     my %errors = <no-file unknown remote no-target> Z=> {}, {}, {}, {};
     my %links;
     my %targets;
-    my %config = $pr.get-data('let-callable');
+    my %config = $pr.get-data('link-error-test');
     sub failed-targets($file, Str $target) {
         my $old = $target.trim;
         # straight check

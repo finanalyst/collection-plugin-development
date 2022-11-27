@@ -2,7 +2,7 @@ sub ( $pp, %options ) {
     my Bool $loadjq-lib = False;
     my @js;
     my @js-bottom;
-    my %own-config = $pp.get-data('js-collator');
+    my %own-config = $pp.get-data('gather-js-jq');
     for $pp.plugin-datakeys -> $plug {
         next if $plug eq 'js-collator' ;
         my $data = $pp.get-data($plug);

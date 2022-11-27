@@ -2,12 +2,17 @@
 use v6.d;
 %(
     graphviz => sub (%prm, %tml) {
+        # check that dot executes
+        my $proc = shell 'command -v dot', :out;
+        unless $proc.out.slurp(:close) { # if dot does not exist, then no output
+                return "\n"~'<div class="graphviz"><div style="color: red">The program ｢dot｣ fom Graphviz needs installing to get an image</div></div>'
+        }
         #remove <p> and </p>
         my $data = %prm<contents>.subst(/^\<p\>/, '');
         $data .=subst(/\<\/p\> \s* $/, '');
         # de-escape data
         $data .= trans(qw｢ &lt; &gt; &amp; &quot; ｣ => qw｢ <    >    &     " ｣);
-        my $proc = Proc::Async.new(:w, 'dot', '-Tsvg');
+        $proc = Proc::Async.new(:w, 'dot', '-Tsvg');
         my $proc-rv;
         my $proc-err;
         $proc.stdout.tap(-> $d { $proc-rv ~= $d });

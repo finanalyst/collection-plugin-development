@@ -2,11 +2,11 @@
 .precomp/
 lib/.precomp/
 .idea/
-xt/test-dir/
 trial/doc_cache/
 trial/rendered_html/
 trial/Website/structure-cache/
-trial/Website/structure-cache/*
+/trial/Website/reports/
 *.css.map
 raku-collection-plugin-development.iml
-raku-collection-plugins/*
+raku-collection-plugins/
+working/*

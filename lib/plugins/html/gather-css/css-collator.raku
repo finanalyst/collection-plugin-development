@@ -1,8 +1,9 @@
-sub ($pp, %plugin-options, %options) {
+sub ($pp, %options) {
     my $css = '';
     my @links;
     my @adds;
     for $pp.plugin-datakeys {
+        next if $_ eq 'gather-css';
         my $data = $pp.get-data($_);
         next unless $data ~~ Associative;
         if $data<css>:exists and $data<css> ~~ Str:D {

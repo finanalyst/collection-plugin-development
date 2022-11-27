@@ -1,7 +1,7 @@
 %(
     plugin-options => %(
         cro-app => %(
-            :port<30000>,
+            :port<5000>,
             :host<0.0.0.0>,
         ),
         link-error-test => %(

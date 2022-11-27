@@ -16,7 +16,9 @@ use v6.d;
     :!full-render, # force rendering of all output files
     :!without-processing,
     :mode<Website>, # the default mode, which must exist
-    :ignore< 404 HomePage >,
+    #:ignore< 404 HomePage >,
+    :ignore< 404 HomePage Type/Attribute Type/CallFrame Type/Cool Type/Dateish Type/Parameter
+        Type/Signature faq Language/classtut nativecall variables subscripts>,
     :extensions< rakudoc pod pod6 p6 pm pm6 >,
     :asset-basename<asset_base>,
     :asset-paths( %( # type of asset is key, then metadata for that type
