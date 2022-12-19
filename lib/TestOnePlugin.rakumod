@@ -126,21 +126,14 @@ module Test::CollectionPlugin {
         }
         True
     }
-    our sub check-render-reqs(Str:D $component where *~~ one(<custom-raku template-raku>), %config --> Bool) {
-        my Bool $rc = True;
-        unless $component ~~ any(%config.keys) {
-            my-diag("Plugin config must contain a ｢$component｣ key because it contains a ｢render｣ key.");
-            $rc = False
-        }
-        if $rc and %config{$component} !~~ Str:D {
-            if %config{$component} !~~ Empty {
-                my-diag(qq:to/ERROR/);
-                    ｢config\{ $component \}｣ should point to () or a string.
-                    Instead got ｢{ %config{$component}.raku }｣.
-                    ERROR
-
-                $rc = False
-            }
+    our sub check-render-reqs(Str:D $component where *~~ one(<custom-raku template-raku>), %config --> Str ) {
+        return "Plugin config must contain a ｢$component｣ key because it contains a ｢render｣ key."
+            unless $component ~~ any(%config.keys);
+        if %config{$component} !~~ Str:D {
+            return qq:to/ERROR/ unless %config{$component} ~~ Empty;
+                ｢config\< $component \>｣ should point to () or a string.
+                Instead got ｢{ %config{$component}.raku }｣.
+                ERROR
         }
         else {
             if %config{$component}.IO ~~ :e & :f {
@@ -149,44 +142,34 @@ module Test::CollectionPlugin {
                     $retval = EVALFILE %config{$component};
                     CATCH {
                         default {
-                            my-diag(qq:to/ERROR/);
-                                ｢config\{ $component \}｣ points to ｢{ %config{$component} }｣ which should run as a Raku program.
+                            return qq:to/ERROR/;
+                                ｢config\< $component \>｣ points to ｢{ %config{$component} }｣ which should run as a Raku program.
                                 Instead got compiler exception ｢{ .message }｣
                                 ERROR
-
-                            $rc = False
                         }
                     }
                     if $component eq 'custom-raku' and $retval !~~ Positional {
-                        my-diag(qq:to/ERROR/);
-                            ｢config\{ $component \}｣ points to ｢{ %config{$component} }｣ which should return an Array.
+                        return qq:to/ERROR/;
+                            ｢config\< $component \>｣ points to ｢{ %config{$component} }｣ which should return an Array.
                             Instead got ｢{ $retval.raku }｣.
                             ERROR
-
-                        $rc = False;
                     }
                     if $component eq 'template-raku' and $retval !~~ Associative {
-                        my-diag(qq:to/ERROR/);
-                            ｢config\{ $component \}｣ points to ｢{ %config{$component} }｣ which should return an Hash.
+                        return qq:to/ERROR/;
+                            ｢config\< $component \>｣ points to ｢{ %config{$component} }｣ which should return an Hash.
                             Instead got ｢{ $retval.raku }｣.
                             ERROR
-
-                        $rc = False;
                     }
                 }
             }
             else {
-                $rc = %config<information>.defined and $component ~~ any(%config<information>.list);
-                unless $rc {
-                    my-diag(qq:to/ERROR/)
-                        ｢config\{ $component \}｣ points to ｢{ %config{$component} }｣ which should be a file in the plugin directory
-                        Have you misspelt the filename, or missed out a \:information key?
-                        ERROR
-
-                     }
+                return qq:to/ERROR/ unless %config<information>.defined and ($component ~~ any(%config<information>.list));
+                    ｢config\< $component \>｣ points to ｢{ %config{$component} }｣ which should be a file in the plugin directory
+                    Have you misspelt the filename, or missed out a \:information key?
+                    ERROR
             }
         }
-        $rc
+        ''
     }
     our sub check-milestone(%config, Bool :$relaxed = False --> Bool) {
         my Bool $rc = True;
@@ -210,15 +193,20 @@ module Test::CollectionPlugin {
                     my-diag(qq:to/ERROR/);
                         Config contains ｢:render｣ but does not contain both ｢:custom-raku｣ and ｢:template-raku｣
                         ERROR
-
                     return False
                 }
-                $rc = check-render-reqs('custom-raku', %config);
-                $rc &&= check-render-reqs('template-raku', %config);
-                return False unless $rc;
+                my $err = check-render-reqs('custom-raku', %config);
+                if $err {
+                    my-diag($err);
+                    return False
+                }
+                $err = check-render-reqs('template-raku', %config);
+                if $err {
+                    my-diag($err);
+                    return False
+                }
                 next if %config<render> ~~ Bool;
                 # render requisites met and render key should point to a file
-                return False unless $rc;
                 #     sub ( $pr, %options --> Array ) {...}
                 $rc = check-callable($_, %config,
                     / 'sub' \s+ \(
@@ -237,7 +225,6 @@ module Test::CollectionPlugin {
                     \s* '$mode-root' \s* \,
                     \s* '%options' \s*
                     \) /, :$relaxed);
-
             }
             when 'compilation' {
                 # sub ( $pr, %processed, %options) { ... }
@@ -292,7 +279,7 @@ module Test::CollectionPlugin {
             CATCH {
                 default {
                     my-diag(qq:to/ERROR/);
-                    ｢config\{ $key \}｣ points to ｢{ %config{$key} }｣ which should run as a Raku program.
+                    ｢config\< $key \>｣ points to ｢{ %config{$key} }｣ which should run as a Raku program.
                     Instead got compiler exception ｢{ .message }｣
                     ERROR
 
@@ -301,7 +288,7 @@ module Test::CollectionPlugin {
             }
         }
         unless $call ~~ Callable {
-            my-diag("｢config\{ $key \}｣ points to ｢{ %config{$key} }｣ which does not evaluate to a callable");
+            my-diag("｢config\< $key \>｣ points to ｢{ %config{$key} }｣ which does not evaluate to a callable");
             return False
         }
         return True if $relaxed;
@@ -312,7 +299,7 @@ module Test::CollectionPlugin {
             LAST {
                 unless $rc {
                     my-diag(qq:to/ERROR/);
-                    ｢config\{ $key \}｣ points to ｢{ %config{$key} }｣ which should contain a line matching ｢{ $regex.raku }｣.
+                    ｢config\< $key \>｣ points to ｢{ %config{$key} }｣ which should contain a line matching ｢{ $regex.raku }｣.
                     If the callable uses a different naming convention, call check-plugin with ｢:relaxed｣.
                     ERROR
 

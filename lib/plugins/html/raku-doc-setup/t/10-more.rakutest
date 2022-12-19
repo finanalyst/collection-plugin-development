@@ -14,7 +14,7 @@ my $cache = Pod::From::Cache.new(:extensions<pod6 pm6>, :doc-source<t/s>, :cache
 my &callable;
 lives-ok { &callable = EVALFILE 'raku-doc-change-routes.raku' }, 'got callable';
 
-&callable($cache, Pod::From::Cache, True, 's', '', {} );
+&callable($cache, Pod::From::Cache, True, 's', '', {}, {} );
 my $rv = $cache.pod('t/s/language/two.pod6');
 isa-ok $rv[0], Pod::Block, 'got cache contents';
 like $rv[0].raku, / 'other stuff' /, 'got two.pod6';

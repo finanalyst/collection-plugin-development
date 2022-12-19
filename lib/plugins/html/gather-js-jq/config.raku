@@ -14,5 +14,5 @@
 	:render<js-collator.raku>,
 	:template-raku<js-templates.raku>,
 	:transfer<cleanup.raku>,
-	:version<0.3.2>,
+	:version<0.3.3>,
 )

@@ -86,8 +86,9 @@ multi sub MAIN(
 multi sub MAIN(:show-default(:show-defaults($))!) is export {
     say format-config(%collection-defaults);
 }
-multi sub MAIN(Bool :$bump!, Str:D :plugins(:$plugin) = '', Str:D :$path = '.',
-    Bool :$quiet = False ) {
+multi sub MAIN(Bool :$bump!, Str:D :plugins(:$plugin) = '',
+        Str:D :$path = 'lib/plugins/html',
+        Bool :$quiet = False ) {
     my %config = get-config(:path("$path/$plugin/config.raku"));
     my @v = %config<version>.split(/'.'/);
     @v[2]++;

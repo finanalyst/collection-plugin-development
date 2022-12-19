@@ -77,4 +77,13 @@ are changed in the working version are later than the released version with the 
 =item if C<working> exists, then git pull into directory
 =item make consistent with raku-pod-render 4
 
+=head1 2022-11-27 v0.4.1
+=item plugin updates
+
+=head1 2022-12-13 v0.4.2
+=item fix error in TestOnePlug in render requirements.
+
+=head1 2022-12-21 v0.4.3
+=item added secondaries plugin to generate the legacy Secondary files.
+
 =end pod

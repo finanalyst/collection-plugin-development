@@ -4,9 +4,13 @@
 		"finanalyst",
 	),
 	:completion<cro-run.raku>,
+	:host<localhost>,
+	:information(
+		"host",
+		"port",
+	),
 	:license<Artistic-2.0>,
 	:name<cro-app>,
-	:host<localhost>,
 	:port<30000>,
-	:version<0.3.0>,
+	:version<0.3.1>,
 )

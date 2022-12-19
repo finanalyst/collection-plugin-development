@@ -26,6 +26,8 @@ they are unique.
 =head1 Configuration
 
 Testing remote files is slow, so it can be turned off by setting C<no-remote> to True in the plugin config file.
+In general, Collection allows for plugin configuration data to be declared in the Mode configuration
+file. Check the Collection documentation.
 
 =head1 Reporting
 

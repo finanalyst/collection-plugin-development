@@ -1,0 +1,57 @@
+use v6.d;
+use Test;
+plan 14;
+
+my %tems;
+my $rv;
+
+lives-ok { %tems = EVALFILE 'header-templates.raku' }, 'hash is returned';
+bail-out 'no templates' unless %tems.elems;
+isa-ok %tems<heading>, Callable, 'got a callable in header template';
+my %data = :heading( %(defs => {},) ), ;
+my %params = %(
+    text => 'Some text',
+    target => 'A_header',
+    top => '__TOP',
+    config => %( :name<testf>, :path<this/dir> ),
+    heading => %data<heading>,
+);
+ok %params<heading><defs> ~~ Associative, 'defs ok';
+my %tml = %( escaped => sub ($s) {
+    $s.uc
+},);
+lives-ok { $rv = %tems<heading>.(%params, %tml) }, 'closure lives';
+like $rv, /
+    '<h1 id="' .+
+    { %params<text> }
+    .+ '</h1>'
+    /, 'A simple header';
+is %data<heading><defs>.keys.Int,0, 'no change to defs';
+%params<text> = 'method coerce_type';
+$rv = %tems<heading>.(%params, %tml);
+is %data<heading><defs>.keys.Int, 1, 'new file with defn';
+isa-ok %data<heading><defs><testf>, Associative, 'a file/target Hash found';
+is %data<heading><defs><testf><A_HEADER><kind>, 'routine', 'kind correct';
+is %data<heading><defs><testf><A_HEADER><subkind>, 'method', 'subkind correct';
+is %data<heading><defs><testf><A_HEADER><category>, 'method', 'category correct';
+%params = %(
+    text => 'sub move-over',
+    target => 'moveover_header',
+    top => '__TOP',
+    config => %( :name<testf>, :path<this/dir> ),
+    heading => %data<heading>,
+);
+$rv = %tems<heading>.(%params, %tml);
+is %data<heading><defs>.elems,1, 'same file definition';
+is %data<heading><defs><testf>.elems, 2, 'new definition in same file';
+%params = %(
+    text => 'sub move-over',
+    target => 'moveover_header',
+    top => '__TOP',
+    config => %( :name<testf2>, :path<this/dir> ),
+    heading => %data<heading>,
+);
+$rv = %tems<heading>.(%params, %tml);
+is %data<heading><defs>.elems,2, 'new file definition';
+
+done-testing;

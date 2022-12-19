@@ -13,6 +13,9 @@
 [2022-09-16 v0.2.0](#2022-09-16-v020)  
 [2022-09-23 v0.3.0](#2022-09-23-v030)  
 [2022-10-31 v0.4.0](#2022-10-31-v040)  
+[2022-11-27 v0.4.1](#2022-11-27-v041)  
+[2022-12-13 v0.4.2](#2022-12-13-v042)  
+[2022-12-21 v0.4.3](#2022-12-21-v043)  
 
 ----
 # 2022-08-09 v0.0.2
@@ -119,17 +122,28 @@
 *  remove old files/directories from released plugins when deleted from working copies
 
 # 2022-10-31 v0.4.0
-
-
 *  create a new directory (default `working`) as the source for Collection-Plugins
 
 *  change prepare-plugins to automatically create `working` by cloning from Collection-Plugins
 
 *  if `working` exists, then git pull into directory
 
+*  make consistent with raku-pod-render 4
+
+# 2022-11-27 v0.4.1
+*  plugin updates
+
+# 2022-12-13 v0.4.2
+*  fix error in TestOnePlug in render requirements.
+
+# 2022-12-21 v0.4.3
+
+
+*  added secondaries plugin to generate the legacy Secondary files.
+
 
 
 
 
 ----
-Rendered from CHANGELOG at 2022-10-31T10:16:12Z
+Rendered from CHANGELOG at 2022-12-19T21:13:32Z
