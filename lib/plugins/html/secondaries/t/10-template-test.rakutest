@@ -1,6 +1,6 @@
 use v6.d;
 use Test;
-plan 14;
+plan 17;
 
 my %tems;
 my $rv;
@@ -43,7 +43,6 @@ is %data<heading><defs><testf><A_HEADER><category>, 'method', 'category correct'
 );
 $rv = %tems<heading>.(%params, %tml);
 is %data<heading><defs>.elems,1, 'same file definition';
-is %data<heading><defs><testf>.elems, 2, 'new definition in same file';
 %params = %(
     text => 'sub move-over',
     target => 'moveover_header',
@@ -53,5 +52,16 @@ is %data<heading><defs><testf>.elems, 2, 'new definition in same file';
 );
 $rv = %tems<heading>.(%params, %tml);
 is %data<heading><defs>.elems,2, 'new file definition';
-
+%params = %(
+    text => 'The <code>*</code> twigil',
+    target => 'The_*_twigil',
+    top => '__TOP',
+    config => %( :name<testf>, :path<this/dir> ),
+    heading => %data<heading>,
+);
+$rv = %tems<heading>.(%params, %tml);
+is %data<heading><defs><testf>.elems, 3, 'another new definition in same file';
+is %data<heading><defs><testf><THE_*_TWIGIL><kind>, 'syntax', 'kind correct';
+is %data<heading><defs><testf><THE_*_TWIGIL><subkind>, 'twigil', 'subkind correct';
+is %data<heading><defs><testf><THE_*_TWIGIL><category>, 'twigil', 'category correct';
 done-testing;

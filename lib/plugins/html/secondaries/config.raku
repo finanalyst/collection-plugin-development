@@ -10,5 +10,5 @@
 	:compilation<gen-secondaries.raku>,
 	:transfer<cleanup.raku>,
 	:template-raku<header-templates.raku>,
-	:version<0.1.0>,
+	:version<0.1.3>,
 )

@@ -63,22 +63,29 @@ use v6.d;
             if $parsed {
                 my $kind;
                 my $category;
+                my $name;
+                my $subkind;
                 my $fn = %prm<config><name>;
+                with $parsed<TOP><infix-foo> { $name = .<name>.Str; $subkind = .<subkind>.Str }
+                with $parsed<TOP><the-foo-infix> { $name = .<single-name>.Str ; $subkind = .<subkind>.Str }
                 with $parsed<TOP><infix-foo><subkind><routine> { $kind = 'routine'; $category = .Str }
                 with $parsed<TOP><infix-foo><subkind><syntax> { $kind = 'syntax'; $category = .Str }
                 with $parsed<TOP><infix-foo><subkind><operator> { $kind = 'routine'; $category = 'operator' }
+                with $parsed<TOP><the-foo-infix><subkind><routine> { $kind = 'routine'; $category = .Str }
+                with $parsed<TOP><the-foo-infix><subkind><syntax> { $kind = 'syntax'; $category = .Str }
+                with $parsed<TOP><the-foo-infix><subkind><operator> { $kind = 'routine'; $category = 'operator' }
                 %prm<heading><defs>{ $fn } = {} unless %prm<heading><defs>{ $fn }:exists;
                 %prm<heading><defs>{ $fn }{ $target } = %(
-                    name       => ~$parsed<TOP><infix-foo><name> // ~$parsed<TOP><infix-foo><single-name>,
+                    :$name,
                     :$kind,
-                    subkind   => ~$parsed<TOP><infix-foo><subkind>,
+                    :$subkind,
                     :$category, # only one category per defn
                 );
                 $bookmark = "<!-- defnmark $target -->";
             }
         }
         # now output the header
-        '<h' ~ $level
+        "\n<h" ~ $level
             ~ ' id="'
             ~ $target
             ~ '"><a href="#'

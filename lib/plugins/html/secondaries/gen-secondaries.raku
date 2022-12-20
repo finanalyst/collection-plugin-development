@@ -19,7 +19,7 @@ sub ( $pp, %processed, %options ) {# these chars cannot appear in a unix filesys
         my @goodchars = @badchars
                         .map({ '$' ~ .uniname      })
                         .map({ .subst(' ', '_', :g)});
-
+        $name .= subst( / [ \< | \< \/ ] 'code' \> /, '', :g );
         $name = $name.subst(@badchars[0], @goodchars[0], :g);
         $name = $name.subst(@badchars[1], @goodchars[1], :g);
 
