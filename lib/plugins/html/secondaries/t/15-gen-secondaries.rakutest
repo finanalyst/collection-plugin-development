@@ -4,8 +4,11 @@ use File::Directory::Tree;
 use ProcessedPod;
 use RakuConfig;
 
-plan 11;
+plan 14;
 
+my @triples;
+my %processed;
+my %data;
 my %config = get-config;
 my ProcessedPod $pp .= new;
 $pp.templates( 't/test-temps.rakuon' );
@@ -17,9 +20,9 @@ my &secondaries;
 lives-ok { &secondaries  = EVALFILE %config<compilation> }, 'compilation callable evaluates';
 my &cleanup;
 lives-ok { &cleanup = EVALFILE %config<transfer> }, 'transfer callable evaluates';
-lives-ok { &namespace-check( $pp, {} )}, 'render callable lives';
+lives-ok { &namespace-check( $pp, {} ) }, 'render callable lives';
 
-my %data = $pp.get-data('heading');
+%data = $pp.get-data('heading');
 isa-ok %data<defs>, Associative, 'data structure established';
 
 =begin pod
@@ -50,7 +53,6 @@ A soft infix syntax
 
 =end pod
 
-my %processed;
 for ^2 -> $p {
     my $name = "Synthetic_$p";
     with $pp {
@@ -58,14 +60,51 @@ for ^2 -> $p {
         .pod-file.path = "doc/sythn/p_$p\.rakudoc";
         .process-pod( $=pod[$p] );
         .file-wrap(:filename($name), :dir<html>, :ext<html> );
-        %processed{ $name } = .emit-and-renew-processed-state
+        %processed{ $name } = .emit-and-renew-processed-state;
     }
 }
 is +%processed.keys, 2, 'two files in processed';
-my @triples;
 lives-ok { @triples = &secondaries($pp,%processed, %() ) }, 'gen-secondaries lives';
 is @triples.elems,2, 'some secondaries generated';
+
+=begin pod
+=TITLE Difficult Heads
+=SUBTITLE complex pod in headers
+
+=head1 infix X<C«and»|Operators,and>
+
+Header with Indexing in title
+
+=head1 infix C«...»
+X<|Infix operators,...>X<|Infix operators,...^>X<|Infix operators,^...>X<|Infix operators,^...^>
+X<|Infix operators,…>X<|Infix operators,…^>X<|Infix operators,^…>X<|Infix operators,^…^>
+
+header with zero indexing afterwards
+
+=end pod
+
+%processed = Empty;
+$pp .= new;
+$pp.templates( 't/test-temps.rakuon' );
+$pp.modify-templates( %config<template-raku> );
+&namespace-check( $pp, {} );
+%data = $pp.get-data('heading');
+my $name = 'Complex_headers';
+with $pp {
+    .pod-file.name = $name;
+    .pod-file.path = "doc/sythn/p_3\.rakudoc";
+    .process-pod( $=pod[2] );
+    .file-wrap(:filename($name), :dir<html>, :ext<html> );
+    %processed{ $name } = .emit-and-renew-processed-state;
+}
+
+@triples = &secondaries($pp,%processed, %() );
+is @triples.elems,2, 'two secondaries generated';
+is @triples[0][0], one(<routine/and.html routine/....html>), 'got one right file';
+is @triples[1][0], one(<routine/and.html routine/....html>), 'got other right file';
+
 &cleanup($pp, %(), %() );
 is 'html/routine'.IO.dir( test => *.ends-with('html') ), (), 'routine directory emptied';
 is 'html/syntax'.IO.dir( test => *.ends-with('html') ), (), 'syntax directory emptied';
+
 done-testing;

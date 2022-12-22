@@ -52,14 +52,18 @@ use v6.d;
     #        $!dcategory = $/.Str;
     #    }
     #}
-
         # get the heading information structure
         my $text = %prm<text> // '';
+        # Normalize text for searching for routines
+        my $n-text = $text
+            .subst(/ '<a' ~ '/a>' .+? / , '', :g)
+            .subst(/ \< ~ \> .+? / , '', :g)
+            .trim;
         my $target = %tml<escaped>(%prm<target>);
         my $level = %prm<level> // '1';
         my $bookmark = '';
         unless %prm<skip-parse> {
-            my $parsed = $text ~~ / <TOP> /;
+            my $parsed = $n-text ~~ / <TOP> /;
             if $parsed {
                 my $kind;
                 my $category;

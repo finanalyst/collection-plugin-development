@@ -6,7 +6,7 @@ sub ( $pp, %options --> Array ) {
         %ns<defs> = {};
     }
     else {
-        $pp.add-data('heading', %( :defs( {} ), ) )
+        $pp.add-data('heading', %( :defs( {} ), ) );
     }
     []
 }

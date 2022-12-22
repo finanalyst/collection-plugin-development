@@ -64,4 +64,5 @@ is %data<heading><defs><testf>.elems, 3, 'another new definition in same file';
 is %data<heading><defs><testf><THE_*_TWIGIL><kind>, 'syntax', 'kind correct';
 is %data<heading><defs><testf><THE_*_TWIGIL><subkind>, 'twigil', 'subkind correct';
 is %data<heading><defs><testf><THE_*_TWIGIL><category>, 'twigil', 'category correct';
+
 done-testing;

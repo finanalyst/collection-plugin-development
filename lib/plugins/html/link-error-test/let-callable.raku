@@ -152,15 +152,15 @@ sub ($pr, %processed, %options) {
                     }
                     # otherwise no action for matches
                 }
-                when 'internal' and %registered<target> ~~ / ^ <-[#]>+ $ / {
-                    my $target = ~$/;
-                    my @failed = failed-targets("/$fn", $target);
-                    next unless @failed.elems;
-                    %errors<no-target>{$fn}.push(%(
-                        file => $fn,
-                        targets => @failed,
-                        link-label => %registered<link-label>
-                    ))
+                when 'internal' and (%registered<target> ~~ / ^ <-[#]>+ $ /) {
+#                    my $target = ~$/;
+#                    my @failed = failed-targets("/$fn", $target);
+#                    next unless @failed.elems;
+#                    %errors<no-target>{$fn}.push(%(
+#                        file => $fn,
+#                        targets => @failed,
+#                        link-label => %registered<link-label>
+#                    ))
                 }
                 default {
                     %errors<unknown>{$fn}.push(%(
