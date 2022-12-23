@@ -1,0 +1,67 @@
+#raku-repl {
+    position: fixed;
+    bottom: 0;
+    left: 1vw;
+    width: 98vw;
+    z-index: 100;
+    opacity: 80%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
+    justify-content: stretch;
+    grid-template-areas:
+        "input input"
+        "stdout stderr"
+}
+#Camelia-code {
+    visibility: hidden;
+	width: 100px;
+	height: 48px;
+}
+#raku-input {
+    display: flex;
+    flex-direction: row;
+    grid-area: input;
+}
+#raku-code {
+    border-color: darkblue;
+    border-width: 2px;
+    border-radius: 10px;
+    border-style: ridge;
+    visibility: inherit;
+}
+.raku-button {
+    border-radius: 10px;
+    color: blue;
+    background-color: whitesmoke;
+    visibility: inherit;
+}
+#raku-ws-headout {
+    border-color: deepskyblue;
+    border-width: 2px;
+    border-radius: 10px;
+    border-style: ridge;
+    grid-area: stdout;
+    display: flex;
+    justify-content: start;
+    background-color: whitesmoke;
+    visibility: inherit;
+    legend {
+        color: darkblue;
+    visibility: inherit;
+    }
+}
+#raku-ws-headerr {
+    border-color: deeppink;
+    border-width: 2px;
+    border-radius: 10px;
+    border-style: ridge;
+    grid-area: stderr;
+    display: flex;
+    justify-content: start;
+    background-color: whitesmoke;
+    visibility: inherit;
+    legend {
+        color: darkred;
+    }
+}

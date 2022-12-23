@@ -209,6 +209,7 @@ use ProcessedPod;
                 ~ %tml<page-bottom>({},{})
                 ~ (%prm<footnotes> // '')
                 ~ %tml<footer>(%prm, %tml)
+                ~ '<div id="raku-repl"></div>'
                 ~ %tml<js-bottom>({},{})
                 ~ "\n\t</body>\n</html>\n"
     },
@@ -305,7 +306,8 @@ use ProcessedPod;
     },
     'footer' => sub ( %prm, %tml ) {
         "\n"
-        ~ '<footer><div>Rendered from <span class="path">'
+        ~ '<footer>'
+        ~ '<div>Rendered from <span class="path">'
         ~ ( (%prm<config><path>:exists and  %prm<config><path> ne '') ?? %prm<config><path> !! 'no path' )
         ~ '</span></div>'
         ~ '<div>at <span class="time">'

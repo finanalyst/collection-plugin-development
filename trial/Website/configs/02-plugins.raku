@@ -5,7 +5,7 @@
         :setup<raku-doc-setup>,
         :render<
             raku-styling website camelia simple-extras listfiles images font-awesome filterlines
-            leafletmap graphviz latex-render secondaries
+            leafletmap graphviz latex-render secondaries raku-repl
             link-error-test
             gather-js-jq gather-css
         >,

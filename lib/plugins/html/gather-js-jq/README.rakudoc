@@ -1,7 +1,7 @@
 =begin pod
 =TITLE Documentation on gather-js-jq plugin for Collection
 
-=DESCRIPTION Looks for C<script>/C<script-link> & C<jquery>/<jquery-link> key in other plugins.
+=DESCRIPTION Looks for C<js-script>/C<js-link> & C<jquery>/<jquery-link> key in other plugins.
 Creates template entries that are referenced in the generic source-wrap template.
 
 =head1 Usage

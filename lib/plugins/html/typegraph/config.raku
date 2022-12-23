@@ -6,7 +6,7 @@
 	:custom-raku(),
 	:license<Artistic-2.0>,
 	:name<typegraph>,
-	:render,
+	:setup<add-type-graph.raku>,
 	:template-raku(),
 	:version<0.2.0>,
 )

@@ -4,14 +4,18 @@
     grid-tempate-rows: 7em auto;
     grid-template-areas: 'top top' 'left right';
     align-content: start;
-    justify-content: center;
+    justify-content: flex-start;
     .ws-toc-container {
         grid-area: left;
         align-self: start;
+        height: 57vh;
+        overflow: scroll;
     }
     .ws-glossary-container {
         grid-area: right;
         align-self: start;
+        height: 57vh;
+        overflow: scroll;
     }
     input {
         grid-area: top;

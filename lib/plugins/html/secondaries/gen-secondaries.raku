@@ -1,6 +1,7 @@
 #!/usr/bin/env raku
 use v6.d;
 use ProcessedPod;
+use Collection::Progress;
 
 sub ( $pp, %processed, %options ) {# these chars cannot appear in a unix filesystem path
     my regex defnmark {
@@ -34,7 +35,10 @@ sub ( $pp, %processed, %options ) {# these chars cannot appear in a unix filesys
     my %things = %( routine => {}, syntax => {} );
     my %templates = $pp.tmpl; # templates hash in ProcessedPod instance
     my @transfers; #this is for the triples describing the files
-    for %data<defs>.kv -> $fn, %targets {
+    my %definitions = %data<defs>;
+    counter(:items( %definitions.keys ), :header('Generating secondaries'));
+    for %definitions.kv -> $fn, %targets {
+        counter(:dec);
         my $html = %processed{$fn}.pod-output;
         my $parsed = $html ~~ / [ <defnmark> .*? ]+ $ /;
         for $parsed<defnmark> {

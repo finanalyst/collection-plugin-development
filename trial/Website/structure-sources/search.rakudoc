@@ -1,11 +1,22 @@
 =begin pod :no-toc :no-glossary
 =TITLE Search Page
 
-=head1 Search the Website
-
 =begin Website :make<toc-glossary> :toc-caption<Table of Contents> :glossary-caption<Website Index>
 Combined Contents and Index
 
 =end Website
 
 =end pod
+#=begin FilterLines :selector<.listf-file *> :placeholder<Search for routine name>
+#
+#=for ListFiles :select<kind=routine>
+#Search for routines by name
+#
+#=end FilterLines
+#
+#=begin FilterLines :selector<.listf-file> :placeholder<Search for syntax name>
+#
+#=for ListFiles :select<kind=syntax>
+#Search for syntax by name
+#
+#=end FilterLines
