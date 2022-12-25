@@ -3,12 +3,12 @@
 	:authors(
 		"finanalyst",
 	),
+	:compilation<gen-secondaries.raku>,
 	:custom-raku(),
 	:license<Artistic-2.0>,
 	:name<secondaries>,
 	:render<namespace-check.raku>,
-	:compilation<gen-secondaries.raku>,
-	:transfer<cleanup.raku>,
 	:template-raku<header-templates.raku>,
-	:version<0.1.5>,
+	:transfer<cleanup.raku>,
+	:version<0.1.6>,
 )

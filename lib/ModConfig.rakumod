@@ -86,9 +86,14 @@ multi sub MAIN(
 multi sub MAIN(:show-default(:show-defaults($))!) is export {
     say format-config(%collection-defaults);
 }
-multi sub MAIN(Bool :$bump!, Str:D :plugins(:$plugin) = '',
+multi sub MAIN(Bool :$bump!, Str:D :$plugins, |c ) {
+    for $plugins.comb(/ \S+ /) { MAIN(:bump, :plugin($_), |c ) }
+}
+multi sub MAIN(Bool :$bump!, Str:D :$plugin = '',
         Str:D :$path = 'lib/plugins/html',
         Bool :$quiet = False ) {
+    exit note("｢$path/$plugin/config.raku｣ does not exist")
+        unless "$path/$plugin/config.raku".IO ~~ :e &:f;
     my %config = get-config(:path("$path/$plugin/config.raku"));
     my @v = %config<version>.split(/'.'/);
     @v[2]++;
