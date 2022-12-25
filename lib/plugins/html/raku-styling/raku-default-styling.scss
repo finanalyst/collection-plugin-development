@@ -50,10 +50,10 @@ header {
     width: 100%;
     display: grid;
     grid-template-rows: 3.5em 2em;
-    grid-template-columns: 100px auto 12% 10% 100px;
+    grid-template-columns: 100px 1fr 3fr 1fr 1fr 100px;
     grid-template-areas:
-    "home title error extra extra"
-    " . menu menu menu .";
+    "home brand title error extra extra"
+    " . menu menu menu menu .";
     border-radius: 0 0 4em 4em;
     margin: 0;
     padding: 0.5em 0em 0 0em;
@@ -70,8 +70,8 @@ header {
         justify-self: stretch;
         font-family: sans-serif;
         font-weight: bold;
-        font-size: xx-large;
-        color: blanchedalmond;
+        font-size: x-large;
+        color: darkblue;
         text-shadow:
             0 1px 0 #ccc,
             0 2px 0 #c9c9c9,
@@ -168,7 +168,7 @@ header {
             font-family: sans-serif;
             font-weight: normal;
             font-size: large;
-            color: #9A161D;
+            color: #155497;
             padding: 0.5em 0.5em 0.3em 0.5em;
             margin: 0 0.5em 0 0.5em;
             box-shadow:
@@ -217,21 +217,110 @@ pre {
     white-space: pre-wrap;
     word-break: break-all; }
 
-nav {
+.raku-collection {
+    color: black;
+    font-size: x-large;
+    font-weight: bold;
+    grid-area: brand;
+}
+
+.raku-sidebar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  float: left;
+}
+
+.raku-sidebar {
+  display: flex;
+}
+
+.raku-sidebar-container .checkbox {
+  position: absolute;
+  display: block;
+  height: 32px;
+  width: 32px;
+  z-index: 21;
+  opacity: 0;
+  margin: 7px;
+  cursor: pointer;
+}
+
+.raku-sidebar-container .hamburger-lines {
+  display: block;
+  height: 26px;
+  width: 32px;
+  position: absolute;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin: 7px;
+}
+
+.raku-sidebar-container .hamburger-lines .line {
+  display: block;
+  height: 4px;
+  width: 100%;
+  border-radius: 10px;
+  background: #0e2431;
+}
+
+.raku-sidebar-container .hamburger-lines .line1 {
+  transform-origin: 0% 0%;
+  transition: transform 0.4s ease-in-out;
+}
+
+.raku-sidebar-container .hamburger-lines .line2 {
+  transition: transform 0.2s ease-in-out;
+}
+
+.raku-sidebar-container .hamburger-lines .line3 {
+  transform-origin: 0% 100%;
+  transition: transform 0.4s ease-in-out;
+}
+
+.raku-sidebar-container .raku-sidebar {
+  width: 25vw;
+  display: flex;
+  flex-direction: column;
+  padding-left: 50px;
+  transition: transform 0.5s ease-in-out;
+}
+
+.raku-sidebar-container input[type="checkbox"]:checked ~ .raku-sidebar {
+  transform: matrix(0,0,0,0,0,0);
+}
+
+.raku-sidebar-container input[type="checkbox"]:not(:checked) ~ .hamburger-lines .line1 {
+  transform: rotate(45deg);
+}
+
+.raku-sidebar-container input[type="checkbox"]:not(:checked) ~ .hamburger-lines .line2 {
+  transform: scaleY(0);
+}
+
+.raku-sidebar-container input[type="checkbox"]:not(:checked) ~ .hamburger-lines .line3 {
+  transform: rotate(-45deg);
+}
+
+aside {
     display: grid;
     grid-gap: 0.75em;
-    width: 25vw;
     padding: 0.75em;
     border-radius: 1em;
-    background-color: #bbb7b245;
-    float: left;
+    background-color: rgba(187, 183, 178, 0.3);
     margin: 0 0.75em 0.7em 0;
 }
 #_TOC {
     grid-row: 1;
+    max-height: 40vh;
+    overflow: scroll;
 }
 #_Glossary {
     grid-row: 2;
+    max-height: 40vh;
+    overflow: scroll;
 }
 
 .glossary {
@@ -261,11 +350,19 @@ nav {
         font-weight: bold;
     }
 }
-.glossary-place {
+.glossary-places {
     grid-column: 2 / span 2;
     line-height: 1.1;
+    display: flex;
+    flex-direction: column;
     &.header {
         font-weight: bold;
+        color: navy;
+    }
+}
+.glossary-place {
+    a {
+        text-decoration: none;
         color: navy;
     }
 }
@@ -325,6 +422,11 @@ nav {
             left: 10px;
         }
     }
+}
+.in-page-title {
+    font-style: bold;
+    text-align: center;
+    font-size: xxlarge;
 }
 .subtitle {
     font-style: italic;

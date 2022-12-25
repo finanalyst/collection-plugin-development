@@ -9,13 +9,13 @@
 .ws-combined .ws-toc-container {
   grid-area: left;
   align-self: start;
-  height: 57vh;
+  max-height: 57vh;
   overflow: scroll;
 }
 .ws-combined .ws-glossary-container {
   grid-area: right;
   align-self: start;
-  height: 57vh;
+  max-height: 57vh;
   overflow: scroll;
 }
 .ws-combined input {
@@ -25,7 +25,6 @@
 
 .ws-toc-container {
   display: grid;
-  justify-content: center;
   grid-template-rows: 5em auto;
   grid-template-columns: 5% 3% 2% 2% 2% auto [end];
   row-gap: 0.05em;
@@ -99,7 +98,6 @@
 
 .ws-glossary-container {
   display: grid;
-  justify-content: center;
   grid-template-rows: 5em auto;
   grid-template-columns: 10% 10% auto;
   row-gap: 0.05em;

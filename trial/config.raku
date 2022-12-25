@@ -27,4 +27,5 @@ use v6.d;
             :extensions<png jpeg jpeg svg mp4 webm gif>,
         ),
     )),
+    :with-only(''),
 )

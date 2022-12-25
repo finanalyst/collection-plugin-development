@@ -1,9 +1,9 @@
 #raku-repl {
-  position: sticky;
+  position: fixed;
+  bottom: 0;
   left: 1vw;
   width: 98vw;
   z-index: 100;
-  top: 74vh;
   opacity: 80%;
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -22,6 +22,8 @@
   display: flex;
   flex-direction: row;
   grid-area: input;
+  background-color: whitesmoke;
+  gap: 5px;
 }
 
 #raku-code {
@@ -32,11 +34,42 @@
   visibility: inherit;
 }
 
-.raku-button {
+#raku-evaluate {
   border-radius: 10px;
-  color: blue;
-  background-color: whitesmoke;
+  color: whitesmoke;
+  background-color: darkblue;
   visibility: inherit;
+}
+#raku-evaluate:hover {
+  border-color: red;
+}
+
+#raku-hide {
+  visibility: inherit;
+  display: flex;
+}
+#raku-hide img {
+  width: 45px;
+  position: fixed;
+}
+#raku-hide .code-overlay {
+  width: 45px;
+}
+#raku-hide .code-overlay span:first-child {
+  transform: translate(-6px, 18px) rotate(45deg);
+  display: block;
+  height: 6px;
+  width: 130%;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.6);
+}
+#raku-hide .code-overlay span:last-child {
+  transform: translate(-8px, 12px) rotate(-45deg);
+  display: block;
+  height: 6px;
+  width: 130%;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.6);
 }
 
 #raku-ws-headout {
