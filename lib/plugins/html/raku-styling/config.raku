@@ -11,5 +11,5 @@
 	:scss<raku-default-styling.scss>,
 	:template-raku(),
 	:js-script<sidebar.js>,
-	:version<0.3.0>,
+	:version<0.3.1>,
 )

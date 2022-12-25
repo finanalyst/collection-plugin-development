@@ -194,12 +194,7 @@ use ProcessedPod;
         '</div>'
     },
     'content-top' => sub (%prm, %tml) {
-        my $rv = '<div class="pod-body">' ~ "\n";
-        return $rv unless %prm<path>.defined and %prm<path> ~~ / ^ 'raku-docs' (.+) $ /;
-        $rv ~= '<button title="Edit this page" class="edit-raku-doc" '
-            ~ 'onclick="location=\'https://github.com/Raku/doc/edit/master' ~ %tml<escaped>(~$0) ~ '\'">'
-            ~ '<img src="/assets/images/pencil.svg" >'
-            ~ '</button>'
+        '<div class="pod-body">' ~ "\n"
     },
     'content-bottom' => sub (%prm, %tml) {
         '</div>'
@@ -227,6 +222,13 @@ use ProcessedPod;
         !! '')
             ~ "\t</tbody>\n"
             ~ "</table>\n"
+    },
+    'edit-page' => sub (%prm, %tml) {
+        return '' unless %prm<config><path> ~~ / ^ .+ ('docs/' .+) $ /;
+        "\n" ~ '<button title="Edit this page" class="edit-raku-doc" '
+            ~ 'onclick="location=\'https://github.com/Raku/doc/edit/master' ~ %tml<escaped>(~$0) ~ '\'">'
+            ~ '<img src="/assets/images/pencil.svg" >'
+            ~ '</button>'
     },
     'top-of-page' => sub (%prm, %tml) {
         if %prm<title-target>:exists and %prm<title-target> ne '' {
@@ -278,6 +280,7 @@ use ProcessedPod;
             ~ %tml<page-top>(%prm, %tml)
             ~ %tml<sidebar>(%prm, %tml)
             ~ %tml<top-of-page>(%prm, %tml)
+            ~ %tml<edit-page>(%prm, %tml)
             ~ '<h1 class="in-page-title">' ~ %prm<title> ~ '</h1>'
             ~ %tml<subtitle>(%prm, %tml)
             ~ %tml<content-top>(%prm, %tml)
