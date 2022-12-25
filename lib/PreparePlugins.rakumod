@@ -140,8 +140,9 @@ sub compare-modified(Str:D $from, Str:D $to--> Positional) {
         if "$to/$fn".IO ~ :e {
             @problems.append: compare-modified(~$node, "$to/$fn").flat
             if $node ~~ :d;
-            if $node.modified > "$to/$fn".IO.modified {
-                @problems.append: "｢$fn｣ was modified in ｢$from｣ after its release."
+            if ("$to/$fn".IO ~~ :e & :f) and ($node.modified > "$to/$fn".IO.modified) {
+                @problems.append("｢$fn｣ was modified in ｢$from｣ after its release.")
+                    unless $node ~~ :d
             }
         }
         else {
