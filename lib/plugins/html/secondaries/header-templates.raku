@@ -88,16 +88,23 @@ use v6.d;
                 $bookmark = "<!-- defnmark $target -->";
             }
         }
-        # now output the header
-        "\n<h" ~ $level
-            ~ ' id="'
-            ~ $target
-            ~ '"><a href="#'
-            ~ %tml<escaped>(%prm<top>)
-            ~ '" class="u" title="NEW TITLE=Go to top">'
-            ~ $text
-            ~ '</a></h'
-            ~ $level
-            ~ ">\n$bookmark\n"
+        # now output the header + book
+        # if it exists output the header using the previous header formattingmark
+        with %tml.prior('heading') {
+            $_.( %prm, %tml )
+            ~ "\n$bookmark\n"
+        }
+        else { # no previous header, so here's a generic one in case
+            "\n<h" ~ $level
+                ~ ' id="'
+                ~ $target
+                ~ '"><a href="#'
+                ~ %tml<escaped>(%prm<top>)
+                ~ '" class="u" title="NEW TITLE=Go to top">'
+                ~ $text
+                ~ '</a></h'
+                ~ $level
+                ~ ">\n$bookmark\n"
+        }
     },
 );

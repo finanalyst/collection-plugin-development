@@ -16,13 +16,13 @@
   visibility: hidden;
   width: 100px;
   height: 48px;
+  grid-area: input-start;
 }
 
 #raku-input {
   display: flex;
   flex-direction: row;
   grid-area: input;
-  background-color: whitesmoke;
   gap: 5px;
 }
 
@@ -32,6 +32,7 @@
   border-radius: 10px;
   border-style: ridge;
   visibility: inherit;
+  background-color: whitesmoke;
 }
 
 #raku-evaluate {
@@ -55,21 +56,19 @@
 #raku-hide .code-overlay {
   width: 45px;
 }
-#raku-hide .code-overlay span:first-child {
-  transform: translate(-6px, 18px) rotate(45deg);
+#raku-hide .code-overlay span {
   display: block;
-  height: 6px;
-  width: 130%;
+  height: 12px;
+  width: 150%;
   border-radius: 10px;
-  background: rgba(0, 0, 0, 0.6);
+  border-style: double;
+  border-color: red;
+}
+#raku-hide .code-overlay span:first-child {
+  transform: translate(-14px, 12px) rotate(45deg);
 }
 #raku-hide .code-overlay span:last-child {
-  transform: translate(-8px, 12px) rotate(-45deg);
-  display: block;
-  height: 6px;
-  width: 130%;
-  border-radius: 10px;
-  background: rgba(0, 0, 0, 0.6);
+  transform: translate(-14px, -5px) rotate(-45deg);
 }
 
 #raku-ws-headout {

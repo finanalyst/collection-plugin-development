@@ -224,7 +224,7 @@ use ProcessedPod;
             ~ "</table>\n"
     },
     'edit-page' => sub (%prm, %tml) {
-        return '' unless %prm<config><path> ~~ / ^ .+ 'docs/' ( .+) $ /;
+        return '' unless %prm<config><path> ~~ / ^ .+ 'docs/' ( .+ ) $ /;
         "\n" ~ '<button title="Edit this page" class="edit-raku-doc" '
             ~ 'onclick="location=\'https://github.com/Raku/doc/edit/master/' ~ %tml<escaped>.(~$0) ~ '\'">'
             ~ '<img src="/assets/images/pencil.svg" >'

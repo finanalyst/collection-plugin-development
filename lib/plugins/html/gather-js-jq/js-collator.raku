@@ -2,56 +2,65 @@ sub ( $pp, %options ) {
     my Bool $loadjq-lib = False;
     my @js;
     my @js-bottom;
+    my multi sub add-defn(:$field, Positional :$info, :$plug, :$order = 0) {
+        if $info[1] ~~ Str {
+            add-defn(:$field, :info( $info[0] ), :$plug );
+            add-defn(:$field, :info( $info[1] ), :$plug )
+        }
+        elsif $info[1] ~~ Int {
+            add-defn(:$field, :info( $info[0] ), :order( $info[1]), :$plug)
+        }
+        else {
+            note "[{$?FILE.IO.basename}] ignoring invalid '$field' config data from ｢$plug｣, because ｢{ $info.raku }｣ is not valid" ;
+        }
+    }
+    my multi sub add-defn(:$field, Str:D :$info, :$plug, :$order = 0 ) {
+        given $field {
+            when 'js-script' {
+                @js.push( ($info, $plug, $order ) )
+            };
+            when 'js-link' {
+                @js.push( ($info, '', $order ) )
+            }
+            when 'js-bottom' {
+                @js-bottom.push(( $info, $plug, $order ));
+            }
+            when 'jquery' {
+                @js.push(( $info, $plug, $order ));
+                $loadjq-lib = True
+            }
+            when 'jquery-link' {
+                @js.push( ($info, '', $order ) );
+                $loadjq-lib = True
+            }
+        }
+    }
     my %own-config = $pp.get-data('gather-js-jq');
     for $pp.plugin-datakeys -> $plug {
         next if $plug eq 'js-collator' ;
         my $data = $pp.get-data($plug);
         next unless $data ~~ Associative;
-        for $data.keys {
-            when $_ ~~ 'js-script' and $data{$_} ~~ Str:D {
-                @js.push( ($data{$_}, $plug, 0 ) )
+        for $data.kv -> $field, $info {
+            next unless $field ~~ any(<js-link js-script js-bottom jquery jquery-link>);
+            unless $field ~~ Str:D | Positional {
+                note "[{$?FILE.IO.basename}] ignoring invalid '$field' config data from ｢$plug｣, because ｢{ $info.raku }｣ is not Str or Positional" ;
+                next
             }
-            when $_ ~~ 'js-link' and $data{$_} ~~ Str:D {
-                @js.push( ($data{$_}, '', 0 ) )
+            if $info ~~ Str:D {
+                 add-defn(:$field, :$info, :$plug )
             }
-            when $_ ~~ 'js-bottom' and $data{$_} ~~ Str:D {
-                @js-bottom.push(( $data{$_}, $plug, 0 ));
-            }
-            when $_ ~~ 'jquery' and $data{$_} ~~ Str:D {
-                @js.push(( $data{$_}, $plug, 0 ));
-                $loadjq-lib = True
-            }
-            when $_ ~~ 'jquery-link' and $data{$_} ~~ Str:D {
-                @js.push( ($data{$_}, '', 0 ) );
-                $loadjq-lib = True
-            }
-            # handle higher order parameters.
-            when $_ ~~ 'js-script' and $data{$_} ~~ Positional {
-                ( note "[{$?FILE.IO.basename}] ignoring invalid 'js-script' config data from ｢$plug｣, viz. ｢{ $data{$_}[0] }｣ or ｢{ $data{$_}[1] }｣" ) and next
-                    unless ($data{$_}[0] ~~ Str:D and +$data{$_}[1] ~~ Int:D);
-                @js.push( ($data{$_}[0], $plug, +$data{$_}[1] ) )
-            }
-            when $_ ~~ 'js-link' and $data{$_} ~~ Positional {
-                ( note "[{$?FILE.IO.basename}] ignoring invalid 'js-link' config data from ｢$plug｣, viz. ｢{ $data{$_}[0] }｣ or ｢{ $data{$_}[1] }｣" ) and next
-                unless ($data{$_}[0] ~~ Str:D and +$data{$_}[1] ~~ Int:D);
-                @js.push( ($data{$_}[0], '', +$data{$_}[1] ) )
-            }
-            when $_ ~~ 'js-bottom' and $data{$_} ~~ Positional {
-                ( note "[{$?FILE.IO.basename}] ignoring invalid 'js-bottom' config data from ｢$plug｣, viz. ｢{ $data{$_}[0] }｣ or ｢{ $data{$_}[1] }｣" ) and next
-                unless ($data{$_}[0] ~~ Str:D and +$data{$_}[1] ~~ Int:D);
-                @js-bottom.push(( $data{$_}[0], $plug, +$data{$_}[1] ));
-            }
-            when $_ ~~ 'jquery' and $data{$_} ~~ Positional {
-                ( note "[{$?FILE.IO.basename}] ignoring invalid 'jquery' config data from ｢$plug｣, viz. ｢{ $data{$_}[0] }｣ or ｢{ $data{$_}[1] }｣" ) and next
-                unless ($data{$_}[0] ~~ Str:D and +$data{$_}[1] ~~ Int:D);
-                @js.push(( $data{$_}[0], $plug, +$data{$_}[1] ));
-                $loadjq-lib = True
-            }
-            when $_ ~~ 'jquery-link' and $data{$_} ~~ Positional {
-                ( note "[{$?FILE.IO.basename}] ignoring invalid 'jquery-link' config data from ｢$plug｣, viz. ｢{ $data{$_}[0] }｣ or ｢{ $data{$_}[1] }｣" ) and next
-                unless ($data{$_}[0] ~~ Str:D and +$data{$_}[1] ~~ Int:D);
-                @js.push( ($data{$_}[0], '', +$data{$_}[1] ) );
-                $loadjq-lib = True
+            else {
+                # handle higher order parameters or list
+                # if data entry is a Positional, then it can be either a list of items, mixing Array and Strings,
+                my @inf = $info.list;
+                if @inf.elems == 2 and @inf[1] !~~ Positional {
+                    add-defn( :$field, :$plug, :$info);
+                }
+                else {
+                    while @inf.elems {
+                        add-defn( :$field, :$plug, :info( @inf.shift ) );
+                    }
+                }
             }
         }
     }

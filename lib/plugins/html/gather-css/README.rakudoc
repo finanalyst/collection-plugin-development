@@ -9,6 +9,8 @@ after all such other plugins in the plugins-required configuration of the Mode.
 This plugin looks at all the namespaces in the B<ProcessedPod> object's plugin-data area and seeks
 C<css>, C<add-css> or C<css-link> keys in the other plugin's config.
 
+If any of the data are arrays, then each element of the array is treated as below.
+
 =head2 Local css files
 
 A C<css> or C<add-css> is interpreted as the name of a local file in the other plugin's directory.
@@ -32,7 +34,7 @@ C< <link rel=\"stylesheet\" $_ /> >, with C<$_> being the value I<some reference
 
 Plugin provides or generates
 =item a callable that interogates the C<ProcessedPod> object it is passed and find
-add-csss/css/css-link keys.
+add-css/css/css-link keys.
 
 =item a template for C<css>.
 

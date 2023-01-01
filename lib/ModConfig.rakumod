@@ -107,7 +107,7 @@ multi sub MAIN(Bool :$bump!, Str:D :$plugin = '',
     }
     "$path/$plugin/config.raku".IO.spurt($new-conf) if $write
 }
-multi sub MAIN(|c) is export {
+multi sub MAIN() is export {
     say qq:to/USAGE/;
     The program ｢{ $*PROGRAM-NAME }｣
     - assumes that the current working directory has sub-directories named for plugins,

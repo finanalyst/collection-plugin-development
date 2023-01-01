@@ -2,19 +2,29 @@ sub ($pp, %options) {
     my $css = '';
     my @links;
     my @adds;
-    for $pp.plugin-datakeys {
-        next if $_ eq 'gather-css';
-        my $data = $pp.get-data($_);
+    for $pp.plugin-datakeys -> $p {
+        next if $p eq 'gather-css';
+        my $data = $pp.get-data($p);
         next unless $data ~~ Associative;
-        if $data<css>:exists and $data<css> ~~ Str:D {
-            my $file = ($data<path> ~ '/' ~ $data<css>).IO;
-            $css ~= "\n" ~ $file.slurp
+        with $data<css> {
+            when Str:D {
+                my $file = ($data<path> ~ '/' ~ $_).IO;
+                $css ~= "\n" ~ $file.slurp
+            }
+            when Positional {
+                for .list {
+                    my $file = ($data<path> ~ '/' ~ $_).IO;
+                    $css ~= "\n" ~ $file.slurp
+                }
+            }
         }
-        elsif $data<css-link>:exists and $data<css-link> ~~ Str:D {
-            @links.append($data<css-link>)
+        with $data<css-link> {
+            when Str:D { @links.append: $_ }
+            when Positional { @links.append: .list }
         }
-        elsif $data<add-css>:exists and $data<add-css> ~~ Str:D {
-            @adds.push( ($_ , $data<add-css>) )
+        with $data<add-css> {
+            when Str:D { @adds.push( ($p  , $_ ) ) } # only name of plugin needed. path found later by Collection
+            when Positional { @adds.push( ($p , $_ ) ) for .list }
         }
     }
     return () unless $css or +@adds or +@links;

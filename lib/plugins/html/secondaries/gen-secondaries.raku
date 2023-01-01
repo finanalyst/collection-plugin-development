@@ -33,7 +33,7 @@ sub ( $pp, %processed, %options ) {# these chars cannot appear in a unix filesys
     my %data = $pp.get-data('heading');
     #| each of the things we want to group in a file
     my %things = %( routine => {}, syntax => {} );
-    my %templates = $pp.tmpl; # templates hash in ProcessedPod instance
+    my %templates := $pp.tmpl; # templates hash in ProcessedPod instance
     my @transfers; #this is for the triples describing the files
     my %definitions = %data<defs>;
     counter(:items( %definitions.keys ), :header('Generating secondaries'));
