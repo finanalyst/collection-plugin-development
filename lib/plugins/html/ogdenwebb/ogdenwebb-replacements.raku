@@ -12,6 +12,7 @@ use v6.d;
         { %tml<header>.(%prm, %tml)  }
         { %tml<sidebar>.(%prm, %tml)  }
         { %tml<wrapper>.(%prm, %tml)  }
+        <div id="raku-repl"></div>
         { %tml<footer>.(%prm, %tml)  }
         { %tml<js-bottom>.({}, {}) }
         { %tml<end-block>.(%prm, %tml) }
@@ -24,7 +25,7 @@ use v6.d;
             <div class="navbar-brand navbar-logo">
               <div class="navbar-logo">
                 <a class="navbar-item" href="/">
-                  <img src="/assets/image/camelia-recoloured.png" alt="Raku" width="52.83" height="38">
+                  <img src="/assets/images/camelia-recoloured.png" alt="Raku" width="52.83" height="38">
                 </a>
                 <div class="navbar-logo-tm">tm</div>
               </div>
@@ -36,16 +37,16 @@ use v6.d;
             </div>
             <div id="navMenu" class="navbar-menu">
               <div class="navbar-start">
-                  <a class="navbar-item" href="/language">
+                  <a class="navbar-item" href="/language.html">
                     Language
                   </a>
-                  <a class="navbar-item" href="/type">
+                  <a class="navbar-item" href="/type.html">
                     Types
                   </a>
-                  <a class="navbar-item" href="/routine">
+                  <a class="navbar-item" href="/routine.html">
                     Routines
                   </a>
-                  <a class="navbar-item" href="/programs">
+                  <a class="navbar-item" href="/programs.html">
                     Programs
                   </a>
                 <a class="navbar-item" href="https://raku.org">
@@ -59,25 +60,18 @@ use v6.d;
                     More
                   </a>
                   <div class="navbar-dropdown">
-                    <a class="navbar-item" href="/search">
+                    <a class="navbar-item" href="/search.html">
                       Extended Search
                     </a>
                     <hr class="navbar-divider">
-                    <a class="navbar-item" href="/about">
+                    <a class="navbar-item" href="/about.html">
                       About
-                    </a>
-                    <hr class="navbar-divider">
-                    <a class="navbar-item has-text-red" href="https://github.com/raku/doc/blob/master/CONTRIBUTING.md#reporting-bugs">
-                      Report an issue with the content
-                    </a>
-                    <hr class="navbar-divider">
-                    <a class="navbar-item has-text-red" href="https://github.com/Altai-man/docs.raku.org/issues">
-                      Report an issue of this site
                     </a>
                   </div>
                 </div>
               </div>
-              <div class="navbar-end navbar-search-wrapper">
+
+            <div class="navbar-end navbar-search-wrapper">
                 <div class="navbar-item">
                   <div class="field has-addons">
                     <div id="search" class="control">
@@ -86,33 +80,32 @@ use v6.d;
                     <div class="control">
                       <a class="button is-primary">
                         <span class="icon">
-                          <i class="fas fa-search "></i>
+                          <svg class="svg-inline--fa fa-search fa-w-16" aria-hidden="true" data-prefix="fas" data-icon="search" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg=""><path fill="currentColor" d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"></path></svg><!-- <i class="fas fa-search "></i> -->
                         </span>
                       </a>
                     </div>
                   </div>
                 </div>
+
                 <div id="navbar-search" class="navbar-search-autocomplete" style="display: none;">
-                    <ul id="ui-id-1"
-                        tabindex="0"
-                        class="ui-menu ui-widget ui-widget-content ui-autocomplete ui-front"
-                        style="display: none;">
-                    </ul>
-                </div>
-                <div id="navbar-search-empty"
-                    class="navbar-search-autocomplete">
-                  <a id="try-web-search" href="https://www.google.com/" class="button" target="blank">
-                    Not found, but you can try site search</a>
+                    <ul id="ui-id-1" tabindex="0" class="ui-menu ui-widget ui-widget-content ui-autocomplete ui-front" style="display: none;"></ul>
                 </div>
               </div>
             </div>
           </div>
-        </nav>;
+        </nav>
         BLOCK
     },
     'sidebar' => sub (%prm, %tml) {
         return '' unless %prm<toc>;
         qq:to/BLOCK/
+        <div class="raku-sidebar-toggle" style="">
+          <a class="button is-primary">
+            <span class="icon">
+              <i class="fas fa-chevron-left is-medium"></i>
+            </span>
+          </a>
+        </div>
         <div id="mainSidebar" class="raku-sidebar" style="width:0px; display:none;">
           <div class="field">
             <label class="label has-text-centered">Table of Contents</label>
@@ -143,25 +136,29 @@ use v6.d;
     },
     'page-header' => sub (%prm, %tml) {
         qq:to/BLOCK/
-        <section class="container px-4">
-            <div class="raku page-title has-text-centered">
-            { %prm<title>  }
+        <section class="raku page-header">
+            <div class="container px-4">
+                <div class="raku page-title has-text-centered">
+                { %prm<title> }
+                </div>
+                <div class="raku page-subtitle has-text-centered">
+                { %prm<subtitle> }
+                </div>
+                { %tml<page-edit>.(%prm,%tml) }
             </div>
-            <div class="raku page-subtitle has-text-centered">
-            { %prm<subtitle>  }
-            </div>
-            { %tml<page-edit>.(%prm,%tml)  }
         </section>
         BLOCK
     },
     'page-content' => sub (%prm, %tml) {
-        qq:to/BLOCK/
-        <section class="raku page-content">
-            <div class="container px-4">
-            { %prm<body>  }
-            </div>
-        </section>
-        BLOCK
+        my $rv = '<section class="raku page-content">';
+        $rv ~= %prm<config><page-content-columns>
+            ?? '<div class="container"><div class="columns">'
+            !! '<div class="container px-4">';
+        $rv ~=  %prm<body>;
+        $rv ~= %prm<config><page-content-columns>
+            ?? '</div></div>'
+            !! '</div>';
+        $rv ~= "</section>\n"
     },
     'page-footnotes' => sub (%prm, %tml) {
         return '' unless %prm<footnotes>;
@@ -180,8 +177,12 @@ use v6.d;
               <p> Generated from { %prm<config><path> }
                 at { DateTime(now).truncated-to('second') }</p>
             </div>
-        </section>;
+        </section>
         BLOCK
+    },
+    'pod' => sub (%prm, %tml) {
+        (%prm<contents> // '')
+        ~ "\n" ~ (%prm<tail> // '') ~ "\n"
     },
     'footer' => sub (%prm, %tml) {
         q:to/BLOCK/
@@ -236,5 +237,68 @@ use v6.d;
             class="ui-helper-hidden-accessible">
         </div>
         BLOCK
+    },
+    #placeholder
+    'block-code' => sub (%prm, %tml) { # previous block-code is set by 02-highlighter
+        my $hl = %tml.prior('block-code').(%prm, %tml);
+        $hl .= subst( / '<pre class="' /, '<pre class="cm-s-ayaya ');
+        '<div class="raku-code raku-lang">'
+            ~ $hl
+            ~ '</div>'
+    },
+    'heading' => sub (%prm, %tml) {
+        my $h = 'h' ~ (%prm<level> // '1');
+        "\n<$h"
+            ~ ' id="'
+            ~ %tml<escaped>.(%prm<target>)
+            ~ '" '
+            ~ "class=\"raku-$h\">"
+            ~ '<a href="#'
+            ~ %tml<escaped>.(%prm<top>)
+            ~ '" class="u" title="go to top of document">'
+            ~ (%prm<text> // '')
+            ~ "</a></$h>\n"
+    },
+    table => sub (%prm, %tml) {
+        my $tb = %tml.prior('table').(%prm, %tml);
+        $tb.subst(/ '<table class="' /, '<table class="table is-bordered centered ')
+    },
+    'toc' => sub (%prm, %tml) {
+        if %prm<toc>.defined and %prm<toc>.keys {
+            my $rv = "<ul class=\"menu-list\">\n";
+            my Bool $sub-list = False;
+            my $last-level;
+            for %prm<toc>.list -> $el {
+                with $last-level {
+                    if $el.<level> eq $last-level {
+                        $rv ~= '</li>'
+                    }
+                    else {
+                        if $el.<level> eq 1 {
+                            $rv ~= '</ul></li>';
+                            $sub-list = False
+                        }
+                        elsif ! $sub-list {
+                            $rv ~= '<ul>';
+                            $sub-list = True;
+                        }
+                    }
+                }
+                $rv ~= '<li>'
+                    ~ '<a href="#'
+                    ~ %tml<escaped>.($el.<target>)
+                    ~ '">'
+                    ~ %tml<escaped>.($el.<text> // '')
+                    ~ '</a>';
+                $last-level = $el.<level>;
+            }
+            if $last-level eq 1 {
+                $rv ~= "</li></ul>\n"
+            }
+            else {
+                $rv ~= "</li></ul></li></ul>\n"
+            }
+        }
+        else { '' }
     },
 );

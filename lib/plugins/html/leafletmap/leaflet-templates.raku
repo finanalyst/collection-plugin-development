@@ -1,6 +1,14 @@
 #!/usr/bin/env perl6
 %(
     leafletmap => sub (%prm, %tml) {
+        my $proc = shell 'ping -c 1 unpkg.com', :err, :out;
+        unless $proc.out.slurp(:close) { # if ping does not give output can't reach libraries
+            return q:to/RSP/
+            <div style="color: red">
+                Internet access to ｢unpkg.com｣ is needed for map libraries, so map cannot be shown.
+            </div>
+            RSP
+        }
         my $id = %prm<id> // %prm<leafletmap><id> // 'collection-leaflet-map';
         my $var-name = 'v' ~ $id.trans('-' => '_');
         my $lat = %prm<lat> // %prm<leafletmap><lat> // 51.48160;

@@ -38,8 +38,15 @@
     color: whitesmoke;
     background-color: darkblue;
     visibility: inherit;
-    &:hover {
+    border-width: 4px;
+    border-style: ridge;
+    padding: 1em;
+    font-weight: bold;
+    &:not([disabled]):hover {
         border-color: red;
+    }
+    &:disabled {
+        background-color: grey;
     }
 }
 #raku-hide {
@@ -66,6 +73,16 @@
             }
         }
     }
+}
+#raku-connection {
+    border-style: inset;
+    border-width: 2px;
+    background-color: bisque;
+    padding: 0.3em;
+    align-self: center;
+    color: navy;
+    font-weight: bold;
+    border-radius: 10px;
 }
 
 #raku-ws-headout {

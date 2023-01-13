@@ -8,7 +8,7 @@
             :no-remote,
         ),
         raku-repl => %(
-            :websocket-host<raku.finanalyst.org>,
+            :websocket-host<finanalyst.org>,
             :websocket-port<443>,
         ),
     ),

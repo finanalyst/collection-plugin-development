@@ -201,7 +201,7 @@ use ProcessedPod;
     },
     'pod' => sub (%prm, %tml) {
         '<section name="'
-            ~ %tml<escaped>.(%prm<name> // '') ~ '">'
+            ~ %tml<escaped>.(%prm<conf><name> // '') ~ '">'
             ~ (%prm<contents> // '')
             ~ (%prm<tail> // '')
             ~ '</section>'
@@ -295,15 +295,15 @@ use ProcessedPod;
     },
     'footnotes' => sub (%prm, %tml) {
         with %prm<notes> {
-            if .elems {
-                "<div id=\"_Footnotes\" class=\"footnotes\">\n"
+            if .elems {"<div id=\"_Footnotes\" class=\"footnotes\">\n"
                     ~ [~] .map({ '<div class="footnote" id="' ~ %tml<escaped>.($_<fnTarget>) ~ '">'
-                    ~ ('<span class="footnote-number">' ~ ($_<fnNumber> // '') ~ '</span>')
-                    ~ ($_<text> // '')
-                    ~ '<a class="footnote-linkback" href="#'
-                    ~ %tml<escaped>.($_<retTarget>)
-                    ~ "\"> « Back »</a></div>\n"
-                })
+                            ~ ('<span class="footnote-number">' ~ ($_<fnNumber> // '') ~ '</span>')
+                            ~ '<a class="footnote-linkback" href="#'
+                            ~ %tml<escaped>.($_<retTarget>)
+                            ~ '\"> [↑] </a>'
+                            ~ ($_<text> // '')
+                            ~ "</div>\n"
+                        })
                     ~ "\n</div>\n"
             }
             else { '' }

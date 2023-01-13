@@ -2,25 +2,37 @@
 	:auth<collection>,
 	:authors(
 		"finanalyst",
+		"ogdenwebb",
+		"altai-man",
 	),
 	:custom-raku(),
 	:license<Artistic-2.0>,
 	:name<ogdenwebb>,
 	:render<move-images.raku>,
+	:compilation<add-search.raku>,
+	:transfer<cleanup.raku>,
 	:template-raku<ogdenwebb-replacements.raku>,
-	:version<0.1.0>,
+	:version<0.1.3>,
 	:add-css<
+		css/main.css
 		css/themes/dark.css css/themes/light.css
 		css/code/dark.css css/code/light.css
-		css/lib/codemirror.min.css
-		css/main.css
-	>,
-	:jq-script<
-		js/core.js js/extended-search.js
-		js/lib/autoComplete.min.js
-		js/lib/codemirror.min.js
-		js/lib/cookie.umd.min.js
-		js/lib/raku-mode.js
-	>,
-	:information<add-css jq-script>,
+	>, # order of files is important
+	# css/lib/codemirror.min.css
+	:jquery(
+		['js/core.js',2],
+		['js/search.js',3],
+		['js/lib/autoComplete.min.js',1],
+		['js/lib/cookie.umd.min.js',1]
+	),
+	#		js/extended-search.js
+	#		js/lib/codemirror.min.js
+	#	js/lib/raku-mode.js
+	:jquery-link(
+		'src="https://rawgit.com/farzher/fuzzysort/master/fuzzysort.js"',
+		'src= "https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+			integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
+			crossorigin="anonymous"'
+	),
+	:information<add-css jquery jquery-link>,
 )

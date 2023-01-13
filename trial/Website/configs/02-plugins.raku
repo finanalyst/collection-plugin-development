@@ -4,8 +4,8 @@
     plugins-required => %(
         :setup<raku-doc-setup>,
         :render<
-            raku-styling website camelia simple-extras listfiles images font-awesome filterlines
-            leafletmap graphviz latex-render secondaries raku-repl
+            raku-styling deprecate-span website camelia simple-extras listfiles images font-awesome filterlines
+            leafletmap graphviz latex-render secondaries raku-repl typegraph
             link-error-test
             gather-js-jq gather-css
         >,

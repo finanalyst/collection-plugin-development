@@ -100,7 +100,7 @@ use v6.d;
                 ~ $target
                 ~ '"><a href="#'
                 ~ %tml<escaped>(%prm<top>)
-                ~ '" class="u" title="NEW TITLE=Go to top">'
+                ~ '" class="u" title="Go to top">'
                 ~ $text
                 ~ '</a></h'
                 ~ $level

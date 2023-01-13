@@ -283,6 +283,7 @@ body {
 }
 
 /* Categories */
+/* original
 .raku-category.category-block {
   margin-bottom: $size-5;
 }
@@ -307,7 +308,51 @@ body {
     margin-bottom: 0.25rem;
   }
 }
+*/
 
+/* For Collection */
+.raku .container .columns {
+    flex-wrap: wrap;
+    justify-content: space-around;
+    .listf-container {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: $size-5;
+        width: 48%;
+        font-size: $size-6;
+        font-weight: $weight-medium;
+        line-height: 1.5;
+        div:nth-of-type(4n-2) {
+            background-color: inherit;
+        }
+        div:nth-of-type(4n-1) {
+            background-color: inherit;
+        }
+        .listf-caption {
+            font-size: $size-6;
+            font-weight: $weight-medium;
+            line-height: 1.5;
+            display: flex;
+            justify-content: center;
+        }
+        .listf-file {
+            padding-top: 0.25rem;
+            font-size: $size-6;
+            font-weight: $weight-medium;
+            line-height: 1.5;
+            border-top: 1px;
+        }
+        .listf-desc {
+            font-size: $size-6;
+            font-weight: $weight-medium;
+            line-height: 1.5;
+            padding: 0 0.5rem;
+            margin-bottom: 0.25rem;
+            align-self: normal;
+            > p { padding: inherit; }
+        }
+    }
+}
 /* Programs page template */
 .raku-programs {
 

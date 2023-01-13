@@ -1,7 +1,7 @@
-=begin pod :no-glossary
-=TITLE Raku Language Documentation
+=begin pod :no-glossary :page-content-columns
 
-Tutorials, general reference, migration guides and meta pages for the Raku language.
+=TITLE Raku Language Documentation
+=SUBTITLE Tutorials, general reference, migration guides and meta pages for the Raku language.
 
 =for ListFiles :select<kind=Language, category=beginning>
 At the beginning

@@ -5,4 +5,9 @@ if [ $# -eq 0 ]
     exit
 fi
 echo lib/plugins/html/$1
-sass --update --no-source-map lib/plugins/html/$1:lib/plugins/html/$1
+if [ -d lib/plugins/html/$1/scss ];
+then
+    sass --update --no-source-map lib/plugins/html/$1/scss:lib/plugins/html/$1/css
+else
+    sass --update --no-source-map lib/plugins/html/$1:lib/plugins/html/$1
+fi

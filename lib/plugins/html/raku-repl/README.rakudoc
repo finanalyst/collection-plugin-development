@@ -4,7 +4,9 @@
 The plugin is for the render milestone to ensure the data space is created.  The render callable
 changes the js script to include the websocket host/port from the configuration.
 
-Only css and jquery is required to enable the Repl div in the footer.
+Place the following in the page to enable the Repl bar.
+
+     <div id="raku-repl"></div>
 
 =head1 Custom blocks
 
