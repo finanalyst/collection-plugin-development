@@ -3,7 +3,7 @@
   bottom: 0;
   left: 1vw;
   width: 98vw;
-  z-index: 100;
+  z-index: 40;
   opacity: 80%;
   display: grid;
   grid-template-columns: 1fr 1fr;
