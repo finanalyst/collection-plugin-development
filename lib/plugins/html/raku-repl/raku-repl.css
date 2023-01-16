@@ -61,21 +61,21 @@
   position: fixed;
 }
 #raku-hide .code-overlay {
-  width: 45px;
+  width: 46px;
 }
 #raku-hide .code-overlay span {
   display: block;
-  height: 12px;
-  width: 150%;
+  height: 10px;
+  width: 70px;
   border-radius: 10px;
   border-style: double;
   border-color: red;
 }
 #raku-hide .code-overlay span:first-child {
-  transform: translate(-14px, 12px) rotate(45deg);
+  transform: translate(-12px, 19px) rotate(45deg);
 }
 #raku-hide .code-overlay span:last-child {
-  transform: translate(-14px, -5px) rotate(-45deg);
+  transform: translate(-12px, 9px) rotate(-45deg);
 }
 
 #raku-connection {

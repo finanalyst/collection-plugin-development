@@ -211,7 +211,7 @@ use v6.d;
         BLOCK
     },
     'page-edit' => sub (%prm, %tml) {
-        return '' unless %prm<config><path> ~~ / ^ .+ ('docs/' .+) $ /;
+        return '' unless %prm<config><path> ~~ / ^ .+ 'docs/' ( .+) $ /;
         qq:to/BLOCK/
         <div class="page-edit">
             <a class="button page-edit-button"
