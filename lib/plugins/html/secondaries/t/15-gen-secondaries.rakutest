@@ -4,7 +4,7 @@ use File::Directory::Tree;
 use ProcessedPod;
 use RakuConfig;
 
-plan 14;
+plan 15;
 
 my @triples;
 my %processed;
@@ -81,6 +81,10 @@ X<|Infix operators,…>X<|Infix operators,…^>X<|Infix operators,^…>X<|Infix 
 
 header with zero indexing afterwards
 
+=head2 method proc
+
+header with just name
+
 =end pod
 
 %processed = Empty;
@@ -99,9 +103,11 @@ with $pp {
 }
 
 @triples = &secondaries($pp,%processed, %() );
-is @triples.elems,2, 'two secondaries generated';
-is @triples[0][0], one(<routine/and.html routine/....html>), 'got one right file';
-is @triples[1][0], one(<routine/and.html routine/....html>), 'got other right file';
+my @expected = <routine/and.html routine/....html routine/proc.html>;
+is @triples.elems,@expected.elems, 'two secondaries generated';
+is @triples[0][0], any(@expected), 'got 1 right file';
+is @triples[1][0], any(@expected), 'got 2 right file';
+is @triples[2][0], any(@expected), 'got 3 right file';
 
 &cleanup($pp, %(), %() );
 is 'html/routine'.IO.dir( test => *.ends-with('html') ), (), 'routine directory emptied';

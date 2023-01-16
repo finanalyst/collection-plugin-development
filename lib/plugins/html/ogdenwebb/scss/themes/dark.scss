@@ -131,8 +131,6 @@ $search-match: $green;
 
 $homepage-gradient: linear-gradient(180deg, #030303 0.2%, #170F44 1%, #35229E 82.29%, #271974 100%);
 
-@import "./_themes-template-common.scss";
-
 a.button strong {
   color: $scheme-main-ter;
 }
@@ -155,3 +153,5 @@ a.button.is-primary .icon {
         border-bottom: 1px solid $border;
     }
 }
+
+@import "./_themes-template-common.scss";
