@@ -280,14 +280,18 @@ body {
 */
 /* For Collection */
 .raku .container .columns {
-  flex-wrap: wrap;
-  justify-content: space-around;
+  column-count: 2;
+  display: block;
+}
+.raku .container .columns > p {
+  column-span: all;
+  margin: 0 0 2em;
+  text-align: center;
 }
 .raku .container .columns .listf-container {
   display: flex;
   flex-direction: column;
   margin-bottom: 1.25rem;
-  width: 48%;
   font-size: 1rem;
   font-weight: 500;
   line-height: 1.5;

@@ -99,7 +99,7 @@ use v6.d;
     'sidebar' => sub (%prm, %tml) {
         return '' unless %prm<toc>;
         qq:to/BLOCK/
-        <div class="raku-sidebar-toggle" style="">
+        <div id="raku-sidebar" class="raku-sidebar-toggle" style="">
           <a class="button is-primary">
             <span class="icon">
               <i class="fas fa-chevron-left is-medium"></i>

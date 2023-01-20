@@ -312,13 +312,17 @@ body {
 
 /* For Collection */
 .raku .container .columns {
-    flex-wrap: wrap;
-    justify-content: space-around;
+    column-count: 2;
+    display: block;
+    > p {
+        column-span: all;
+        margin: 0 0 2em;
+        text-align: center;
+    }
     .listf-container {
         display: flex;
         flex-direction: column;
         margin-bottom: $size-5;
-        width: 48%;
         font-size: $size-6;
         font-weight: $weight-medium;
         line-height: 1.5;
