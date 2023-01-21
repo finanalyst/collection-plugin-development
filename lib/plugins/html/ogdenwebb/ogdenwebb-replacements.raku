@@ -40,10 +40,10 @@ use v6.d;
                   <a class="navbar-item" href="/language.html">
                     Language
                   </a>
-                  <a class="navbar-item" href="/type.html">
+                  <a class="navbar-item" href="/types.html">
                     Types
                   </a>
-                  <a class="navbar-item" href="/routine.html">
+                  <a class="navbar-item" href="/routines.html">
                     Routines
                   </a>
                   <a class="navbar-item" href="/programs.html">
@@ -66,6 +66,10 @@ use v6.d;
                     <hr class="navbar-divider">
                     <a class="navbar-item" href="/about.html">
                       About
+                    </a>
+                    <hr class="navbar-divider">
+                    <a class="navbar-item" href="/error-report.html">
+                      Errors
                     </a>
                   </div>
                 </div>
@@ -215,7 +219,7 @@ use v6.d;
         qq:to/BLOCK/
         <div class="page-edit">
             <a class="button page-edit-button"
-               href="https://github.com/Raku/doc/edit/master/{ %tml<escaped>.(~$0) }"
+               href="https://github.com/Raku/doc/edit/main/{ %tml<escaped>.(~$0) }"
                title="Edit this page.">
               <span class="icon is-right">
                 <i class="fas fa-pen-alt is-medium"></i>

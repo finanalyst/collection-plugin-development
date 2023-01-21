@@ -15,7 +15,7 @@
 	:name<raku-repl>,
 	:render<modify-js.raku>,
 	:template-raku(),
-	:version<0.1.8>,
+	:version<0.1.9>,
 	:websocket-host<localhost>,
 	:websocket-port<35145>,
 )
