@@ -305,7 +305,7 @@ use ProcessedPod;
                     ~ ($_<text> // '')
                     ~ "</div>\n"
                 })
-                    ~ "\n</div>\n"
+                ~ "\n</div>\n"
             }
             else { '' }
         }

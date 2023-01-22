@@ -133,7 +133,7 @@ sub copy-plugin(IO :$node!, Str:D :$to!) is export {
         }
     }
 }
-sub compare-modified(Str:D $from, Str:D $to--> Positional) {
+sub compare-modified(Str:D $from, Str:D $to --> Positional) {
     my @problems;
     for "$from".IO.dir -> $node {
         my $fn = $node.basename;
