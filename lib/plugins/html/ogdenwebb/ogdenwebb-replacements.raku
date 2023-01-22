@@ -52,7 +52,7 @@ use v6.d;
                 <a class="navbar-item" href="https://raku.org">
                   Raku Homepage
                 </a>
-                <a class="navbar-item" href="https://webchat.freenode.net/?channels=#raku">
+                <a class="navbar-item" href="https://kiwiirc.com/client/irc.libera.chat/#raku">
                   Chat with us
                 </a>
                 <div class="navbar-item has-dropdown is-hoverable">
@@ -129,14 +129,19 @@ use v6.d;
         BLOCK
     },
     'wrapper' => sub (%prm, %tml) {
-        qq:to/BLOCK/
-        <div id="wrapper">
-        { %tml<page-header>.(%prm, %tml)  }
-        { %tml<page-content>.(%prm, %tml)  }
-        { %tml<page-footnotes>.(%prm, %tml)  }
-        { %tml<page-generated>.(%prm, %tml)  }
-        </div>
-        BLOCK
+        with %prm<config><direct-wrap> {
+            %prm<body>
+        }
+        else {
+            qq:to/BLOCK/
+            <div id="wrapper">
+            { %tml<page-header>.(%prm, %tml)  }
+            { %tml<page-content>.(%prm, %tml)  }
+            { %tml<page-footnotes>.(%prm, %tml)  }
+            { %tml<page-generated>.(%prm, %tml)  }
+            </div>
+            BLOCK
+        }
     },
     'page-header' => sub (%prm, %tml) {
         qq:to/BLOCK/
@@ -156,7 +161,7 @@ use v6.d;
     'page-content' => sub (%prm, %tml) {
         my $rv = '<section class="raku page-content">';
         $rv ~= %prm<config><page-content-columns>
-            ?? '<div class="container"><div class="columns">'
+            ?? '<div class="container"><div class="columns listing">'
             !! '<div class="container px-4">';
         $rv ~=  %prm<body>;
         $rv ~= %prm<config><page-content-columns>
@@ -195,7 +200,7 @@ use v6.d;
             <nav class="level">
                 <div class="level-left">
                   <div class="level-item">
-                      <a href="/about">About</a>
+                      <a href="/about.html>About</a>
                    </div>
                     <div class="level-item">
                       <a id="toggle-theme">Toggle theme</a>

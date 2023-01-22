@@ -1,4 +1,5 @@
-=begin pod :no-glossary
+=begin pod :no-glossary :page-content-columns
+
 =TITLE Raku Language Documentation
 =SUBTITLE Tutorials, general reference, migration guides and meta pages for the Raku language.
 

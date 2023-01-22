@@ -1,4 +1,4 @@
-=begin pod :no-glossary
+=begin pod :no-glossary :page-content-columns
 =TITLE Raku Programs Documentation
 
 =for ListFiles :select<kind=Programs>

@@ -16,10 +16,6 @@ If they do, the skins will burst; the wine will run out and the wineskins will b
 No, they pour new wine into new wineskins, and both are preserved.'" - Larry Wall
 (L<2019|https://github.com/Raku/problem-solving/pull/89#pullrequestreview-300789072>)
 
-Test of bad link L<bad remote|https://raku.finanalyst.org/nowhere.html>.
-
-Test of bad host L<bad host|http://notanorg.wales/nowhere.html>.
-
 =head1 The Raku community
 
 =head2 Online communities

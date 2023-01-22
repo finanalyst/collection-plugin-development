@@ -90,33 +90,11 @@ Or bends with the remover to remove.
 
 =head1 New Format Codes
 
-Format codes equate to line elements or spans in HTML, but can add extra meta data.
-
-The ability to create new custom codes and because
-Raku treats all Unicode characters the same, Chinese/Arabic/Cyrillic glyphs can also be
-specified to repeat or alias the predefined codes of C<B C I K T U E Z X N L P V >.
-
-=head2 Deprecation V<D<>>
-
-Suppose we want to add a deprecation notice or historical comment about functionality
-that used to exist. The new Format-Code-D does this. Eg.,
-
-=begin code
-
-    Here is an example of D<deprecated functionality | it will be eliminated in Raku-X>. Try
-    hovering over the marked words.
-
-=end code
-
-renders as:
-
-Here is an example of D<deprecated functionality | it will be eliminated in Raku-X>. Try
-hovering over the marked words.
-
-=head2 Add in an icon with V<F<>>
-
 Here is an example where the format code F has been leveraged to generate B<FontAwesome> icons.
 The plugin here utilises v4.7. The API for v5 / 6 is different, so another plugin may be needed.
+
+Since Raku treats all Unicode characters the same, Chinese/Arabic/Cyrillic glyphs can now be
+specified to repeat or alias the predefined codes of C<B C I K T U E Z X N L P V >.
 
 =begin code
 Some FontAwesome icons

@@ -201,7 +201,7 @@ use ProcessedPod;
     },
     'pod' => sub (%prm, %tml) {
         '<section name="'
-            ~ %tml<escaped>.(%prm<config><name> // '') ~ '">'
+            ~ %tml<escaped>.(%prm<conf><name> // '') ~ '">'
             ~ (%prm<contents> // '')
             ~ (%prm<tail> // '')
             ~ '</section>'
@@ -224,7 +224,7 @@ use ProcessedPod;
             ~ "</table>\n"
     },
     'edit-page' => sub (%prm, %tml) {
-        return '' unless %prm<config><path> ~~ / ^ .+ 'docs/' ( .+ ) $ /;
+        return '' unless %prm<config><path> ~~ / ^ .+ 'docs/' ( .+) $ /;
         "\n" ~ '<button title="Edit this page" class="edit-raku-doc" '
             ~ 'onclick="location=\'https://github.com/Raku/doc/edit/master/' ~ %tml<escaped>.(~$0) ~ '\'">'
             ~ '<img src="/assets/images/pencil.svg" >'
@@ -295,17 +295,16 @@ use ProcessedPod;
     },
     'footnotes' => sub (%prm, %tml) {
         with %prm<notes> {
-            if .elems {
-                "<div id=\"_Footnotes\" class=\"footnotes\">\n"
+            if .elems {"<div id=\"_Footnotes\" class=\"footnotes\">\n"
                     ~ [~] .map({ '<div class="footnote" id="' ~ %tml<escaped>.($_<fnTarget>) ~ '">'
-                    ~ ('<span class="footnote-number">' ~ ($_<fnNumber> // '') ~ '</span>')
-                    ~ '<a class="footnote-linkback" href="#'
-                    ~ %tml<escaped>($_<retTarget>)
-                    ~ '"> [↑] </a>'
-                    ~ ($_<text> // '')
-                    ~ "</div>\n"
-                })
-                ~ "\n</div>\n"
+                            ~ ('<span class="footnote-number">' ~ ($_<fnNumber> // '') ~ '</span>')
+                            ~ '<a class="footnote-linkback" href="#'
+                            ~ %tml<escaped>.($_<retTarget>)
+                            ~ '\"> [↑] </a>'
+                            ~ ($_<text> // '')
+                            ~ "</div>\n"
+                        })
+                    ~ "\n</div>\n"
             }
             else { '' }
         }
