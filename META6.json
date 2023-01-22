@@ -20,8 +20,7 @@
     "Collection::AddPlugin": "lib/AddPlugin.rakumod",
     "Collection::ModConfig": "lib/ModConfig.rakumod",
     "Collection::PreparePlugins": "lib/PreparePlugins.rakumod",
-    "Collection::TestAllPlugins": "lib/TestAllPlugins.rakumod",
-    "Test::CollectionPlugin": "lib/TestOnePlugin.rakumod"
+    "Collection::TestAllPlugins": "lib/TestAllPlugins.rakumod"
   },
   "resources": [],
   "support": {

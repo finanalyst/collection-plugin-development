@@ -86,4 +86,8 @@ are changed in the working version are later than the released version with the 
 =head1 2022-12-21 v0.4.3
 =item added secondaries plugin to generate the legacy Secondary files.
 
+=head1 2023-01-22 v0.5.0
+=item move TestPlugin to Collection
+=item change all the test imports on all plugins to import from the correct module.
+
 =end pod

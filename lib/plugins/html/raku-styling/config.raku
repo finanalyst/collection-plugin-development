@@ -5,11 +5,11 @@
 	),
 	:css<raku-default-styling.css>,
 	:custom-raku(),
+	:js-script<sidebar.js>,
 	:license<Artistic-2.0>,
 	:name<raku-styling>,
 	:render<move-images-in-css.raku>,
 	:scss<raku-default-styling.scss>,
 	:template-raku(),
-	:js-script<sidebar.js>,
-	:version<0.3.1>,
+	:version<0.3.2>,
 )

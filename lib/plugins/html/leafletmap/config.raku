@@ -33,6 +33,6 @@
 	:provider<OpenStreetMap>,
 	:render,
 	:template-raku<leaflet-templates.raku>,
-	:version<0.3.3>,
+	:version<0.3.5>,
 	:zoom(16),
 )
