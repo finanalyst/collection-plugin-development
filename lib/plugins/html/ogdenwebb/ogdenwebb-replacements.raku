@@ -219,7 +219,7 @@ use v6.d;
         </footer>
         BLOCK
     },
-    'page-edit' => sub (%prm, %tml) {
+    page-edit => sub (%prm, %tml) {
         return '' unless %prm<config><path> ~~ / ^ .+ 'docs/' ( .+) $ /;
         qq:to/BLOCK/
         <div class="page-edit">
@@ -233,7 +233,7 @@ use v6.d;
           </div>
         BLOCK
     },
-    'end-block' => sub (%prm, %tml) {
+    end-block => sub (%prm, %tml) {
         qq:to/BLOCK/
         <div
             role="status"
@@ -244,14 +244,14 @@ use v6.d;
         BLOCK
     },
     #placeholder
-    'block-code' => sub (%prm, %tml) { # previous block-code is set by 02-highlighter
+    block-code => sub (%prm, %tml) { # previous block-code is set by 02-highlighter
         my $hl = %tml.prior('block-code').(%prm, %tml);
         $hl .= subst( / '<pre class="' /, '<pre class="cm-s-ayaya ');
         '<div class="raku-code raku-lang">'
             ~ $hl
             ~ '</div>'
     },
-    'heading' => sub (%prm, %tml) {
+    heading => sub (%prm, %tml) {
         my $h = 'h' ~ (%prm<level> // '1');
         "\n<$h"
             ~ ' id="'
@@ -268,7 +268,7 @@ use v6.d;
         my $tb = %tml.prior('table').(%prm, %tml);
         $tb.subst(/ '<table class="' /, '<table class="table is-bordered centered ')
     },
-    'toc' => sub (%prm, %tml) {
+    toc => sub (%prm, %tml) {
         if %prm<toc>.defined and %prm<toc>.keys {
             my $rv = "<ul class=\"menu-list\">\n";
             my Bool $sub-list = False;
@@ -305,5 +305,52 @@ use v6.d;
             }
         }
         else { '' }
+    },
+    extendedsearch => sub (%prm, %tml) {
+        return q:to/ERROR/ without %prm<extendedsearch>;
+            <div class="listf-error">ListFiles has no collected data,
+            is ｢extendedsearch｣ in the Mode's ｢plugins-required<compilation>｣ list?
+            </div>
+            ERROR
+        qq:to/SEARCH/;
+          <div class="container px-4">
+            <div class="search-form mb-4">
+              <div class="field">
+                <div class="control has-icons-right">
+                  <input id="search-input" class="input" type="text" placeholder="Search">
+                  <span class="icon is-small is-right">
+                    <i class="fas fa-search"></i>
+                  </span>
+                </div>
+              </div>
+              <nav class="level">
+                <!-- Left side -->
+                <div class="level-left">
+                  <div class="level-item">
+                    <div class="field">
+                      <div class="control">
+                        <div class="select">
+                          <select id="search-category-select">
+                            <option value="All">All</option>
+                            { %prm<extendedsearch>.map(
+                                { '<option value="' ~ $_ ~ '">' ~ $_ ~ '</option>' }
+                            ) }
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="level-right">
+                  <div class="level-item">
+                    <div id="search-count" class="raku search-result-amount">Type in a Search string</div>
+                  </div>
+                </div>
+              </nav>
+            </div>
+            <div class="raku-search results"></div>
+          </div>
+        <script defer="" src="/assets/scripts/js/extended-search.js"></script>
+        SEARCH
     },
 );

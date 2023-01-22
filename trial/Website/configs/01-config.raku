@@ -3,7 +3,7 @@
     :mode-cache<structure-cache>, # cache for the above
     :mode-ignore<
         footnotes.rakudoc glossary.rakudoc toc.rakudoc
-        search.rakudoc collection-examples.rakudoc
+        collection-examples.rakudoc
     >, # files to ignore
     :mode-obtain(), # not a remote repository
     :mode-refresh(), # ditto
