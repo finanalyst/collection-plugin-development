@@ -308,7 +308,7 @@ use v6.d;
     },
     extendedsearch => sub (%prm, %tml) {
         return q:to/ERROR/ without %prm<extendedsearch>;
-            <div class="listf-error">ListFiles has no collected data,
+            <div class="listf-error">ExtendedSearch has no collected data,
             is ｢extendedsearch｣ in the Mode's ｢plugins-required<compilation>｣ list?
             </div>
             ERROR

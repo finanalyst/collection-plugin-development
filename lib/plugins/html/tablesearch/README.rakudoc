@@ -1,0 +1,32 @@
+=begin pod
+=TITLE tablesearch is a plugin for Collection
+=SUBTITLE The plugin exposes the tablesearch JQuery plugin
+
+The plugin adds a namespace at the render stage, but it expects data to be
+made available during the render stage and for it to be used during the compilation
+stage.
+
+Credit is due to L<dhruvjivani18|https://www.jqueryscript.net/plus/search.php?keyword=dhruvjivani18>
+for the JQuery code.
+
+The data should be in form of a hash, with keys to be accessed using the parameter C<data>,
+see Custom blocks.
+
+The structure pointed by a data key should be in the form of an array:
+=item first (zeroth) element is an array of strings that will be used as the headers
+=item2 An empty string can be used to create an empty header.
+=item2 It is assumed there will always be a header.
+=item2 Only one header row is assumed.
+=item subsequent elements will be data in rows.
+=item if more data is in a row than in a header, it will be ignored
+=item if less data is in a row than in a header, empty cell(s) will be added to the row
+
+=head1 Custom blocks
+
+The block is C< =TableSearch> and requires the meta data C<:data>, eg
+=begin code
+    =TableSearch :data<routines>
+    Text that will be used in the table caption
+=end code
+
+=end pod

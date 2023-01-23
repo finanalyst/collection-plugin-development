@@ -1,0 +1,10 @@
+=begin pod :no-glossary :no-toc
+=TITLE Routines in Raku
+
+There are many routines in Raku because operators are treated as routines. In addition,
+methods and regex rules and tokens are also similar to routines. Search in the table
+below for routines, methods and regex that have been documented.
+
+=TableSearch :data<routines>
+
+=end pod
