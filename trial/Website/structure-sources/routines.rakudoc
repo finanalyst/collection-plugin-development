@@ -1,16 +1,15 @@
 =begin pod :no-glossary :no-toc
 =TITLE Routines in Raku
 
-There are many routines in Raku because operators are treated as routines. In addition,
-methods and regex rules and tokens are also similar to routines. Search in the table
-below for routines, methods and regex that have been documented.
+There are many routines in Raku because operators are treated as routines. Search in the table
+below for routines that have been documented.
 
 =for TableManager :data<routines>
-= :firstSort('[[2,0]]')
+= :firstSort('[[2,0],[1,0]]')
 = :disable('["last"]')
 = :appendFilterby('true')
 = :pagination('true')
 = :showrows('[10,20,30,50]')
-= :disableFilterBy('[4]')
+= :disableFilterBy('["last"]')
 
 =end pod

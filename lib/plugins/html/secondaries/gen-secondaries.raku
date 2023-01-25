@@ -41,7 +41,7 @@ sub ($pp, %processed, %options) {
     #|this is for the triples describing the files to be transferred once created
     my @transfers;
     #| container for tablesearch plugin
-    my @routines = [ ['Type', 'Name' , 'Subtype', 'Category', 'Where documented'] , ];
+    my @routines = [ ['Category', 'Name' , 'Type', 'Where documented'] , ];
     counter(:items(%definitions.keys), :header('Generating secondaries'));
     for %definitions.kv -> $fn, %targets {
         counter(:dec);
@@ -97,10 +97,9 @@ sub ($pp, %processed, %options) {
                 ), %templates);
                 $body ~= .<body>;
                 @routines.push: [
-                    $kind.tc,
+                    .<category>.tc,
                     $dn,
                     .<subkind>,
-                    .<category>,
                     qq[[<a href="/{ .<source> }.html#{ .<target> }">{ .<source> }</a>]]
                 ];
             }
