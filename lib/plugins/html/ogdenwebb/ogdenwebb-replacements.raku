@@ -252,17 +252,18 @@ use v6.d;
             ~ '</div>'
     },
     heading => sub (%prm, %tml) {
+        my $txt = %prm<text> // '';
+        my $index-parse = $txt ~~ /
+            ( '<a name="index-entry-' .+? '</a>' )
+            '<span class="glossary-entry">' ( .+? ) '</span>'
+        /;
         my $h = 'h' ~ (%prm<level> // '1');
-        "\n<$h"
-            ~ ' id="'
-            ~ %tml<escaped>.(%prm<target>)
-            ~ '" '
-            ~ "class=\"raku-$h\">"
-            ~ '<a href="#'
-            ~ %tml<escaped>.(%prm<top>)
-            ~ '" class="u" title="go to top of document">'
-            ~ (%prm<text> // '')
-            ~ "</a></$h>\n"
+        qq[[\n<$h id="{ %tml<escaped>.(%prm<target>) }"]]
+            ~ qq[[ class="raku-$h">]]
+            ~ ( $index-parse.so ?? $index-parse[0] !! '' )
+            ~ qq[[<a href="#{ %tml<escaped>.(%prm<top>) }" class="u" title="go to top of document">]]
+            ~ ( $index-parse.so ?? $index-parse[1] !! $txt )
+            ~ qq[[</a></$h>\n]]
     },
     table => sub (%prm, %tml) {
         my $tb = %tml.prior('table').(%prm, %tml);

@@ -133,16 +133,17 @@ use ProcessedPod;
             ~ ((%prm<text>.defined and %prm<text> ne '') ?? '<span class="glossary-entry">' ~ %prm<text> ~ '</span>' !! '')
     },
     'heading' => sub (%prm, %tml) {
-        "\n<h" ~ (%prm<level> // '1')
-            ~ ' id="'
-            ~ %tml<escaped>.(%prm<target>)
-            ~ '"><a href="#'
-            ~ %tml<escaped>.(%prm<top>)
-            ~ '" class="u" title="go to top of document">'
-            ~ (%prm<text> // '')
-            ~ '</a></h'
-            ~ (%prm<level> // '1')
-            ~ ">\n"
+        my $txt = %prm<text> // '';
+        my $index-parse = $txt ~~ /
+            ( '<a name="index-entry-' .+? '</a>' )
+            '<span class="glossary-entry">' ( .+? ) '</span>'
+        /;
+        my $h = 'h' ~ (%prm<level> // '1');
+        qq[[\n<$h id="{ %tml<escaped>.(%prm<target>) }">]]
+            ~ ( $index-parse.so ?? $index-parse[0] !! '' )
+            ~ qq[[<a href="#{ %tml<escaped>.(%prm<top>) }" class="u" title="go to top of document">]]
+            ~ ( $index-parse.so ?? $index-parse[1] !! $txt )
+            ~ qq[[</a></$h>\n]]
     },
     'image' => sub (%prm, %tml) {
         '<img src="' ~ (%prm<src> // 'path/to/image') ~ '"'
