@@ -9,5 +9,5 @@
 	:name<typegraph>,
 	:render<add-type-graph.raku>,
 	:template-raku<tp-template.raku>,
-	:version<0.2.3>,
+	:version<0.3.0>,
 )
