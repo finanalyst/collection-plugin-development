@@ -90,65 +90,96 @@ Or bends with the remover to remove.
 
 =head1 New Format Codes
 
-Here is an example where the format code F has been leveraged to generate B<FontAwesome> icons.
-The plugin here utilises v4.7. The API for v5 / 6 is different, so another plugin may be needed.
+Plugins also can be used to create new format code, in addition to the specified ones.
+
+The difference between a B<Pod-block> and a B<FormatCode> is that a block is line oriented,
+where as format codes are word/character oriented and can appear inside a line.
 
 Since Raku treats all Unicode characters the same, Chinese/Arabic/Cyrillic glyphs can now be
 specified to repeat or alias the predefined codes of C<B C I K T U E Z X N L P V >.
+This means a character/glyph more appropriate in another language can be used in place of,
+for example B<B> for bold.
+
+Here are two examples of new format codes:
+=item leveraging the format code V<F<>> to generate B<FontAwesome> icons.
+=item creating a deprecation code to show how information about changes to documentation
+can be signalled to the reader.
+
+=head2 Fontawesome v5.15.4
+
+The code only uses the free icons. See L<font search page|https://fontawesome.com/icons>.
+Make sure to filter for the free icons.
 
 =begin code
 Some FontAwesome icons
 
-F<fa-ambulance> Example of ambulance
+F<fas fa-ambulance> Example of ambulance
 
-F<fa-automobile> Example of automobile (alias)
+F<fas fa-car> Example of automobile
 
-F<fa-bicycle> Example of bicycle
+F<fas fa-bicycle> Example of bicycle
 
-F<fa-bus> Example of bus
+F<fas fa-bus> Example of bus
 
-F<fa-truck> Example of truck
+F<fas fa-truck> Example of truck
 
-F<fa-wheelchair> Example of wheelchair
+F<fas fa-wheelchair> Example of wheelchair
 
-F<fa-wheelchair-alt> Example of wheelchair-alt
+F<fas fab-accessible-icon> Example of accessible-icon (was wheelchair-alt in fontawesom v4)
 =end code
 
 Generates
 Some FontAwesome icons
 
-F<fa-ambulance> Example of ambulance
+F<fas fa-ambulance> Example of ambulance
 
-F<fa-automobile> Example of automobile (alias)
+F<fas fa-car> Example of automobile
 
-F<fa-bicycle> Example of bicycle
+F<fas fa-bicycle> Example of bicycle
 
-F<fa-bus> Example of bus
+F<fas fa-bus> Example of bus
 
-F<fa-truck> Example of truck
+F<fas fa-truck> Example of truck
 
-F<fa-wheelchair> Example of wheelchair
+F<fas fa-wheelchair> Example of wheelchair
 
-F<fa-wheelchair-alt> Example of wheelchair-alt
+F<fab fa-accessible-icon> Example of accessible-icon (was wheelchair-alt in fontawesome v4)
 
 FontAwesome has some other options.
 =begin code
 
-Train normal size F<fa-train> Triple size train F<fa-train|fa-3x>
+Train normal size F<fas fa-train> Triple size train F<fas fa-train|fa-3x>
 
-An animated spinner F<fa-refresh|fa-spin fa-3x fa-fw>
+An animated spinner F<fas fa-sync|fa-spin fa-3x fa-fw>
 =end code
 Generates
 
-Train normal size F<fa-train> Triple size train F<fa-train|fa-3x>
+Train normal size F<fas fa-train> Triple size train F<fas fa-train|fa-3x>
 
-An animated spinner F<fa-refresh|fa-spin fa-3x fa-fw>
+An animated spinner F<fas fa-sync|fa-spin fa-3x fa-fw>
 
 Notice how these examples leverage off the idea of meta data together with a Format Code. This
 is not standard Rakudoc (aka POD6), as this metadata is only specified for C< X<> > and C< L<> >.
 C<Raku::Pod::Render>
 allows for metadata to be added to any I<non-standard> letter used as a Format Code, and
 any Unicode thingy that Raku treats as a "character" to be made into a Format Code.
+
+=head2 Deprecation code
+
+Suppose some functionality has been deprecated, or added, to documentation. Rather than
+deleting the documentation, and so hiding information from developers trying to maintain
+code, meta text is added to the code which can be viewed by hovering a mouse over it
+(when rendered into HTML, but another strategy can be adopted for other formats).
+
+For example, the following Rakudoc markup
+=begin code
+    This is some text about D<function this-might-be-useful(Str:D $indeed) | Replaced with function much-more-useful(Str:D $indeed)>.
+    Try hovering over the outlined text
+=end code
+renders as:
+
+This is some text about D<function this-might-be-useful(Str:D $indeed) | Replaced with function much-more-useful(Str:D $indeed)>.
+Try hovering over the outlined text
 
 =head1 Compilation blocks
 
@@ -311,14 +342,14 @@ C<:headlevel(0)> is set so that the Table of Contents is not affected.
 =for LeafMarker
 =    :map-id<map-four>
 =    :lat(51.529269) :long(-3.188109)
-=    :fa-icon<fa-cutlery fa-spin fa-3x fa-fw>
+=    :fa-icon<fas fa-cutlery fa-spin fa-3x fa-fw>
 =    :headlevel(0)
 =    :title<Fintans Fish & Chip Co>
 
 =for LeafMarker
 =    :map-id<map-four>
 =    :lat(51.502576) :long(-3.190222)
-=    :fa-icon<fa-cutlery>
+=    :fa-icon<fas fa-cutlery>
 =    :headlevel(0)
 =    :popup<Yan’s Fish Bar>
 
@@ -336,14 +367,14 @@ Thus for two chippies judged the best in Cardiff at the time of writing:
 =for LeafMarker
 =    :map-id<map-four>
 =    :lat(51.529269) :long(-3.188109)
-=    :fa-icon<fa-cutlery fa-spin fa-3x fa-fw>
+=    :fa-icon<fa-solid fa-utensils fa-spin fa-3x fa-fw>
 =    :headlevel(0)
 =    :title<Fintans Fish & Chip Co, Llanishen>
 
 =for LeafMarker
 =    :map-id<map-four>
 =    :lat(51.502576) :long(-3.190222)
-=    :fa-icon<fa-cutlery>
+=    :fa-icon<fa-solid fa-utensils>
 =    :headlevel(0)
 =    :popup<Yan’s Fish Bar>
 

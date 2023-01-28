@@ -1,5 +1,6 @@
 %(
-	:add-css<font-awesome.min.css>,
+	:add-css<all.min.css>,
+	:jquery(['all.min.js',-1]),
 	:auth<collection>,
 	:authors(
 		"finanalyst",
@@ -9,5 +10,5 @@
 	:name<font-awesome>,
 	:render<fa-assets.raku>,
 	:template-raku<fa-template.raku>,
-	:version<0.3.1>,
+	:version<0.4.1>,
 )

@@ -12,7 +12,7 @@
 	:compilation<add-search.raku>,
 	:transfer<cleanup.raku>,
 	:template-raku<ogdenwebb-replacements.raku>,
-	:version<0.1.21>,
+	:version<0.2.0>,
 	:add-css<
 		css/main.css
 		css/themes/dark.css css/themes/light.css
@@ -33,7 +33,6 @@
 		['src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
 			integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
 			crossorigin="anonymous"', 1],
-		['src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"', 2],
 	),
 	:information<add-css jquery jquery-link>,
 )

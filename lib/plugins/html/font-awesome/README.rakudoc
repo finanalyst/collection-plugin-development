@@ -4,7 +4,7 @@
 
 Plugin provides Fontawesome icons when the C< F<> > FormatCode is encountered in Pod6 content files.
 
-Currently only Fontawesome 4.47 is supported.
+Updated to Fontawesome 5.15.4-web.
 
 The FormatCode has the form C< F<name|other classes> > which render as
 

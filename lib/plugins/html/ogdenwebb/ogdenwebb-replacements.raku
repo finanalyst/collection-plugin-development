@@ -71,6 +71,10 @@ use v6.d;
                     <a class="navbar-item" href="/error-report.html">
                       Errors
                     </a>
+                    <hr class="navbar-divider">
+                    <a class="navbar-item" href="/collection-examples.html">
+                      Plugin demos
+                    </a>
                   </div>
                 </div>
               </div>

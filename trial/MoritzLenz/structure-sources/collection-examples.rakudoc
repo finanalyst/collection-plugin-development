@@ -90,81 +90,59 @@ Or bends with the remover to remove.
 
 =head1 New Format Codes
 
-Format codes equate to line elements or spans in HTML, but can add extra meta data.
-
-The ability to create new custom codes and because
-Raku treats all Unicode characters the same, Chinese/Arabic/Cyrillic glyphs can also be
-specified to repeat or alias the predefined codes of C<B C I K T U E Z X N L P V >.
-
-=head2 Deprecation V<D<>>
-
-Suppose we want to add a deprecation notice or historical comment about functionality
-that used to exist. The new Format-Code-D does this. Eg.,
-
-=begin code
-
-    Here is an example of D<deprecated functionality | it will be eliminated in Raku-X>. Try
-    hovering over the marked words.
-
-=end code
-
-renders as:
-
-Here is an example of D<deprecated functionality | it will be eliminated in Raku-X>. Try
-hovering over the marked words.
-
-=head2 Add in an icon with V<F<>>
-
 Here is an example where the format code F has been leveraged to generate B<FontAwesome> icons.
-The plugin here utilises v4.7. The API for v5 / 6 is different, so another plugin may be needed.
+The plugin here utilises v5.15.4.
+
+Since Raku treats all Unicode characters the same, Chinese/Arabic/Cyrillic glyphs can now be
+specified to repeat or alias the predefined codes of C<B C I K T U E Z X N L P V >.
 
 =begin code
 Some FontAwesome icons
 
-F<fa-ambulance> Example of ambulance
+F<fas fa-ambulance> Example of ambulance
 
-F<fa-automobile> Example of automobile (alias)
+F<fas fa-car> Example of automobile
 
-F<fa-bicycle> Example of bicycle
+F<fas fa-bicycle> Example of bicycle
 
-F<fa-bus> Example of bus
+F<fas fa-bus> Example of bus
 
-F<fa-truck> Example of truck
+F<fas fa-truck> Example of truck
 
-F<fa-wheelchair> Example of wheelchair
+F<fas fa-wheelchair> Example of wheelchair
 
-F<fa-wheelchair-alt> Example of wheelchair-alt
+F<fas fab-accessible-icon> Example of accessible-icon (was wheelchair-alt in fontawesom v4)
 =end code
 
 Generates
 Some FontAwesome icons
 
-F<fa-ambulance> Example of ambulance
+F<fas fa-ambulance> Example of ambulance
 
-F<fa-automobile> Example of automobile (alias)
+F<fas fa-car> Example of automobile
 
-F<fa-bicycle> Example of bicycle
+F<fas fa-bicycle> Example of bicycle
 
-F<fa-bus> Example of bus
+F<fas fa-bus> Example of bus
 
-F<fa-truck> Example of truck
+F<fas fa-truck> Example of truck
 
-F<fa-wheelchair> Example of wheelchair
+F<fas fa-wheelchair> Example of wheelchair
 
-F<fa-wheelchair-alt> Example of wheelchair-alt
+F<fab fa-accessible-icon> Example of accessible-icon (was wheelchair-alt in fontawesom v4)
 
 FontAwesome has some other options.
 =begin code
 
-Train normal size F<fa-train> Triple size train F<fa-train|fa-3x>
+Train normal size F<fas fa-train> Triple size train F<fas fa-train|fa-3x>
 
-An animated spinner F<fa-refresh|fa-spin fa-3x fa-fw>
+An animated spinner F<fas fa-sync|fa-spin fa-3x fa-fw>
 =end code
 Generates
 
-Train normal size F<fa-train> Triple size train F<fa-train|fa-3x>
+Train normal size F<fas fa-train> Triple size train F<fas fa-train|fa-3x>
 
-An animated spinner F<fa-refresh|fa-spin fa-3x fa-fw>
+An animated spinner F<fas fa-sync|fa-spin fa-3x fa-fw>
 
 Notice how these examples leverage off the idea of meta data together with a Format Code. This
 is not standard Rakudoc (aka POD6), as this metadata is only specified for C< X<> > and C< L<> >.
@@ -333,14 +311,14 @@ C<:headlevel(0)> is set so that the Table of Contents is not affected.
 =for LeafMarker
 =    :map-id<map-four>
 =    :lat(51.529269) :long(-3.188109)
-=    :fa-icon<fa-cutlery fa-spin fa-3x fa-fw>
+=    :fa-icon<fas fa-cutlery fa-spin fa-3x fa-fw>
 =    :headlevel(0)
 =    :title<Fintans Fish & Chip Co>
 
 =for LeafMarker
 =    :map-id<map-four>
 =    :lat(51.502576) :long(-3.190222)
-=    :fa-icon<fa-cutlery>
+=    :fa-icon<fas fa-cutlery>
 =    :headlevel(0)
 =    :popup<Yan’s Fish Bar>
 
@@ -358,14 +336,14 @@ Thus for two chippies judged the best in Cardiff at the time of writing:
 =for LeafMarker
 =    :map-id<map-four>
 =    :lat(51.529269) :long(-3.188109)
-=    :fa-icon<fa-cutlery fa-spin fa-3x fa-fw>
+=    :fa-icon<fa-solid fa-utensils fa-spin fa-3x fa-fw>
 =    :headlevel(0)
 =    :title<Fintans Fish & Chip Co, Llanishen>
 
 =for LeafMarker
 =    :map-id<map-four>
 =    :lat(51.502576) :long(-3.190222)
-=    :fa-icon<fa-cutlery>
+=    :fa-icon<fa-solid fa-utensils>
 =    :headlevel(0)
 =    :popup<Yan’s Fish Bar>
 

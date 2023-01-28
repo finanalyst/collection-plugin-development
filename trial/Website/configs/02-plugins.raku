@@ -4,8 +4,10 @@
     plugins-required => %(
         :setup<raku-doc-setup>,
         :render<
-            tablemanager ogdenwebb website camelia simple-extras listfiles images deprecate-span font-awesome filterlines
-            secondaries typegraph
+            font-awesome tablemanager ogdenwebb
+            website camelia simple-extras listfiles images deprecate-span filterlines
+            secondaries typegraph raku-repl
+            leafletmap latex-render graphviz
             link-error-test
             gather-js-jq gather-css
         >,
