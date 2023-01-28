@@ -19,7 +19,7 @@ sub ( $pp, %processed, %options ) {
     my %defns = $pp.get-data('heading')<defs>;
     # structure of %defns is <file name as in processed> => %( <target> => %info )
     # %info = :name, :kind, :subkind, :category
-    exit note 'data needed from parsed headings' unless +%defns;
+    note 'no data from parsed headings' unless +%defns;
     # structure of processed
     # <filename> => %( :config-data => :kind, @sub-kind, @category )
     # Helper functions as in Documentable
