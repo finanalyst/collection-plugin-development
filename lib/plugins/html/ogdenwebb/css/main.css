@@ -77,8 +77,8 @@ body {
 
 .navbar-search-wrapper {
   position: absolute;
-  right: 3px;
   top: 10%;
+  right: 3px;
 }
 
 .autocomplete_wrapper {
@@ -96,6 +96,10 @@ body {
   padding: 0;
   z-index: 1;
   list-style: none;
+}
+.navbar-search-autocomplete ul {
+  top: 0 !important;
+  left: 0 !important;
 }
 
 .navbar-search-autocomplete[hidden],
@@ -116,6 +120,7 @@ body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  overflow-x: ellipsis;
   transition: all 0.2s ease;
 }
 
@@ -516,6 +521,12 @@ h1.error-title {
   color: grey;
 }
 
+@media only screen and (min-width: 1210px) {
+  .navbar-search-autocomplete {
+    top: 35px;
+    left: 10px;
+  }
+}
 .raku-sidebar {
   max-width: calc(100% - 50px);
   position: fixed;
@@ -8302,6 +8313,10 @@ a.has-text-danger-dark:hover, a.has-text-danger-dark:focus {
   .navbar-search-wrapper {
     top: 12%;
   }
+  .navbar-search-autocomplete {
+    top: 42px;
+    left: 10px;
+  }
 }
 @media screen and (max-width: 768px) {
   body {
@@ -8371,7 +8386,7 @@ a.has-text-danger-dark:hover, a.has-text-danger-dark:focus {
   }
   .navbar-search-autocomplete {
     display: block;
-    position: static;
+    position: absolute;
   }
 }
 @media only screen and (min-width: 769px) and (max-width: 1204px) {
