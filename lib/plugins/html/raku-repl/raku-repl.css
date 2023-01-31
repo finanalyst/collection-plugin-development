@@ -1,6 +1,6 @@
 #raku-repl {
   position: fixed;
-  bottom: 0;
+  bottom: 15vh;
   left: 1vw;
   width: 98vw;
   z-index: 60;

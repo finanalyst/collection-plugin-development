@@ -4,7 +4,8 @@
 The B<Raku programming language> is a very flexible, modern programming language.
 
 This website is dedicated to be a good I<viewer> for its documentation.
-Many people have contributed to writing the documentation and tooling, and a separate credits page is
+
+Many people have contributed to writing the documentation and tooling, and a separate credits page
 can be found L<here|https://raw.githubusercontent.com/Raku/doc/master/CREDITS>.
 
 This particular website is a fraction of effort standing on the shoulders of the giants.
@@ -17,4 +18,7 @@ Some of the people who helped create this I< website > are:
 resulting in L<Documentable|https://github.com/Raku/Documentable> creation.
 
 =item L<Richard Nabil Hainsworth, aka finanalyst | http://github.com/finanalyst> - adapted website to Collection toolchain.
+
+The website is continuously being improved by community members, L<who are listed here|/credits>.
+
 =end pod

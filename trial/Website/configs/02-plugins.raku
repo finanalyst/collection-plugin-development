@@ -2,7 +2,7 @@
     :plugins<plugins>,
     :plugin-format<html>,
     plugins-required => %(
-        :setup<raku-doc-setup>,
+        :setup<raku-doc-setup credits-page>,
         :render<
             font-awesome tablemanager ogdenwebb
             website camelia simple-extras listfiles images deprecate-span filterlines
