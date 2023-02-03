@@ -39,7 +39,7 @@ sub ( $pp, %processed, %options ) {
             @entries.push: %(
                 :$category,
                 :value( escape( %info<name> ) ),
-                :info( escape(': in <b>' ~ $fn ~ '</b>') ),
+                :info( ': in <b>' ~ escape($fn) ~ '</b>' ),
                 :url( escape-json( "/$fn\.html\#$targ" ) )
             )
         }
@@ -55,7 +55,7 @@ sub ( $pp, %processed, %options ) {
             @entries.push: %(
                 :category<Heading>,
                 :value( escape( .<text> ) ),
-                :info( ': section in <b>' ~ $podf.title ~ '</b>' ),
+                :info( ': section in <b>' ~ escape( $podf.title ) ~ '</b>' ),
                 :url( escape-json( '/' ~ $fn ~ '.html#' ~ .<target> ) )
             )
         }
