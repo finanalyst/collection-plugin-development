@@ -31,6 +31,19 @@ sub ( $pp, %processed, %options ) {
     sub escape-json(Str $s) is export {
         $s.subst(｢\｣, ｢%5c｣, :g).subst('"', '\"', :g).subst(｢?｣, ｢%3F｣, :g)
     }
+    for %defns.kv -> $fn, %targets {
+        for %targets.kv -> $targ, %info {
+            my $category = %info<category>.tc ;
+            $category = %info<subkind>.tc ~ ' operator' if $category eq 'Operator';
+            $categories{ $category }++;
+            @entries.push: %(
+                :$category,
+                :value( escape( %info<name> ) ),
+                :info( escape(': in <b>' ~ $fn ~ '</b>') ),
+                :url( escape-json( "/$fn\.html\#$targ" ) )
+            )
+        }
+    }
     for %processed.kv -> $fn, $podf {
         @entries.push: %(
             :category( $podf.pod-config-data<kind>.tc ),
@@ -59,19 +72,6 @@ sub ( $pp, %processed, %options ) {
 #            }
 #        }
         $categories{ $podf.pod-config-data<kind>.tc }++
-    }
-    for %defns.kv -> $fn, %targets {
-        for %targets.kv -> $targ, %info {
-            my $category = %info<category>.tc ;
-            $category = %info<subkind>.tc ~ ' operator' if $category eq 'Operator';
-            $categories{ $category }++;
-            @entries.push: %(
-                :$category,
-                :value( escape( %info<name> ) ),
-                :info( escape(': in <b>' ~ $fn ~ '</b>') ),
-                :url( escape-json( "/$fn\.html\#$targ" ) )
-            )
-        }
     }
     # try to file out duplicates by looking for only unique urls
     @entries .= unique(:as( *.<url> ) );
