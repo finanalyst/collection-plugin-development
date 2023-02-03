@@ -14,7 +14,7 @@ sub ( $pp, %processed, %options ) {
         %( :category("Syntax"), :value("#` multi-line comment"), :url("/language/syntax.html#Multi-line_/_embedded_comments") ),
         %( :category("Signature"), :value(";; (long name)"), :url("/type/Signature.html#index-entry-Long_Names") )
     ;
-    my $categories = <Syntax Signature>.SetHash;
+    my $categories = <Syntax Signature Heading Glossary>.SetHash;
     # collect info stored from parsing headers
     my %defns = $pp.get-data('heading')<defs>;
     # structure of %defns is <file name as in processed> => %( <target> => %info )
@@ -35,9 +35,28 @@ sub ( $pp, %processed, %options ) {
         @entries.push: %(
             :category( $podf.pod-config-data<kind>.tc ),
             :value( escape( $podf.title )),
-            :info( 'source file' ),
+            :info( 'is source file name' ),
             :url( escape-json( '/' ~ $fn ~ '.html' ))
         );
+        for $podf.raw-toc.grep({ !(.<is-title>) }) {
+            @entries.push: %(
+                :category<Heading>,
+                :value( escape( .<text> ) ),
+                :info( 'in file <b>' ~ $podf.title ~ '</b>' ),
+                :url( escape-json( '/' ~ $fn ~ '.html#' ~ .<target> ) )
+            )
+        }
+        # raw glossary is a hash of entry strings -> places in text
+        for $podf.raw-glossary.kv -> $entry, $targets {
+            for $targets.list {
+                @entries.push: %(
+                    :category<Glossary>,
+                    :value( escape( $entry ) ),
+                    :info( 'in file <b>' ~ $podf.title ~ '</b>' ),
+                    :url( escape-json( '/' ~ $fn ~ '.html#' ~ $_ ) )
+                )
+            }
+        }
         $categories{ $podf.pod-config-data<kind>.tc }++
     }
     for %defns.kv -> $fn, %targets {
@@ -48,7 +67,7 @@ sub ( $pp, %processed, %options ) {
             @entries.push: %(
                 :$category,
                 :value( escape( %info<name> ) ),
-                :info( escape('｢' ~ %info<subkind> ~ '｣' ~ 'in file ' ~ $fn) ),
+                :info( escape-json('in file <b>' ~ $fn ~ '</b>') ),
                 :url( escape-json( "/$fn\.html\#$targ" ) )
             )
         }

@@ -6,7 +6,7 @@
         :render<
             font-awesome tablemanager ogdenwebb
             website camelia simple-extras listfiles images deprecate-span filterlines
-            secondaries typegraph raku-repl
+            secondaries typegraph
             leafletmap latex-render graphviz
             link-error-test
             gather-js-jq gather-css

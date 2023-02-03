@@ -136,6 +136,14 @@ body {
   text-transform: uppercase;
 }
 
+.item-info {
+  padding-left: 2em;
+}
+.item-info > b {
+  font-weight: 600;
+  font-family: initial;
+}
+
 .navbar-logo {
   position: relative;
 }
