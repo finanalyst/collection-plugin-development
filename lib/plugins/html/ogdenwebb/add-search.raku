@@ -39,7 +39,7 @@ sub ( $pp, %processed, %options ) {
             @entries.push: %(
                 :$category,
                 :value( escape( %info<name> ) ),
-                :info( ': in <b>' ~ escape($fn) ~ '</b>' ),
+                :info( ': in <b>' ~ escape-json($fn) ~ '</b>' ),
                 :url( escape-json( "/$fn\.html\#$targ" ) )
             )
         }
@@ -47,7 +47,7 @@ sub ( $pp, %processed, %options ) {
     for %processed.kv -> $fn, $podf {
         @entries.push: %(
             :category( $podf.pod-config-data<kind>.tc ),
-            :value( escape( $podf.title )),
+            :value( escape-json( $podf.title )),
             :info( ': file title' ),
             :url( escape-json( '/' ~ $fn ~ '.html' ))
         );
@@ -55,22 +55,10 @@ sub ( $pp, %processed, %options ) {
             @entries.push: %(
                 :category<Heading>,
                 :value( escape( .<text> ) ),
-                :info( ': section in <b>' ~ escape( $podf.title ) ~ '</b>' ),
+                :info( ': section in <b>' ~ escape-json( $podf.title ) ~ '</b>' ),
                 :url( escape-json( '/' ~ $fn ~ '.html#' ~ .<target> ) )
             )
         }
-        ## glossary data is poor quality in POD6 sources. Not useful
-#        # raw glossary is a hash of entry strings -> places in text
-#        for $podf.raw-glossary.kv -> $entry, $targets {
-#            for $targets.list {
-#                @entries.push: %(
-#                    :category<Glossary>,
-#                    :value( escape( $entry ) ),
-#                    :info( ': index-entry in <b>' ~ $podf.title ~ '</b>' ),
-#                    :url( escape-json( '/' ~ $fn ~ '.html#' ~ $_ ) )
-#                )
-#            }
-#        }
         $categories{ $podf.pod-config-data<kind>.tc }++
     }
     # try to file out duplicates by looking for only unique urls
