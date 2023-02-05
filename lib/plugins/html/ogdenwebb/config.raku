@@ -5,14 +5,12 @@
 		"ogdenwebb",
 		"altai-man",
 	),
-	:custom-raku<new-blocks.raku>,
+	:custom-raku(),
 	:license<Artistic-2.0>,
 	:name<ogdenwebb>,
 	:render<move-images.raku>,
-	:compilation<add-search.raku>,
-	:transfer<cleanup.raku>,
 	:template-raku<ogdenwebb-replacements.raku>,
-	:version<0.2.10>,
+	:version<0.2.12>,
 	:add-css<
 		css/main.css
 		css/themes/dark.css css/themes/light.css
@@ -20,19 +18,8 @@
 	>, # order of files is important
 	# css/lib/codemirror.min.css
 	:jquery(
-		['js/core.js', 3],
-		['js/search.js', 4],
-		['js/lib/autoComplete.min.js', 1],
+		['core.js', 3],
 		['js/lib/cookie.umd.min.js', 1],
 	),
-	#		js/extended-search.js
-	#		js/lib/codemirror.min.js
-	#	js/lib/raku-mode.js
-	:jquery-link(
-		['src="https://rawgit.com/farzher/fuzzysort/master/fuzzysort.js"', 1],
-		['src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
-			integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
-			crossorigin="anonymous"', 1],
-	),
-	:information<add-css jquery jquery-link>,
+	:information<add-css jquery>,
 )

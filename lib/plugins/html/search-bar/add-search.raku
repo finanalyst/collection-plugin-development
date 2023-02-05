@@ -48,7 +48,7 @@ sub ( $pp, %processed, %options ) {
         @entries.push: %(
             :category( $podf.pod-config-data<kind>.tc ),
             :value( escape-json( $podf.title )),
-            :info( ': file title' ),
+            :info( ' ' ),
             :url( escape-json( '/' ~ $fn ~ '.html' ))
         );
         for $podf.raw-toc.grep({ !(.<is-title>) }) {
@@ -64,13 +64,12 @@ sub ( $pp, %processed, %options ) {
     # try to file out duplicates by looking for only unique urls
     @entries .= unique(:as( *.<url> ) );
     $pp.add-data('extendedsearch', $categories.keys);
-    'js/search.js'.IO.spurt:
+    'search-bar.js'.IO.spurt:
         'var items = '
         ~ to-json( @entries )
         ~ ";\n"
         ~ 'search-temp.js'.IO.slurp;
     [
-        [ 'assets/scripts/js/search.js', 'myself', 'js/search.js' ],
-        [ 'assets/scripts/js/extended-search.js', 'myself', 'js/extended-search.js' ]
+        [ 'assets/scripts/search-bar.js', 'myself', 'search-bar.js' ],
     ]
 }
