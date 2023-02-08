@@ -11,9 +11,9 @@
 	:name<search-bar>,
 	:render,
 	:template-raku<search-templates.raku>,
-	:version<0.1.2>,
+	:version<0.1.3>,
 	:jquery( ['search-bar.js',2], ), # ['extended-search.js', 2]
-	:information<jquery jquery-link add-css>,
+	:information<jquery jquery-link add-css search-site>,
 	:add-css<search-bar.css search-bar-light.css search-bar-dark.css>,
 	:jquery-link(
 		['src="https://rawgit.com/farzher/fuzzysort/master/fuzzysort.js"', 1],
