@@ -6,5 +6,5 @@
 	:license<Artistic-2.0>,
 	:name<link-plugin-assets-report>,
 	:report<link-plugin-assets.raku>,
-	:version<0.3.2>,
+	:version<0.3.3>,
 )

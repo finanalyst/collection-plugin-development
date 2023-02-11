@@ -1,5 +1,6 @@
 #!/usr/bin/env perl6
 use LibCurl::HTTP;
+use Collection::Progress;
 
 sub ($pr, %processed, %options) {
     my regex htmlcode {
@@ -54,16 +55,32 @@ sub ($pr, %processed, %options) {
         return () if $new eq any(%targets{$file}.list);
         return ($old, $new)
     }
+    sub test-remote($url --> Str ) {
+        state $http = LibCurl::HTTP.new;
+        my $resp;
+        try {
+            $resp = $http.HEAD($url).perform.response-code;
+        }
+        if $! {
+            $resp = $http.error;
+        }
+        # return blank if any stringified response code
+        return '' if ?(+$resp);
+        # any numerical response code indicates http link is live
+        # failures with non 404 ok as well.
+        return '' if ($resp ~~ / \:\s(\d\d\d) / and +$0 != 404);
+        $resp
+    }
     my SetHash $files .= new;
     my SetHash $missing .= new;
     my @remote-links;
+    # go through all the rendered files and pick up links and targets
     for %processed.kv -> $fn, $podf {
         # not all files have links, but may be targets, so store filenames
         $files{"/$fn"}++;
-        # format of podf.links Str entry -> :place :target :link-label :type
+        # format of podf.links Str entry => target/link-label/type/place
         # entry is not needed, but keeps the data together
-        # filter out remote schemas
-        # ProcessedPod v0.4 has target/link-label/type/place, not target/location/link
+        # filter out remote schemas, not target/location/link
         %links{$fn} = %(gather for $podf.links {
             if .value<type> eq 'external' {
                 push @remote-links, [$fn, .value<target>, .value<link-label>]
@@ -80,87 +97,48 @@ sub ($pr, %processed, %options) {
         %errors<remote><no_test> = True;
     }
     else {
-        my $num = @remote-links.elems;
-        my $starting = $num;
-        my $tail = $num ~ " / $starting links  ";
-        my $rev = "\b" x $tail.chars;
-        my $head = 'Waiting for internet responses on ';
-        print  $head ~ $tail unless %options<no-status>;
-        my $http = LibCurl::HTTP.new;
-        my $start = now;
+        %errors<remote><no_test> = False;
+        counter(:items(@remote-links.map( *.[1] ) ), :header('Testing remote links') ) unless %options<no-status>;
         for @remote-links -> ($fn, $url, $link-label) {
-            my $resp;
-            try {
-                $resp = $http.HEAD($url).perform.response-code;
-            }
-            if $! {
-                $resp = $http.error;
-            }
-            $tail = --$num ~ " / $starting links  ";
-            print $rev ~ $tail unless %options<no-status>;
-            $rev = "\b" x $tail.chars;
-            next if ?(+$resp);
-            # any numerical response code indicates http link is live
-            next if ($resp ~~ / \:\s(\d\d\d) / and +$0 != 404);
-            # failures with non 404 ok as well.
-            %errors<remote><no_test> = False without %errors<remote><no_test>;
-            %errors<remote>{$fn}.push(%( :$url, :$resp, :$link-label));
+            counter(:dec) unless %options<no-status>;
+            my $resp = test-remote($url);
+            %errors<remote>{$fn}.push(%( :$url, :$resp, :$link-label)) if $resp;
         }
-        my $elap = (now - $start ).Int;
-        say "\b" x $head.chars ~ $rev ~ "Collected responses on $starting links in { $elap div 60 } mins { $elap % 60 } secs"
-                unless %options<no-status>;
     }
-    # all data collected
+    # test for local and internal links by matching link targets, with anchor targets registered in files
     for %links.kv -> $fn, %spec {
         for %spec.kv -> $link, %registered {
             given %registered<type> {
                 when 'local' {
-                    if %registered<target> ~~ / ^ <-[#]>+ $ / {
-                        # filter out local schema without #
-                        my $file = ~$/;
-                        next if $files{$file};
-                        # not missing
-                        next if $missing{$file};
-                        # already registered as missing
-                        $missing{$file}++;
+                    # pass if it has already been registered as missing
+                    next if $missing{ %registered<target> };
+                    # fail if the file is not in the collection list
+                    unless $files{ %registered<target> } {
+                        $missing{ %registered<target> }++;
                         %errors<no-file>{$fn}.push(%(
-                            :$file,
-                            link-label => %registered<link-label>
-                        ))
+                            :file( %registered<target> ),
+                            :link-label( %registered<link-label> )
+                        ));
+                        next
                     }
-                    elsif %registered<target> ~~ / ^ (<-[#]>+) '#' (.+) $ / {
-                        my $file = ~$0;
-                        next if $missing{$file};
-                        # already registered as missing
-                        unless $files{$file} {
-                            $missing{$file}++;
-                            %errors<no-file>{$fn}.push(%(
-                                :$file,
-                                link-label => %registered<link-label>
-                            ));
-                            next
-                        }
-                        my $target = ~$1;
-                        # file exists, but is target listed for that file
-                        my @failed = failed-targets($file, $target);
-                        next unless @failed.elems;
-                        %errors<no-target>{$fn}.push(%(
-                            :$file,
-                            targets => @failed,
-                            link-label => %registered<link-label>
-                        ))
-                    }
-                    # otherwise no action for matches
+                    # so by here file exists, so check to see whether link has a specific place listed for that file
+                    next unless %registered<place>:exists and %registered<place>;
+                    my @failed = failed-targets( %registered<target> , %registered<place> );
+                    next unless @failed.elems;
+                    %errors<no-target>{$fn}.push(%(
+                        :file( $fn ),
+                        targets => @failed,
+                        link-label => %registered<link-label>
+                    ))
                 }
-                when 'internal' and (%registered<target> ~~ / ^ <-[#]>+ $ /) {
-#                    my $target = ~$/;
-#                    my @failed = failed-targets("/$fn", $target);
-#                    next unless @failed.elems;
-#                    %errors<no-target>{$fn}.push(%(
-#                        file => $fn,
-#                        targets => @failed,
-#                        link-label => %registered<link-label>
-#                    ))
+                when 'internal' {
+                    my @failed = failed-targets("/$fn", %registered<place>);
+                    next unless @failed.elems;
+                    %errors<no-target>{$fn}.push(%(
+                        file => $fn,
+                        targets => @failed,
+                        link-label => %registered<link-label>
+                    ))
                 }
                 default {
                     %errors<unknown>{$fn}.push(%(

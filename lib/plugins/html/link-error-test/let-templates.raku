@@ -13,8 +13,8 @@ use PrettyDump;
                         'Remote http/s links with bad host or 404';
             for <remote no-target unknown no-file> -> $type {
                 my %object = $data{$type};
-                next unless %object.elems;
-                $rv ~= '<h2>' ~ %titles{$type} ~ "</h2>\n";
+                next if ! %object.elems or ( $type eq 'remote' and %object.elems eq 1 );
+                $rv ~= '<h2 class="raku-h2">' ~ %titles{$type} ~ "</h2>\n";
                 given $type {
                     when 'remote' {
                         if %object<no_test> {
@@ -40,8 +40,8 @@ use PrettyDump;
                         $rv ~= q:to/HEADER/ ~ "\n"
                                 <div class="let-file header"><div>Document containing link<div class="let-clickable">Click for originating document in new tab</div></div>
                                 <div class="let-link-text header">Originating link text
-                                <div class="let-link-file header"><div>Existing target file<div class="let-clickable">Click for destination document in new tab</div></div>
-                                <div class="let-link-target header">Non-existent internal target (variants tried)</div>
+                                <div class="let-link-file header"><div>A document generates a web-page<div class="let-clickable">Click for destination document in new tab</div></div>
+                                <div class="let-link-target header">An internal target is referenced but does not exist (variants tried)</div>
                                 </div></div></div>
                             HEADER
                     }
