@@ -111,6 +111,13 @@ body {
   font-size: 96px;
 }
 
+// for the page generated content
+.dropdown-item.generated {
+    width: 30vw;
+    .file-path {
+        font-weight: 600;
+    }
+}
 
 // Custom classes
 .has-background-image {

@@ -13,7 +13,8 @@ use PrettyDump;
                         'Remote http/s links with bad host or 404';
             for <remote no-target unknown no-file> -> $type {
                 my %object = $data{$type};
-                next if ! %object.elems or ( $type eq 'remote' and %object.elems eq 1 );
+                next if (! %object.elems)
+                    or ( $type eq 'remote' and ! %object<no_test> and %object.elems eq 1 );
                 $rv ~= '<h2 class="raku-h2">' ~ %titles{$type} ~ "</h2>\n";
                 given $type {
                     when 'remote' {
