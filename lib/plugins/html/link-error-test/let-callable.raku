@@ -126,7 +126,7 @@ sub ($pr, %processed, %options) {
                     my @failed = failed-targets( %registered<target> , %registered<place> );
                     next unless @failed.elems;
                     %errors<no-target>{$fn}.push(%(
-                        :file( $fn ),
+                        :file( %registered<target> ),
                         targets => @failed,
                         link-label => %registered<link-label>
                     ))
