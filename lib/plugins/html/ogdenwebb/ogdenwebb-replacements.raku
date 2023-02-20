@@ -186,6 +186,7 @@ use v6.d;
             <nav class="level">
             { %tml<footer-left>.(%prm, %tml) }
             { %tml<page-generated>.(%prm, %tml) }
+            <div class="level-item">Raku™</div>
             { %tml<footer-right>.(%prm, %tml) }
             </nav>
           </div>
@@ -222,6 +223,7 @@ use v6.d;
                             <p>This page is generated from </p>
                             <p class="file-path">{ %prm<config><path> }</p>
                             <p>{ 'on ' ~ .yyyy-mm-dd ~ ' at ' ~ .hh-mm-ss with DateTime(now) }</p>
+                            { %tml<git-reflog>.(%prm, %tml) if %tml<git-reflog>:exists }
                         </div>
                     </div>
                 </div>
