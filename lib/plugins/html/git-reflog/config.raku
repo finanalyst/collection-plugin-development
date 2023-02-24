@@ -10,5 +10,6 @@
 	:setup<add-ref-hash.raku>,
 	:template-raku<reflog.raku>,
 	:information<template-raku>,
-	:version<0.1.1>,
+	:version<0.1.3>,
+	:transfer<cleanup.raku>,
 )

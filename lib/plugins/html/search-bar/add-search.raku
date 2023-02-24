@@ -46,9 +46,11 @@ sub ( $pp, %processed, %options ) {
         }
     }
     for %processed.kv -> $fn, $podf {
+        next unless $podf.pod-config-data<subkind>:exists;
+        my $value = $podf.name ~~ / ^ 'type/' (.+) $ / ?? ~$/[0] !! $podf.name;
         @entries.push: %(
-            :category( $podf.pod-config-data<kind>.tc ),
-            :value( escape-json( $podf.title )),
+            :category( $podf.pod-config-data<subkind>.tc ),
+            :value( escape-json( $value )),
             :info( ' ' ),
             :url( escape-json( '/' ~ $fn ~ '.html' ))
         );

@@ -74,8 +74,8 @@ sub ($pp, %processed, %options) {
             my @subkind;
             my @category;
             my $podf = PodFile.new(
-                name => $fn-name,
-                :pod-config-data(%( :$kind,)),
+                name => $dn,
+                :pod-config-data(%( :$kind, :subkind<Composite> )),
                 :$title,
                 :path('synthetic documentation'),
                 );

@@ -12,7 +12,7 @@
             gather-js-jq gather-css
         >,
         :report<link-plugin-assets-report>,
-        :transfer<secondaries gather-js-jq gather-css images search-bar>,
+        :transfer<secondaries gather-js-jq gather-css images search-bar git-reflog>,
         :compilation<secondaries listfiles link-error-test search-bar>,
         :completion<cro-app>,
     ),
