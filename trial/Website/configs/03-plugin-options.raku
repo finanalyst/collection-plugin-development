@@ -6,6 +6,11 @@
         ),
         link-error-test => %(
             :no-remote,
+            :run-tests,
+        ),
+        ogdenwebb => %(
+            :!extended-search,
+            :error-report,
         ),
         raku-repl => %(
             :websocket-host<finanalyst.org>,

@@ -3,6 +3,8 @@ use LibCurl::HTTP;
 use Collection::Progress;
 
 sub ($pr, %processed, %options) {
+    my %config = $pr.get-data('link-error-test');
+    return [] unless %config<run-tests>;
     my regex htmlcode {
         \% <[0..9 A..F]> ** 2
     };
@@ -16,7 +18,6 @@ sub ($pr, %processed, %options) {
     my %errors = <no-file unknown remote no-target> Z=> {}, {}, {}, {};
     my %links;
     my %targets;
-    my %config = $pr.get-data('link-error-test');
     sub failed-targets($file, Str $target) {
         my $old = $target.trim;
         # straight check

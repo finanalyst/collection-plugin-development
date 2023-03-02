@@ -1,6 +1,6 @@
 #!/usr/bin/env perl6
-use PrettyDump;
 %(
+
     linkerrortest => sub (%prm, %tml) {
         my $rv = '';
         if %prm<linkerrortest>:exists and +%prm<linkerrortest>.keys {

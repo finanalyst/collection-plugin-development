@@ -15,8 +15,20 @@ use v6.d;
         <div id="raku-repl"></div>
         { %tml<footer>.(%prm, %tml)  }
         { %tml<js-bottom>.({}, {}) }
-        { %tml<end-block>.(%prm, %tml) }
+        </body>
+        </html>
         BLOCK
+    },
+    'head-block' => sub (%prm, %tml) {
+        "\<head>\n"
+            ~ '<title>' ~ %tml<escaped>.(%prm<title>) ~ " | Raku Documentation\</title>\n"
+            ~ '<meta charset="UTF-8" />' ~ "\n"
+            ~ %tml<favicon>.({}, {})
+            ~ (%prm<metadata> // '')
+            ~ %tml<css>.({}, {})
+            ~ %tml<jq-lib>.({}, {})
+            ~ %tml<js>.({}, {})
+            ~ "\</head>\n"
     },
     'header' => sub (%prm, %tml) {
         qq:to/BLOCK/
@@ -64,7 +76,7 @@ use v6.d;
                 Programs
             </a>
             <a class="navbar-item" href="https://raku.org">
-                Raku Homepage
+                Raku™ Homepage
             </a>
             <a class="navbar-item" href="https://kiwiirc.com/client/irc.libera.chat/#raku">
                 Chat with us
@@ -74,20 +86,13 @@ use v6.d;
                 More
               </a>
               <div class="navbar-dropdown">
-                <a class="navbar-item" href="/search.html">
-                  Extended Search
-                </a>
                 <hr class="navbar-divider">
                 <a class="navbar-item" href="/about.html">
                   About
                 </a>
                 <hr class="navbar-divider">
-                <a class="navbar-item" href="/error-report.html">
-                  Anomalous links
-                </a>
-                <hr class="navbar-divider">
-                <a class="navbar-item" href="/collection-examples.html">
-                  Plugin demos
+                <a class="navbar-item has-text-red" href="https://github.com/raku/doc-website/issues">
+                  Report an issue with this site
                 </a>
               </div>
             </div>
@@ -185,36 +190,11 @@ use v6.d;
           <div class="container px-4">
             <nav class="level">
             { %tml<footer-left>.(%prm, %tml) }
-            { %tml<page-generated>.(%prm, %tml) }
-            { %tml<raku-tm>.(%prm, %tml) }
             { %tml<footer-right>.(%prm, %tml) }
             </nav>
           </div>
         </footer>
         BLOCK
-    },
-    raku-tm => sub (%prm, %tml ){
-        q:to/RAKUTM/
-        <div class="level-item">
-            <div class="dropdown is-up is-hoverable">
-                <div class="dropdown-trigger">
-                    <button class="button" aria-haspopup="true" aria-controls="rakutm">
-                        <span>Raku™</span>
-                        <span class="icon is-small">
-                        <i class="fas fa-angle-up" aria-hidden="true"></i>
-                        </span>
-                    </button>
-                </div>
-                <div class="dropdown-menu" id="rakutm" role="menu">
-                    <div class="dropdown-content">
-                        <div class="dropdown-item generated">
-                            <p>Raku is a trademark for the Raku programming language</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        RAKUTM
     },
     footer-left => sub (%prm, %tml ) {
         q:to/FLEFT/
@@ -293,16 +273,6 @@ use v6.d;
               </span>
             </a>
           </div>
-        BLOCK
-    },
-    end-block => sub (%prm, %tml) {
-        qq:to/BLOCK/
-        <div
-            role="status"
-            aria-live="assertive"
-            aria-relevant="additions"
-            class="ui-helper-hidden-accessible">
-        </div>
         BLOCK
     },
     #placeholder

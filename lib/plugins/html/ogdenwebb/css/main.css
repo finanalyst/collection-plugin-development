@@ -264,6 +264,57 @@ body {
   margin: inherit;
 }
 
+.raku .container {
+  display: block;
+}
+.raku .container > p {
+  column-span: all;
+  margin: 0 0 2em;
+  text-align: center;
+}
+.raku .container .listf-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.25rem;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+.raku .container .listf-container div:nth-of-type(4n-2) {
+  background-color: inherit;
+}
+.raku .container .listf-container div:nth-of-type(4n-1) {
+  background-color: inherit;
+}
+.raku .container .listf-container .listf-caption {
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.5;
+  display: flex;
+  justify-content: center;
+}
+.raku .container .listf-container .listf-file {
+  padding-top: 0.25rem;
+  font-size: 1.25rem;
+  font-weight: 500;
+  line-height: 1.5;
+  border-top: 1px;
+  border-bottom: solid 1px #ccc;
+  align-self: flex-start;
+}
+.raku .container .listf-container .listf-desc {
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.5;
+  padding: 0.3rem;
+  margin-bottom: 1rem;
+  align-self: normal;
+}
+.raku .container .listf-container .listf-desc > p {
+  padding: inherit;
+  margin: inherit;
+}
+
 /* Programs page template */
 .raku-programs .programs-items {
   padding-top: 0.25rem;
