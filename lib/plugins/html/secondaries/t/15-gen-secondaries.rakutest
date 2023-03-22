@@ -4,7 +4,7 @@ use File::Directory::Tree;
 use ProcessedPod;
 use RakuConfig;
 
-plan 15;
+plan 19;
 
 my @triples;
 my %processed;
@@ -104,10 +104,53 @@ with $pp {
 
 @triples = &secondaries($pp,%processed, %() );
 my @expected = <routine/and.html routine/....html routine/proc.html>;
-is @triples.elems,@expected.elems, 'two secondaries generated';
+is @triples.elems,@expected.elems, 'correct no secondaries generated';
 is @triples[0][0], any(@expected), 'got 1 right file';
 is @triples[1][0], any(@expected), 'got 2 right file';
 is @triples[2][0], any(@expected), 'got 3 right file';
+
+=begin pod
+=TITLE Syntax file Heads
+=SUBTITLE headers that should generate C<syntax/file> files.
+
+=head1 X<Classes|Syntax,class>
+
+Classes are declared using the C<class> keyword, typically followed by a
+name.
+
+
+=head2 X<C<self>|Syntax,self>
+
+Inside a method, the term C<self> is available and bound to the invocant
+
+=head2 X<Multi-dispatch|Syntax,multi>
+
+Raku allows for writing several routines with the same name but different
+signatures.
+
+=end pod
+
+%processed = Empty;
+$pp .= new;
+$pp.templates( 't/test-temps.rakuon' );
+$pp.modify-templates( %config<template-raku> );
+&namespace-check( $pp, {} );
+%data = $pp.get-data('heading');
+$name = 'Syntax_headers';
+with $pp {
+    .pod-file.name = $name;
+    .pod-file.path = "doc/sythn/p_4\.rakudoc";
+    .process-pod( $=pod[3] );
+    .file-wrap(:filename($name), :dir<html>, :ext<html> );
+    %processed{ $name } = .emit-and-renew-processed-state;
+}
+
+@triples = &secondaries($pp,%processed, %() );
+@expected = <syntax/self.html syntax/class.html syntax/multi.html>;
+is @triples.elems,@expected.elems, 'correct syntax secondaries generated';
+is @triples[0][0], any(@expected), 'got 1 syntax file';
+is @triples[1][0], any(@expected), 'got 2 syntax file';
+is @triples[2][0], any(@expected), 'got 3 syntax file';
 
 &cleanup($pp, %(), %() );
 is 'html/routine'.IO.dir( test => *.ends-with('html') ), (), 'routine directory emptied';

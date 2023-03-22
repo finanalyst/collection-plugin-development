@@ -24,6 +24,10 @@
     padding: $size-7 $size-5;
   }
 
+  .control {
+    font-size: inherit;
+  }
+
   .code-output-title {
     font-size: $size-6;
     font-weight: $weight-medium;
@@ -32,4 +36,8 @@
     margin-bottom: 0.5rem;
   }
 
+  .section {
+    /* https://github.com/Raku/doc-website/issues/144 */
+    padding: 0rem;
+  }
 }

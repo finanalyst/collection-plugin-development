@@ -32,13 +32,13 @@ sub ($pp, %processed, %options) {
         return $name;
     }
     my %data = $pp.get-data('heading');
-    #| get the definitions stored after parsing a header
+    #| get the definitions stored after parsing headers
     my %definitions = %data<defs>;
     #| each of the things we want to group in a file
     my %things = %( routine => {}, syntax => {});
     #| templates hash in ProcessedPod instance
     my %templates := $pp.tmpl;
-    #|this is for the triples describing the files to be transferred once created
+    #| container for the triples describing the files to be transferred once created
     my @transfers;
     #| container for tablesearch plugin
     my @routines = [ ['Category', 'Name' , 'Type', 'Where documented'] , ];
