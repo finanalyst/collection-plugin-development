@@ -21,8 +21,10 @@ sub ($pp, %processed, %options) {
         my @goodchars = @badchars
             .map({ '$' ~ .uniname })
             .map({ .subst(' ', '_', :g) });
-        $name = $name.subst(@badchars[0], @goodchars[0], :g);
-        $name = $name.subst(@badchars[1], @goodchars[1], :g);
+        # de-escape name
+        $name .= trans(qw｢ &lt; &gt; &amp; &quot; ｣ => qw｢ <    >    &     " ｣);
+        $name .= subst(@badchars[0], @goodchars[0], :g);
+        $name .= subst(@badchars[1], @goodchars[1], :g);
 
         # if it contains escaped sequences (like %20) we do not
         # escape %
