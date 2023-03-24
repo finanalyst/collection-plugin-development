@@ -21,17 +21,17 @@ sub ($pp, %processed, %options) {
         my @goodchars = @badchars
             .map({ '$' ~ .uniname })
             .map({ .subst(' ', '_', :g) });
-        # de-escape name
-        $name .= trans(qw｢ &lt; &gt; &amp; &quot; ｣ => qw｢ <    >    &     " ｣);
+        # de-HTML-escape name, change bad to good, make _ into %20
+        $name .= trans(qw｢ &lt; &gt; &amp; &quot; ｣ => qw｢ <    >    &   " ｣);
         $name .= subst(@badchars[0], @goodchars[0], :g);
         $name .= subst(@badchars[1], @goodchars[1], :g);
-
+        $name .= subst( / '_' /, '%20', :g );
         # if it contains escaped sequences (like %20) we do not
         # escape %
         if (!($name ~~ /\%<xdigit> ** 2/)) {
-            $name = $name.subst(@badchars[2], @goodchars[2], :g);
+            $name .= subst(@badchars[2], @goodchars[2], :g);
         }
-        return $name;
+        $name;
     }
     my %data = $pp.get-data('heading');
     #| get the definitions stored after parsing headers

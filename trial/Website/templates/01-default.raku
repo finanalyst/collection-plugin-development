@@ -135,6 +135,8 @@ use ProcessedPod;
             ~ "</pre></div>\n"
     },
     'format-x' => sub (%prm, %tml) {
+#        say 'in format x keys of prm', %prm.keys;
+#        say 'text is ', %prm<text>, ' header is ', %prm<header>;
         '<a name="' ~ (%prm<target> // '') ~ '" class="index-entry"></a>'
             ~ ((%prm<text>.defined and %prm<text> ne '') ?? '<span class="glossary-entry">' ~ %prm<text> ~ '</span>' !! '')
     },
