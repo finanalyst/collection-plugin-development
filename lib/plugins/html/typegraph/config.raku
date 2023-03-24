@@ -12,6 +12,6 @@
 	:render<add-type-graph.raku>,
 	:template-raku<tp-template.raku>,
 	:information<add-css>,
-	:version<0.3.2>,
+	:version<0.3.3>,
 );
 
