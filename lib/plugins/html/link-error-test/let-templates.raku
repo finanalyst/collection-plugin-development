@@ -65,7 +65,7 @@
                 }
                 unless %object<no_test> {
                     for %object.sort.grep( { .value ~~ Positional } ).map(|*.kv) -> $fn, $resp {
-                        $rv ~= '<div class="let-file"><div>' ~ $fn ~ '<a class="let-clickable" href="' ~ $fn ~ '.html" target="_blank" rel="noopener noreferrer">Clickable</a></div>';
+                        $rv ~= '<div class="let-file"><div>' ~ $fn ~ '<a class="let-clickable" href="' ~ $fn ~ '" target="_blank" rel="noopener noreferrer">Clickable</a></div>';
                         when $type eq 'no-file' {
                             for $resp.list -> %info {
                                 $rv ~= '<div class="let-link-text">' ~ %tml<escaped>( %info<link-label> )
@@ -100,7 +100,7 @@
                                 $rv ~= '<div class="let-link-text">' ~ %tml<escaped>( %info<link-label> )
                                     ~ '<div class="let-link-file"><div>'
                                     ~ %tml<escaped>( %info<file> )
-                                    ~ '<a class="let-clickable" href="' ~ %tml<escaped>( %info<file> ) ~ '.html" target="_blank" rel="noopener noreferrer">Clickable</a></div>'
+                                    ~ '<a class="let-clickable" href="' ~ %tml<escaped>( %info<file> ) ~ '" target="_blank" rel="noopener noreferrer">Clickable</a></div>'
                                     ~ %info<targets>.map( {
                                         '<div class="let-link-target">'
                                         ~ %tml<escaped>( $_ )

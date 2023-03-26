@@ -96,7 +96,7 @@ sub ($pp, %processed, %options) {
                 $body ~= %templates<para>.(%(
                    :contents(qq:to/CONT/)
                         See primary documentation
-                        <a href="/{ .<source> }.html#{ .<target> }">in context\</a>
+                        <a href="/{ .<source> }#{ .<target> }">in context\</a>
                         for <b>{ .<target>.subst( / '_' / , ' ', :g ) }</b>
                     CONT
                 ), %templates);
@@ -105,7 +105,7 @@ sub ($pp, %processed, %options) {
                     .<category>.tc,
                     $dn,
                     .<subkind>,
-                    qq[[<a href="/{ .<source> }.html#{ .<target> }">{ .<source> }</a>]]
+                    qq[[<a href="/{ .<source> }#{ .<target> }">{ .<source> }</a>]]
                 ];
             }
             # Construct TOC
@@ -125,7 +125,7 @@ sub ($pp, %processed, %options) {
                 :meta(''),
                 :footnotes(''),
             ), %templates);
-            @transfers.push: ["$fn-name\.html", 'myself', "html/$fn-name\.html"]
+            @transfers.push: ["$fn-name\.html", 'myself', "html/$fn-name.html"]
         }
     }
     my %ns;

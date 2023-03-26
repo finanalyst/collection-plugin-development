@@ -12,6 +12,7 @@ sub ( $destination, $landing, $ext, %p-config, %options ) {
     my $port = %p-config<cro-app><port> // %config<port>;
     my $app = route {
         get -> *@path {
+            @path[*-1] ~= ".$ext" unless ("$destination/" ~ @path.join('/')).IO ~~ :e;
             static "$destination", @path,:indexes( "$landing\.$ext", );
         }
     }

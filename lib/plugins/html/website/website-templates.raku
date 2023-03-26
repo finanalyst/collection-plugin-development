@@ -23,7 +23,7 @@
                     ~ .key ~ '</div>' ~ "\n"
                     ~ .value.map({
                 "<a href=\"{
-                    $fn }.html#{
+                    $fn }#{
                     $_<target> }\" class=\"ws-toc-head-{
                     $_<level> } {$id}{$_<text> }\</a>\n"
             })
@@ -50,7 +50,7 @@
                         ~ $fn
                         ~ '</div>'
                         ~ [~] .value.map({
-                            '<a href="' ~ $fn ~ '.html#'
+                            '<a href="' ~ $fn ~ '#'
                             ~ %tml<escaped>($_<target>)
                             ~ '" class="ws-glossary-place ' ~ $id
                             ~ ($_<place>.defined ?? $_<place> !! '')
@@ -71,7 +71,7 @@
                     '<div class="ws-footnote">'
                     ~ '<span class="ws-footnote-number">' ~ ( $_<fnNumber> // '' ) ~ '</span>'
                     ~ ($_<text> // '')
-                    ~ '<a class="ws-footnote-linkback" href="' ~ $fn ~ '.html#'
+                    ~ '<a class="ws-footnote-linkback" href="' ~ $fn ~ '#'
                     ~ %tml<escaped>($_<retTarget>)
                     ~ '"> « Back »</a>'
                     ~ '</div>'
@@ -93,10 +93,10 @@
                 ~ %prm<website><ws-toc>.cache.sort.map({
             my $fn = .key;
             '<div class="ws-toc-file ' ~ $id
-                    ~ "<a href=\"$fn\.html\">$fn\</a>" ~ '</div>' ~ "\n"
+                    ~ "<a href=\"$fn\">$fn\</a>" ~ '</div>' ~ "\n"
                     ~ .value.map({
                 "<a href=\"{
-                    $fn }.html#{
+                    $fn }#{
                     $_<target> }\" class=\"ws-toc-head-{
                     $_<level> } { $id }{$_<text> }\</a>\n"
             })
@@ -113,10 +113,10 @@
                     ~ .value.sort.map({
                 my $fn = .key;
                 '<div class="ws-glossary-file ' ~ $id
-                        ~ "<a href=\"$fn\.html\">$fn\</a>"
+                        ~ "<a href=\"$fn\">$fn\</a>"
                         ~ '</div>'
                         ~ [~] .value.map({
-                        '<a href="' ~ $fn ~ '.html#'
+                        '<a href="' ~ $fn ~ '#'
                             ~ %tml<escaped>($_<target>)
                             ~ '" class="ws-glossary-place ' ~ $id
                             ~ ($_<place>.defined ?? $_<place> !! '')
