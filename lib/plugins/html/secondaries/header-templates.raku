@@ -87,7 +87,7 @@ use v6.d;
                     :subkind( ~ $indirect[1] ),
                     :category<Syntax>, # only one category per defn
                 );
-                $bookmark = "\n<!-- defnmark $target -->\n";
+                $bookmark = "\n<!-- defnmark $target { %prm<level> // '1' } -->\n";
             }
             else {
                 # Normalize text for searching for routines
