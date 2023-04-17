@@ -2,12 +2,14 @@
 use v6.d;
 use ProcessedPod;
 use Collection::Progress;
+use nqp;
 
 sub ($pp, %processed, %options) {
     # these chars cannot appear in a unix filesystem path
     my regex defnmark {
         '<!-- defnmark' \s+
         $<target> = (.+?) \s+
+        $<level> = (\d+) \s+
         '-->'
         $<body> = (.+?)
         <?before '<h' | '</section' | '</body' | $ >
@@ -38,6 +40,8 @@ sub ($pp, %processed, %options) {
     my %definitions = %data<defs>;
     #| each of the things we want to group in a file
     my %things = %( routine => {}, syntax => {});
+    #| url mapping data
+    my %url-maps;
     #| templates hash in ProcessedPod instance
     my %templates := $pp.tmpl;
     #| container for the triples describing the files to be transferred once created
@@ -70,7 +74,10 @@ sub ($pp, %processed, %options) {
         counter(:dec) unless %options<no-status>;
         for %defns.kv -> $dn, @dn-data {
             # my $url = "/{$kind.Str.lc}/{good-name($name)}";
-            my $fn-name = "{ $kind.Str.lc }/{ good-name($dn) }";
+            my $fn-name = 'hashed/' ~ nqp::sha1($dn);
+            my $fn-name-old = "{ $kind.Str.lc }/{ good-name($dn) }";
+            my $url = "{ $kind.Str.lc }/$dn";
+            %url-maps{ $url, $fn-name-old } = $fn-name xx 2;
             my $title = $dn;
             my $subtitle = 'Combined from primary sources listed below.';
             my @subkind;
@@ -119,13 +126,13 @@ sub ($pp, %processed, %options) {
                 :$title,
                 :$subtitle,
                 :$body,
-                :config(%( :name($dn), :path($fn-name), :lang($podf.lang))),
+                :config(%( :name($dn), :path($url), :lang($podf.lang))),
                 :toc(''),
                 :glossary(''),
                 :meta(''),
                 :footnotes(''),
             ), %templates);
-            @transfers.push: ["$fn-name\.html", 'myself', "html/$fn-name.html"]
+            @transfers.push: ["$fn-name\.html", 'myself', "html/$fn-name\.html"]
         }
     }
     my %ns;
@@ -134,6 +141,7 @@ sub ($pp, %processed, %options) {
         %ns<dataset> = {} without %ns<dataset>;
         %ns<dataset><routines> = @routines;
     }
-
+    'prettyurls'.IO.spurt: %url-maps.fmt("\"\/%s\" \"\/%s\"").join("\n");
+    @transfers.push: ['assets/prettyurls', 'myself', 'prettyurls'];
     @transfers
 }

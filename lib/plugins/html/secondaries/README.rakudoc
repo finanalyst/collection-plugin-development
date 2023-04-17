@@ -16,6 +16,18 @@ The information is used to generate the Secondary files during the compilation s
 to update the %processed data for other Compilation plugables to access. The files are transferred
 to the output directory during the compilation stage.
 
+If the config option C<hash-file-names> is True, then secondary file names will be hashed
+and a map file C<prettyurls> will be generated with the url string and the hashed file name.
+The file is stored in C<assets/>.
+
+C<prettyurls> can be used by a webserver to map from unescaped urls including filesystem problematic
+names to real html files. For example, for the Caddy server, the following stanzas will work
+    root * /usr/lib/caddy
+    map {path} {npath} {
+        import /usr/lib/caddy/assets/prettyurls
+    }
+    try-files {npath}.html {path}.html {path}
+
 During the transfer stage, the secondary files are deleted from the plugin's directory.
 
 =head1 Secondary files

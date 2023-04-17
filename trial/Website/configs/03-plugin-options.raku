@@ -3,6 +3,7 @@
         cro-app => %(
             :port<5000>,
             :host<0.0.0.0>,
+            :url-map<assets/prettyurls>,
         ),
         link-error-test => %(
             :no-remote,

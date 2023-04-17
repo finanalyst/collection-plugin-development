@@ -3,28 +3,40 @@ use Cro::HTTP::Server;
 use Cro::HTTP::Log::File;
 use RakuConfig;
 
-sub ( $destination, $landing, $ext, %p-config, %options ) {
+sub ($destination, $landing, $ext, %p-config, %options) {
     if (try require Cro::HTTP::Router) === Nil {
         exit note "Cro::HTTP needs to be installed"
     }
     my %config = get-config;
     my $host = %p-config<cro-app><host> // %config<host>;
     my $port = %p-config<cro-app><port> // %config<port>;
+    my %map;
+    my @urls;
+    with %p-config<cro-app><url-map> {
+        if ("$destination/$_".IO ~~ :e & :f) {
+            for "$destination/$_".IO.lines {
+                %map.append: .comb(/ \" ~ \" .+? /)>>.subst(/ \" /, '', :g) }
+        }
+    }
+    @urls = %map.keys;
     my $app = route {
         get -> *@path {
-            @path[*-1] ~= ".$ext"
-                unless @path[0] eq '' or ("$destination/" ~ @path.join('/')).IO ~~ :e & :f;
-            static "$destination", @path,:indexes( "$landing\.$ext", );
+            my $url = @path.join('/');
+            say "url ｢$url｣ map-url ｢%map{$url}｣";
+            @path = (%map{$url},) if $url ~~ any(@urls);
+            @path[*- 1] ~= ".$ext"
+                unless @path[0] eq '' or "$destination/$url".IO ~~ :e & :f;
+            static "$destination", @path, :indexes("$landing\.$ext",);
         }
     }
     my Cro::Service $http = Cro::HTTP::Server.new(
-    http => <1.1>,
-    :$host, :$port,
-    application => $app,
-    after => [
-        Cro::HTTP::Log::File.new(logs => $*OUT, errors => $*ERR)
-    ]
-    );
+        http => <1.1>,
+        :$host, :$port,
+        application => $app,
+        after => [
+            Cro::HTTP::Log::File.new(logs => $*OUT, errors => $*ERR)
+        ]
+        );
     say "Serving $landing on $host\:$port" unless %options<no-status>;
     $http.start;
     react {
