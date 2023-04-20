@@ -88,10 +88,9 @@ sub ($pp, %processed, %options) {
             # my $url = "/{$kind.Str.lc}/{good-name($name)}";
             my $mapped-name = 'hashed/' ~ nqp::sha1($dn);
             my $fn-name-old = "{ $kind.Str.lc }/{ good-name($dn) }";
-            my $url = "{ $kind.Str.lc }/$dn";
-            with $url {
-                s:g{ <-[ a .. z A .. Z 0 .. 9 _ \- \. ~ ]> } = $/.encode>>.fmt('%%%02X').join
-            }
+            my $esc-dn = $dn.subst(/ <-[ a .. z A .. Z 0 .. 9 _ \- \. ~ ]> /,
+                *.encode>>.fmt('%%%02X').join, :g);
+            my $url = "{ $kind.Str.lc }/$esc-dn";
             %url-maps{ $url, $fn-name-old, "{ $kind.Str.lc }/$dn" } = $mapped-name xx 3;
             my $title = $dn;
             my $subtitle = 'Combined from primary sources listed below.';
