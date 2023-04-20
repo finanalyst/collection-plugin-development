@@ -19,6 +19,8 @@ sub ($destination, $landing, $ext, %p-config, %options) {
         }
     }
     @urls = %map.keys;
+    say @urls[^10];
+    say %map{ @urls[^10] };
     my $app = route {
         get -> *@path {
             my $url = @path.join('/');
