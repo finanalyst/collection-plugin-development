@@ -15,19 +15,31 @@ sub ($pp, %processed, %options) {
         <?before '<h' | '</section' | '</body' | $ >
     }
     sub good-name($name is copy --> Str) is export {
+        # Documentable code
         # / => $SOLIDUS
         # % => $PERCENT_SIGN
         # ^ => $CIRCUMFLEX_ACCENT
         # # => $NUMBER_SIGN
+        #    my @badchars  = ["/", "^", "%"];
+        #    my @goodchars = @badchars
+        #                    .map({ '$' ~ .uniname      })
+        #                    .map({ .subst(' ', '_', :g)});
+        #
+        #    $name = $name.subst(@badchars[0], @goodchars[0], :g);
+        #    $name = $name.subst(@badchars[1], @goodchars[1], :g);
+        #    # if it contains escaped sequences (like %20) we do not
+        #    # escape %
+        #    if ( ! ($name ~~ /\%<xdigit>**2/) ) {
+        #        $name = $name.subst(@badchars[2], @goodchars[2], :g);
+        #    }
         my @badchars = ["/", "^", "%"];
         my @goodchars = @badchars
             .map({ '$' ~ .uniname })
             .map({ .subst(' ', '_', :g) });
-        # de-HTML-escape name, change bad to good, make _ into %20
+        # Collection has already escaped names, so de-HTML-escape name
         $name .= trans(qw｢ &lt; &gt; &amp; &quot; ｣ => qw｢ <    >    &   " ｣);
         $name .= subst(@badchars[0], @goodchars[0], :g);
         $name .= subst(@badchars[1], @goodchars[1], :g);
-        $name .= subst( / '_' /, '%20', :g );
         # if it contains escaped sequences (like %20) we do not
         # escape %
         if (!($name ~~ /\%<xdigit> ** 2/)) {
@@ -74,10 +86,13 @@ sub ($pp, %processed, %options) {
         counter(:dec) unless %options<no-status>;
         for %defns.kv -> $dn, @dn-data {
             # my $url = "/{$kind.Str.lc}/{good-name($name)}";
-            my $fn-name = 'hashed/' ~ nqp::sha1($dn);
+            my $mapped-name = 'hashed/' ~ nqp::sha1($dn);
             my $fn-name-old = "{ $kind.Str.lc }/{ good-name($dn) }";
             my $url = "{ $kind.Str.lc }/$dn";
-            %url-maps{ $url, $fn-name-old } = $fn-name xx 2;
+            with $url {
+                s:g{ <-[ a .. z A .. Z 0 .. 9 _ \- \. ~ ]> } = $/.encode>>.fmt('%%%02X').join
+            }
+            %url-maps{ $url, $fn-name-old, "{ $kind.Str.lc }/$dn" } = $mapped-name xx 3;
             my $title = $dn;
             my $subtitle = 'Combined from primary sources listed below.';
             my @subkind;
@@ -120,9 +135,9 @@ sub ($pp, %processed, %options) {
 
             # Add data to Processed file
             $podf.pod-config-data(:$kind, :@subkind, :@category);
-            %processed{$fn-name} = $podf;
+            %processed{$url} = $podf;
             # Output html file / construct transfer triple
-            "html/$fn-name\.html".IO.spurt: %templates<source-wrap>.(%(
+            "html/$mapped-name\.html".IO.spurt: %templates<source-wrap>.(%(
                 :$title,
                 :$subtitle,
                 :$body,
@@ -132,7 +147,7 @@ sub ($pp, %processed, %options) {
                 :meta(''),
                 :footnotes(''),
             ), %templates);
-            @transfers.push: ["$fn-name\.html", 'myself', "html/$fn-name\.html"]
+            @transfers.push: ["$mapped-name\.html", 'myself', "html/$mapped-name\.html"]
         }
     }
     my %ns;
