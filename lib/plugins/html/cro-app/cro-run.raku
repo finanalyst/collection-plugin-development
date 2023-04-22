@@ -15,19 +15,19 @@ sub ($destination, $landing, $ext, %p-config, %options) {
     with %p-config<cro-app><url-map> {
         if ("$destination/$_".IO ~~ :e & :f) {
             for "$destination/$_".IO.lines {
-                %map.append: .comb(/ \" ~ \" .+? /)>>.subst(/ \" /, '', :g) }
+                if m/ \" ~ \" (.+?) \s+ \" ~ \" (.+) / {
+                    %map{ ~$0 } = ~$1;
+                }
+            }
         }
     }
     @urls = %map.keys;
-    say @urls[^10];
-    say %map{ @urls[^10] };
     my $app = route {
         get -> *@path {
-            my $url = @path.join('/');
-            say "url ｢$url｣ map-url ｢%map{$url}｣";
+            my $url = '/' ~ @path.join('/');
             @path = (%map{$url},) if $url ~~ any(@urls);
             @path[*- 1] ~= ".$ext"
-                unless @path[0] eq '' or "$destination/$url".IO ~~ :e & :f;
+                unless @path[0] eq '' or "$destination$url".IO ~~ :e & :f;
             static "$destination", @path, :indexes("$landing\.$ext",);
         }
     }

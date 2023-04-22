@@ -64,7 +64,7 @@ sub ( $pp, %processed, %options ) {
         }
         $categories{ $podf.pod-config-data<kind>.tc }++
     }
-    # try to file out duplicates by looking for only unique urls
+    # try to filter out duplicates by looking for only unique urls
     @entries .= unique(:as( *.<url> ) );
     # now sort so js only does filtering.
     sub head-or-fivesix( $a, $b ) { # heading and 5to6 are independent
@@ -84,7 +84,7 @@ sub ( $pp, %processed, %options ) {
     $pp.add-data('extendedsearch', $categories.keys);
     'search-bar.js'.IO.spurt:
         'var items = '
-        ~ to-json( @entries )
+        ~ JSON::Fast::to-json( @entries )
         ~ ";\n"
         ~ 'search-temp.js'.IO.slurp;
     [
