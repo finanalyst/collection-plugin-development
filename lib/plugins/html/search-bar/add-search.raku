@@ -57,7 +57,7 @@ sub ( $pp, %processed, %options ) {
         for $podf.raw-toc.grep({ !(.<is-title>) }) {
             @entries.push: %(
                 :category<Heading>,
-                :value( escape( .<text> ) ),
+                :value( .<text> ),
                 :info( ': section in <b>' ~ escape-json( $podf.title ) ~ '</b>' ),
                 :url( escape-json( '/' ~ $fn ~ '#' ~ .<target> ) )
             )
