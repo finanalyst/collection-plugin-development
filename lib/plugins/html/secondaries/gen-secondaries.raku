@@ -1,20 +1,29 @@
 #!/usr/bin/env raku
 use v6.d;
+use RakuConfig;
 use ProcessedPod;
 use Collection::Progress;
 use nqp;
 
-sub ($pp, %processed, %options) {
-    # these chars cannot appear in a unix filesystem path
+sub (ProcessedPod $pp, %processed, %options) {
     my regex defnmark {
         '<!-- defnmark' \s+
         $<target> = (.+?) \s+
         $<level> = (\d+) \s+
         '-->'
-        $<body> = (.+?)
-        <?before '<h' | '</section' | '</body' | $ >
+    }
+    my $level;
+    my regex chunk {
+        (.+?)
+        <?before
+            "<h$level"
+            | '</section'
+            | '</body'
+            | $
+        >
     }
     sub good-name($name is copy --> Str) is export {
+    # these chars cannot appear in a unix filesystem path
         # Documentable code
         # / => $SOLIDUS
         # % => $PERCENT_SIGN
@@ -47,6 +56,9 @@ sub ($pp, %processed, %options) {
         }
         $name;
     }
+    my %config = get-config;
+    my $hash-urls = %config<hash-urls>;
+    $hash-urls = $_ with $pp.get-data('secondaries')<hash-urls>;
     my %data = $pp.get-data('heading');
     #| get the definitions stored after parsing headers
     my %definitions = %data<defs>;
@@ -64,30 +76,32 @@ sub ($pp, %processed, %options) {
     for %definitions.kv -> $fn, %targets {
         counter(:dec) unless %options<no-status>;
         my $html = %processed{$fn}.pod-output;
-        my $parsed = $html ~~ / [<defnmark> .*?]+ $ /;
-        for $parsed<defnmark> {
-            unless %targets{.<target>}:exists and %targets{.<target>} {
-                note 'Error in secondaries, expected target ｢'
-                    ~ .<target>.raku
-                    ~ "｣ not found in definitions with file ｢$fn｣ defnmark ｢{$parsed<defnmark>}｣";
-                next
+        while $html ~~ m:c / <defnmark> / {
+            given $/<defnmark> {
+                my $targ = .<target>.Str;
+                unless %targets{ $targ }:exists and $targ {
+                    note "Error in secondaries, target ｢$targ｣ not found in definitions but in file ｢$fn｣ as ｢$_｣";
+                    next
+                }
+                my %attr = %targets{ $targ }.clone;
+                my $kind = %attr<kind>:delete;
+                %attr<target> = $targ;
+                %attr<source> = $fn;
+                $level = .<level>.Str;
+                $html ~~ m:c / <chunk> /;
+                %attr<body> = $/<chunk>[0].Str.trim;
+                %things{$kind}{%attr<name>} = [] unless (%things{$kind}{%attr<name>}:exists);
+                %things{$kind}{%attr<name>}.push: %attr;
             }
-            my %attr = %targets{.<target>}.clone;
-            my $kind = %attr<kind>:delete;
-            %attr<target> = .<target>.Str;
-            %attr<body> = .<body>.trim;
-            %attr<source> = $fn;
-            %things{$kind}{%attr<name>} = [] unless (%things{$kind}{%attr<name>}:exists);
-            %things{$kind}{%attr<name>}.push: %attr;
         }
     }
     counter(:items(%things.keys), :header('Gen secondaries stage 2')) unless %options<no-status>;
     for %things.kv -> $kind, %defns {
         counter(:dec) unless %options<no-status>;
         for %defns.kv -> $dn, @dn-data {
-            # my $url = "/{$kind.Str.lc}/{good-name($name)}";
             my $mapped-name = 'hashed/' ~ nqp::sha1($dn);
             my $fn-name-old = "{ $kind.Str.lc }/{ good-name($dn) }";
+            $mapped-name = $fn-name-old unless $hash-urls;
             my $esc-dn = $dn.subst(/ <-[ a .. z A .. Z 0 .. 9 _ \- \. ~ ]> /,
                 *.encode>>.fmt('%%%02X').join, :g);
             my $url = "{ $kind.Str.lc }/$esc-dn";
@@ -155,7 +169,9 @@ sub ($pp, %processed, %options) {
         %ns<dataset> = {} without %ns<dataset>;
         %ns<dataset><routines> = @routines;
     }
-    'prettyurls'.IO.spurt: %url-maps.fmt("\"\/%s\" \"\/%s\"").join("\n");
-    @transfers.push: ['assets/prettyurls', 'myself', 'prettyurls'];
+    if $hash-urls {
+        'prettyurls'.IO.spurt: %url-maps.fmt("\"\/%s\" \"\/%s\"").join("\n");
+        @transfers.push: ['assets/prettyurls', 'myself', 'prettyurls'];
+    }
     @transfers
 }

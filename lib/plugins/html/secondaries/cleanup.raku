@@ -8,6 +8,6 @@ sub ($pr, %processed, %options --> Array) {
             .unlink
         }
     }
-    'prettyurls'.IO.unlink;
+    'prettyurls'.IO.unlink if 'prettyurls'.IO ~~ :e & :f;
     []
 }

@@ -16,7 +16,7 @@ The information is used to generate the Secondary files during the compilation s
 to update the %processed data for other Compilation plugables to access. The files are transferred
 to the output directory during the compilation stage.
 
-If the config option C<hash-file-names> is True, then secondary file names will be hashed
+By default, all secondary file names will be hashed
 and a map file C<prettyurls> will be generated with the url string and the hashed file name.
 The file is stored in C<assets/>.
 
@@ -27,6 +27,9 @@ names to real html files. For example, for the Caddy server, the following stanz
         import /usr/lib/caddy/assets/prettyurls
     }
     try-files {npath}.html {path}.html {path}
+
+If the config option C<hash-urls> is set to False (by default it is not set, which is taken to be True),
+then C<prettyurls> will not be generated, and the secondary files will not be hashed.
 
 During the transfer stage, the secondary files are deleted from the plugin's directory.
 
@@ -43,8 +46,8 @@ As the documentation was written, two types of headings were created:
 =item direct headings, such as C<=head1 sub say>
 =item indirect headings, such as C<=head2 X<Multi-dispatch|Syntax,multi> >
 
-Direct headings are created in the directories C<routine/ and type/>.
-Indirect headings are created in the directories C<syntax/>.
+If C<hash-urls> is False, direct headings are created in the directories C<routine/ and type/>;
+indirect headings are created in the directories C<syntax/>.
 
 The header blocks are analysed when the template is rendered.
 In order to avoid parsing each source file twice to handle header blocks, the parsing is done
@@ -56,7 +59,7 @@ ambient text.
 
 The files are generated during the compilation stage.
 
-The biggest problem is to define how much text to include after the definition header. The plugin
+A crucial assumption is about how much text to include after the definition header. The plugin
 adds a C< <!--- defnmark d --> > where I<d> is the header level. Html to the next C< <hd > container,
 where d is the same number, or the end of the html, is then included.
 
