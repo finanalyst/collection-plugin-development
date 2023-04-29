@@ -101,11 +101,16 @@ sub (ProcessedPod $pp, %processed, %options) {
         for %defns.kv -> $dn, @dn-data {
             my $mapped-name = 'hashed/' ~ nqp::sha1($dn);
             my $fn-name-old = "{ $kind.Str.lc }/{ good-name($dn) }";
+            my $fn-new = "{ $kind.Str.lc }/$dn";
             $mapped-name = $fn-name-old unless $hash-urls;
             my $esc-dn = $dn.subst(/ <-[ a .. z A .. Z 0 .. 9 _ \- \. ~ ]> /,
                 *.encode>>.fmt('%%%02X').join, :g);
             my $url = "{ $kind.Str.lc }/$esc-dn";
-            %url-maps{ $url, $fn-name-old, "{ $kind.Str.lc }/$dn" } = $mapped-name xx 3;
+            %url-maps{ $url } = $mapped-name;
+            %url-maps{ $fn-new.subst(/\"/,'\"',:g) } = $mapped-name;
+            unless $fn-name-old eq $fn-new {
+                %url-maps{ $fn-name-old.subst(/\"/,'\"',:g) } = $mapped-name
+            }
             my $title = $dn;
             my $subtitle = 'Combined from primary sources listed below.';
             my @subkind;
