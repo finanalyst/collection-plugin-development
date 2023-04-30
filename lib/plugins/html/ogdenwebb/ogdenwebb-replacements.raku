@@ -94,7 +94,7 @@ use v6.d;
                   Report an issue with this site
                 </a>
                 <hr class="navbar-divider">
-                <a class="navbar-item has-text-red" href="https://github.com/raku/doc-website/issues">
+                <a class="navbar-item has-text-red" href="https://github.com/raku/doc/issues">
                   Report an issue with the documentation content
                 </a>
               </div>

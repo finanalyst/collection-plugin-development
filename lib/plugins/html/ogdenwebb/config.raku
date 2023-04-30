@@ -12,7 +12,7 @@
 	:template-raku<ogdenwebb-replacements.raku>,
 	:error-report,
 	:!extended-search,
-	:version<0.3.8>,
+	:version<0.3.9>,
 	:add-css<
 		css/main.css
 		css/themes/dark.css css/themes/light.css
