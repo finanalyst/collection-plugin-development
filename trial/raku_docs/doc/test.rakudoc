@@ -1,0 +1,16 @@
+=begin pod
+=TITLE A file to test blocks
+=SUBTITLE This is not a part of official Raku documentation
+
+=begin input
+This        should be rendered with the same
+sort of whitespace
+
+    as it is inputted
+=end input
+
+=end pod
+
+=begin output
+like input
+=end output

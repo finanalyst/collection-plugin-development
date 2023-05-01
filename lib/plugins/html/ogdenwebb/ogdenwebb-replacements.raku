@@ -310,4 +310,11 @@ use v6.d;
             !!  '' }
         ]
     },
+    'list' => sub (%prm, %tml) {
+        qq[
+        <ul{ %prm<nesting> == 0 ?? ' class="rakudoc-item"' !! ''}>
+           { %prm<items>.join }
+        </ul>
+        ]
+    },
 );

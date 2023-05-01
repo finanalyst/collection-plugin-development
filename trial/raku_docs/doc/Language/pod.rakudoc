@@ -381,6 +381,8 @@ When you're not happy.
 
 Lists may be multi-level, with items at each level specified using the
 C<=item1>, C<=item2>, C<=item3>, etc. blocks.
+(The indentation depends on the rendering engine and does not need to be included
+in the Rakudoc markup.) Upto four levels are normally differentiated.
 
 Note that C<=item> is just an abbreviation for C<=item1>.
 
@@ -389,20 +391,28 @@ For example:
 =begin code :lang<rakudoc>
 =item1  Animal
 =item2     Vertebrate
+=item3     Mammals
+=item4     Primates
 =item2     Invertebrate
 
 =item1  Phase
 =item2     Solid
+=item3        Crystaline
+=item3        Amorphous
 =item2     Liquid
 =item2     Gas
 =end code
 
 =item1  Animal
 =item2     Vertebrate
+=item3     Mammals
+=item4     Primates
 =item2     Invertebrate
 
 =item1  Phase
 =item2     Solid
+=item3        Crystaline
+=item3        Amorphous
 =item2     Liquid
 =item2     Gas
 
@@ -527,7 +537,7 @@ To underline a text enclose it in C<U< >>
 =for code :lang<rakudoc>
 Raku is U<awesome>
 
-Z<If used will bust Pod::To::BigPage>
+Raku is U<awesome>
 
 =head2 Code
 
@@ -577,8 +587,8 @@ possible to use the module-style notation, e.g., C«L<Some reference|path::to::f
 
 =head2 Placement links
 
-This code is not implemented in C<Pod::To::HTML>, but is partially implemented
-in C<Pod::To::BigPage>.
+This code is not implemented in C<Pod::To::HTML>, but it is implemented
+in C<Raku::Pod::Render>.
 
 A second kind of link E<mdash> the C<P<>> or B<placement link> E<mdash> works
 in the opposite direction. Instead of directing focus out to another
