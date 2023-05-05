@@ -30,11 +30,10 @@ sub ($pp, %processed, %options) {
     for %processed.kv -> $fn, $podf {
         my $value = $podf.name ~~ / ^ 'type/' (.+) $ / ?? ~$/[0] !! $podf.name;
         my $info = '';
-        say "at $?LINE subt ", $podf.subtitle;
         with $podf.subtitle {
             if m/ \S / {
-                if .chars > $inf-length {
-                    $info = .subst(/ '<p>' | '</p>' /,'',:g).substr( * - $inf-length ) ~ ' ... '
+                if ( .chars + $podf.title.chars ) > $inf-length {
+                    $info = .subst(/ '<p>' | '</p>' /,'',:g).substr( * - $inf-length - $podf.title.chars ) ~ ' ... '
                 }
                 else {
                     $info = .subst(/ '<p>' | '</p>' /,'',:g)
