@@ -211,8 +211,6 @@ from leading declarator blocks in its original format. See the test for the capa
 in the file
 L<S26-documentation/block-leading-user-format.t|https://github.com/Raku/roast/blob/master/S26-documentation/block-leading-user-format.t>.
 
-
-
 =head1 Block types
 
 Pod6 offers a wide range of standard block types.
@@ -333,6 +331,23 @@ which should be rendered without re-justification or squeezing of whitespace.
 
 The C<=output> block is used to specify pre-formatted terminal or file output,
 which should also be rendered without re-justification or whitespace-squeezing.
+=begin code :lang<rakudoc>
+
+    =begin output
+            Name:    Baracus, B.A.
+            Rank:    Sgt
+            Serial:  1PTDF007
+
+            Do you want additional personnel details? K<y>
+
+            Height:  180cm/5'11"
+            Weight:  104kg/230lb
+            Age:     49
+
+            Print? K<n>
+        =end output
+
+=end code
 
 =head2 Lists
 
@@ -463,6 +478,52 @@ for breakfast.
 =end item
 
 As you can see, folk wisdom is often of dubious value.
+
+=head2 Nested blocks
+
+Pod provides a C<=nested> block that marks all its contents as being nested:
+=begin code
+    =begin nested
+    We are all of us in the gutter,
+
+    but some of us are looking at the stars!
+        =begin nested
+        -- Oscar Wilde
+        =end nested
+    =end nested
+=end code
+
+=begin nested
+We are all of us in the gutter,
+
+but some of us are looking at the stars!
+    =begin nested
+    -- Oscar Wilde
+    =end nested
+=end nested
+
+Nesting blocks can contain any other kind of block, including implicit paragraph and code blocks.
+Note that the relative physical indentation of the blocks plays no role in determining
+their ultimate nesting. The preceding example could equally have been specified:
+=begin code
+    =begin nested
+    We are all of us in the gutter,
+
+    but some of us are looking at the stars!
+    =begin nested
+    -- Oscar Wilde
+    =end nested
+    =end nested
+=end code
+
+=begin nested
+We are all of us in the gutter,
+
+but some of us are looking at the stars!
+=begin nested
+-- Oscar Wilde
+=end nested
+=end nested
 
 =head2 Tables
 
@@ -616,10 +677,11 @@ might produce:
 =begin nested
 B<Copyright>
 
-This document is copyright (c) MegaGigaTeraPetaCorp, 2006. All rights reserved.
+=nested This document is copyright (c) MegaGigaTeraPetaCorp, 2006. All rights reserved.
 
 B<Disclaimer>
 
+=begin nested
 ABSOLUTELY NO WARRANTY IS IMPLIED. NOT EVEN OF ANY KIND. WE HAVE SOLD
 YOU THIS SOFTWARE WITH NO HINT OF A SUGGESTION THAT IT IS EITHER USEFUL
 OR USABLE. AS FOR GUARANTEES OF CORRECTNESS...DON'T MAKE US LAUGH! AT
@@ -627,6 +689,7 @@ SOME TIME IN THE FUTURE WE MIGHT DEIGN TO SELL YOU UPGRADES THAT PURPORT
 TO ADDRESS SOME OF THE APPLICATION'S MANY DEFICIENCIES, BUT NO PROMISES
 THERE EITHER. WE HAVE MORE LAWYERS ON STAFF THAN YOU HAVE TOTAL
 EMPLOYEES, SO DON'T EVEN *THINK* ABOUT SUING US. HAVE A NICE DAY.
+=end nested
 =end nested
 
 If a renderer cannot find or access the external data source for a
@@ -636,11 +699,11 @@ some form, possibly as an outwards link. For example:
 =begin nested
 B<Copyright>
 
-See: C<file:/shared/docs/std_copyright.pod>
+=nested See: C<file:/shared/docs/std_copyright.pod>
 
 B<Disclaimer>
 
-See: L<http://www.MegaGigaTeraPetaCorp.com/std/disclaimer.txt>
+=nested See: L<http://www.MegaGigaTeraPetaCorp.com/std/disclaimer.txt>
 =end nested
 
 You can use any of the following URI forms (see L<#Links>) in a
@@ -664,7 +727,7 @@ To create a note enclose it in C<N< >>
 =for code :lang<rakudoc>
 Raku is multi-paradigmatic N<Supporting Procedural, Object Oriented, and Functional programming>
 
-Z<Raku is multi-paradigmatic N<Supporting Procedural, Object Oriented, and Functional programming> >
+Raku is multi-paradigmatic N<Supporting Procedural, Object Oriented, and Functional programming>
 
 =head2 Keyboard input
 
@@ -672,7 +735,7 @@ To flag text as keyboard input enclose it in C<K< >>
 =for code :lang<rakudoc>
 Enter your name K<John Doe>
 
-Z<If used will bust Pod::To::BigPage>
+Enter your name K<John Doe>
 
 =head2 Replaceable
 
@@ -685,16 +748,7 @@ eventually be replaced by an actual value. For example:
 The basic C<ln> command is: C<ln> R<source_file> R<target_file>
 =end code
 
-or:
-
-=begin code :lang<rakudoc>
-Then enter your details at the prompt:
-
-=for input
-    Name: R<your surname>
-      ID: R<your employee number>
-    Pass: R<your 36-letter password>
-=end code
+The basic C<ln> command is: C<ln> R<source_file> R<target_file>
 
 =head2 Terminal output
 
@@ -702,7 +756,7 @@ To flag text as terminal output enclose it in C<T< >>
 =for code :lang<rakudoc>
 Hello T<John Doe>
 
-Z<If used will bust Pod::To::BigPage>
+Hello T<John Doe>
 
 =head2 Unicode
 
@@ -733,7 +787,7 @@ Raku makes considerable use of the « and » characters.
 =head2 Verbatim text
 
 This code is not implemented by C<Pod::To::HTML>, but is implemented in
-C<Pod::To::BigPage>.
+C<Raku::Pod::Render>.
 
 The C<V<>> formatting code treats its entire contents as being B<verbatim>,
 disregarding every apparent formatting code within it. For example:
@@ -807,16 +861,28 @@ because you "OR" the "cache".
 
 =head2 HTML
 
-In order to generate HTML from Pod, you need the
-L<Pod::To::HTML module|https://github.com/Raku/Pod-To-HTML>.
+There are currently two ways to render HTML from Pod:
+=item L<The Pod::To::HTML module|https://github.com/Raku/Pod-To-HTML>.
+=item L<The Raku::Pod::Render module|https://github.com/finanalyst/raku-pod-render>
 
-If it is not already installed, install it by running the following command:
-C<zef install Pod::To::HTML>
+Both can be installed using zef, eg.
+    zef install Raku::Pod::Render
+
+C<Pod::To::HTML> is an older module and does not implement all of the functionality
+in this document. But it is simpler to use.
 
 Once installed, run the following command in the terminal:
 =begin code :lang<shell>
 raku --doc=HTML input.rakudoc > output.html
 =end code
+
+C<Raku::Pod::Render> is used to generate the HTML on this website. It also allows for
+custom blocks, that is C<=some-name> Named blocks. These blocks can be written by
+a developer specially for a specific site, and can be used to include CSS, JS, JQuery elements,
+or access a micro service. More information can be found in the documentation in the
+distribution.
+
+Some custom blocks that come with C<Raku::Pod::Render> are shown below.
 
 =head2 Markdown
 
@@ -899,4 +965,154 @@ Pod::Heading.new(level => 1, config => {}, contents => [Pod::Block::Para.new(con
 Pod::Block::Para.new(config => {}, contents => ["This is a paragraph."]);
 Pod::Heading.new(level => 2, config => {}, contents => [Pod::Block::Para.new(config => {}, contents => ["Subsection"])]);
 Pod::Block::Para.new(config => {}, contents => ["Here some text for the subsection."]);
+
+=head1 Custom blocks distributed with C<Raku::Pod::Render>
+
+=head2 Colourful line breaks
+
+The block was developed as a simple custom block to show how new CSS can be
+associated with common HTML elements.
+
+=begin code
+=for HR :class<yellowish-dots> :headlevel(0)
+
+=for HR :class<bluish-dots> :headlevel(0)
+
+=for HR :class<greenish-dots> :headlevel(0)
+
+=end code
+
+renders as
+
+=for HR :class<yellowish-dots> :headlevel(0)
+
+=for HR :class<bluish-dots> :headlevel(0)
+
+=for HR :class<greenish-dots> :headlevel(0)
+
+=head2 FontAwesome icons
+
+The difference between a B<Pod-block> and a B<FormatCode> is that a block is line oriented,
+where as format codes are word/character oriented and can appear inside a line.
+
+Since Raku treats all Unicode characters the same, Chinese/Arabic/Cyrillic glyphs can now be
+specified to repeat or alias the predefined codes of C<B C I K T U E Z X N L P V >.
+This means a character/glyph more appropriate in another language can be used in place of,
+for example B<B> for bold.
+
+Here V< F<> > is used to include a Fontawesome icon.
+See L<font search page|https://fontawesome.com/icons>.
+Make sure to filter for the free icons.
+
+=begin code
+Some FontAwesome icons
+
+F<fas fa-ambulance> Example of ambulance
+
+F<fas fa-car> Example of automobile
+
+F<fas fa-bicycle> Example of bicycle
+
+F<fas fa-bus> Example of bus
+
+F<fas fa-truck> Example of truck
+
+F<fas fa-wheelchair> Example of wheelchair
+
+F<fas fab-accessible-icon> Example of accessible-icon (was wheelchair-alt in fontawesom v4)
+=end code
+
+Generates
+Some FontAwesome icons
+
+F<fas fa-ambulance> Example of ambulance
+
+F<fas fa-car> Example of automobile
+
+F<fas fa-bicycle> Example of bicycle
+
+F<fas fa-bus> Example of bus
+
+F<fas fa-truck> Example of truck
+
+F<fas fa-wheelchair> Example of wheelchair
+
+F<fab fa-accessible-icon> Example of accessible-icon (was wheelchair-alt in fontawesome v4)
+
+FontAwesome has some other options.
+=begin code
+
+Train normal size F<fas fa-train> Triple size train F<fas fa-train|fa-3x>
+
+An animated spinner F<fas fa-sync|fa-spin fa-3x fa-fw>
+=end code
+Generates
+
+Train normal size F<fas fa-train> Triple size train F<fas fa-train|fa-3x>
+
+An animated spinner F<fas fa-sync|fa-spin fa-3x fa-fw>
+
+=head2 Graphviz
+
+This block introduces a directed graph in the dot language. It is rendered into HTML as an svg using the
+dot program. Since a graph data is require, only the delimited form of the block (starting with =begin/=end)
+will be used.
+
+The following diagraph comes from the C<dot> documentation. The following Rakudoc
+=begin code
+=begin Graphviz :headlevel(0)
+    digraph G {
+        main -> parse -> execute;
+        main -> init;
+        main -> cleanup;
+        execute -> make_string;
+        execute -> printf
+        init -> make_string;
+        main -> printf;
+        execute -> compare;
+    }
+=end Graphviz
+=end code
+
+produces
+
+=begin Graphviz :headlevel(0)
+    digraph G {
+        main -> parse -> execute;
+        main -> init;
+        main -> cleanup;
+        execute -> make_string;
+        execute -> printf
+        init -> make_string;
+        main -> printf;
+        execute -> compare;
+    }
+=end Graphviz
+
+=head2 Latex
+
+This plugin block sends the Latex markup to the CodeCogs online equation editor. For example,
+
+=begin code
+=for Latex :headlevel(0)
+\begin{align*}
+\sum_{i=1}^{k+1} i^{3}
+&= \biggl(\sum_{i=1}^{n} i^{3}\biggr) +  i^3\\
+&= \frac{k^{2}(k+1)^{2}}{4} + (k+1)^3 \\
+&= \frac{k^{2}(k+1)^{2} + 4(k+1)^3}{4}\\
+&= \frac{(k+1)^{2}(k^{2} + 4k + 4)}{4}\\
+&= \frac{(k+1)^{2}(k+2)^{2}}{4}
+\end{align*}
+=end code
+
+=for Latex :headlevel(0)
+\begin{align*}
+\sum_{i=1}^{k+1} i^{3}
+&= \biggl(\sum_{i=1}^{n} i^{3}\biggr) +  i^3\\
+&= \frac{k^{2}(k+1)^{2}}{4} + (k+1)^3 \\
+&= \frac{k^{2}(k+1)^{2} + 4(k+1)^3}{4}\\
+&= \frac{(k+1)^{2}(k^{2} + 4k + 4)}{4}\\
+&= \frac{(k+1)^{2}(k+2)^{2}}{4}
+\end{align*}
+
 =end pod

@@ -579,3 +579,38 @@ button.copy-raku-code {
     padding: 0 0.25rem 0.25rem 0.25rem;
     position: absolute;
 }
+.pod-output {
+    font-family: "Lucida Console", "Courier New", monospace;
+    font-weight: 600;
+}
+.pod-input {
+    font-family: "Monaco", "Lucida Console", "Courier New", monospace;
+    font-weight: 300;
+}
+.pod-nested {
+    margin: 0.25rem 0 0.25rem 2.5rem;
+}
+.pod-placement {
+    font-family: "Georgia", serif;
+    margin: $size-4;
+}
+kbd {
+    font-family: monospace;
+    font-weight: $weight-semibold;
+}
+samp {
+    font-family: "Courier new";
+    font-weight: $weight-semibold;
+    border-style: none none dotted;
+    padding: 0.1em 0.75em;
+}
+var {
+    &::before {
+        content: "｢";
+        padding: 3px;
+        }
+    &::after {
+        content: "｣";
+        padding: 3px;
+    }
+}
