@@ -9,6 +9,8 @@ sub ($pp, %processed, %options) {
     # Category is used to split up items, value is what is searched for, url is where it is to be found.
     # eg { "category": "Types", "value": "Distribution::Hash", "url": "/type/Distribution::Hash" }
     # The first three items are supplied for some reason.
+    #| info is chopped to this length.
+    my $inf-length = 110;
     my @entries =
         %( :category("Syntax"), :value("# single-line comment"), :url("/language/syntax#Single-line_comments") ),
         %( :category("Syntax"), :value("#` multi-line comment"), :url("/language/syntax#Multi-line_/_embedded_comments") ),
@@ -27,17 +29,30 @@ sub ($pp, %processed, %options) {
     }
     for %processed.kv -> $fn, $podf {
         my $value = $podf.name ~~ / ^ 'type/' (.+) $ / ?? ~$/[0] !! $podf.name;
+        my $info = '';
+        say "at $?LINE subt ", $podf.subtitle;
+        with $podf.subtitle {
+            if m/ \S / {
+                if .chars > $inf-length {
+                    $info = .subst(/ '<p>' | '</p>' /,'',:g).substr( * - $inf-length ) ~ ' ... '
+                }
+                else {
+                    $info = .subst(/ '<p>' | '</p>' /,'',:g)
+                }
+                $info = $podf.title ~ " [ $info ]"
+            }
+        }
         @entries.push: %(
             :category($podf.pod-config-data<subkind>.tc),
             :$value,
-            :info($podf.title),
+            :$info,
             :url(escape-json('/' ~ $fn))
         );
         for $podf.raw-toc.grep({ !(.<is-title>) }) {
             @entries.push: %(
                 :category<Heading>,
                 :value(.<text>),
-                :info(': section in <b>' ~ escape-json($podf.title) ~ '</b>'),
+                :info(': section in <b>' ~ $podf.title ~ '</b>'),
                 :url(escape-json('/' ~ $fn ~ '#' ~ .<target>))
             )
         }
