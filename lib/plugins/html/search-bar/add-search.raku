@@ -32,13 +32,15 @@ sub ($pp, %processed, %options) {
         my $info = '';
         with $podf.subtitle {
             if m/ \S / {
-                if ( .chars + $podf.title.chars ) > $inf-length {
-                    $info = .subst(/ '<p>' | '</p>' /,'',:g).substr( * - $inf-length - $podf.title.chars ) ~ ' ... '
+                $info = .subst(/ '<p>' | '</p>' /,'',:g);
+                if ( $info.chars + $podf.title.chars ) > $inf-length {
+                    $info = $podf.title.chars > ( $inf-length - '[ ... ]'.chars )
+                    ?? $podf.title
+                    !! $podf.title ~ " [ { $info.substr( * - ( $inf-length - $podf.title.chars ) ) } ... ]"
                 }
                 else {
-                    $info = .subst(/ '<p>' | '</p>' /,'',:g)
+                    $info = $podf.title ~ " [ $info ]"
                 }
-                $info = $podf.title ~ " [ $info ]"
             }
         }
         @entries.push: %(
