@@ -11,7 +11,7 @@
 	:name<search-bar>,
 	:render,
 	:template-raku<search-templates.raku>,
-	:version<0.1.18>,
+	:version<0.1.19>,
 	:jquery( ['search-bar.js',2], ),
 	:information<jquery jquery-link add-css search-site>,
 	:add-css<search-bar.css search-bar-light.css search-bar-dark.css>,
@@ -21,5 +21,5 @@
 			integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
 			crossorigin="anonymous"', 1],
 	),
-	:search-site<new-raku.finanalyst.org>,
+	:compare-ignore('search-bar.js '),
 )

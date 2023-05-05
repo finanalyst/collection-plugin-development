@@ -968,27 +968,33 @@ Pod::Block::Para.new(config => {}, contents => ["Here some text for the subsecti
 
 =head1 Custom blocks distributed with C<Raku::Pod::Render>
 
+A Custom block is placed by default in the Table of Contents as if it was a
+C<=head1>. Sometimes a block should not be listed in the Table of Contents,
+so use the metadata C<:!toc>. Sometimes, a block is wanted in the Table of
+Content, but at a different level, eg. the same as a C<=head3>, in which
+case, use the metadata C<:headlevel(3)>.
+
 =head2 Colourful line breaks
 
 The block was developed as a simple custom block to show how new CSS can be
 associated with common HTML elements.
 
 =begin code
-=for HR :class<yellowish-dots> :headlevel(0)
+=for HR :class<yellowish-dots> :!toc
 
-=for HR :class<bluish-dots> :headlevel(0)
+=for HR :class<bluish-dots> :!toc
 
-=for HR :class<greenish-dots> :headlevel(0)
+=for HR :class<greenish-dots> :!toc
 
 =end code
 
 renders as
 
-=for HR :class<yellowish-dots> :headlevel(0)
+=for HR :class<yellowish-dots> :!toc
 
-=for HR :class<bluish-dots> :headlevel(0)
+=for HR :class<bluish-dots> :!toc
 
-=for HR :class<greenish-dots> :headlevel(0)
+=for HR :class<greenish-dots> :!toc
 
 =head2 FontAwesome icons
 
@@ -1060,7 +1066,7 @@ will be used.
 
 The following diagraph comes from the C<dot> documentation. The following Rakudoc
 =begin code
-=begin Graphviz :headlevel(0)
+=begin Graphviz :!toc
     digraph G {
         main -> parse -> execute;
         main -> init;
@@ -1076,7 +1082,7 @@ The following diagraph comes from the C<dot> documentation. The following Rakudo
 
 produces
 
-=begin Graphviz :headlevel(0)
+=begin Graphviz :!toc
     digraph G {
         main -> parse -> execute;
         main -> init;
@@ -1094,7 +1100,7 @@ produces
 This plugin block sends the Latex markup to the CodeCogs online equation editor. For example,
 
 =begin code
-=for Latex :headlevel(0)
+=for Latex :!toc
 \begin{align*}
 \sum_{i=1}^{k+1} i^{3}
 &= \biggl(\sum_{i=1}^{n} i^{3}\biggr) +  i^3\\
@@ -1105,7 +1111,7 @@ This plugin block sends the Latex markup to the CodeCogs online equation editor.
 \end{align*}
 =end code
 
-=for Latex :headlevel(0)
+=for Latex :!toc
 \begin{align*}
 \sum_{i=1}^{k+1} i^{3}
 &= \biggl(\sum_{i=1}^{n} i^{3}\biggr) +  i^3\\

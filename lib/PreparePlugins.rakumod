@@ -93,7 +93,9 @@ sub map-to-repo(
             my %rel-config = get-config(:path("$to/config.raku"));
             if %config<version> eq %rel-config<version> {
                 print " Same version ｢{ %config<version> }｣.";
-                my @problems = compare-modified(~$node, $to).flat;
+                my @compare-ignore = ();
+                @compare-ignore = .comb(/ \S+ /) with %config<compare-ignore>;
+                my @problems = compare-modified(~$node, $to, @compare-ignore).flat;
                 if @problems {
                     say "\n\t",color('red'), BOLD, 'Changes ', BOLD_OFF, color('reset'), 'in ｢', $plug, '｣ after ｢',$release,"｣.\n\t",
                         @problems.join(",\n\t"),
@@ -133,20 +135,26 @@ sub copy-plugin(IO :$node!, Str:D :$to!) is export {
         }
     }
 }
-sub compare-modified(Str:D $from, Str:D $to --> Positional) {
+sub compare-modified(Str:D $from, Str:D $to, @compare-ignore --> Positional) {
     my @problems;
-    for "$from".IO.dir -> $node {
+    for $from.IO.dir -> $node {
         my $fn = $node.basename;
         if "$to/$fn".IO ~ :e {
-            @problems.append: compare-modified(~$node, "$to/$fn").flat
-            if $node ~~ :d;
-            if ("$to/$fn".IO ~~ :e & :f) and ($node.modified > "$to/$fn".IO.modified) {
+            @problems.append: compare-modified(~$node, "$to/$fn", @compare-ignore ).flat
+                if $node ~~ :d;
+            if ($fn ~~ none( @compare-ignore) ) and ("$to/$fn".IO ~~ :e & :f) and ($node.modified > "$to/$fn".IO.modified) {
                 @problems.append("｢$fn｣ was modified in ｢$from｣ after its release.")
                     unless $node ~~ :d
             }
         }
         else {
             @problems.append: ($node ~~ :f ?? "File" !! "Directory") ~ " ｢$fn｣ in ｢$from｣ does not exist in release"
+        }
+    }
+    for $to.IO.dir -> $node {
+        my $fn = $node.basename;
+        unless "$from/$fn".IO ~ :e {
+            @problems.append: ($node ~~ :f ?? "File" !! "Directory") ~ " ｢$fn｣ exists in release version ｢$to｣, but has been deleted from ｢$from｣."
         }
     }
     @problems

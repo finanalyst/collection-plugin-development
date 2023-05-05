@@ -1,7 +1,7 @@
 {
   "name": "Collection-Plugin-Development",
   "description": "Development and working repository for Collection plugins",
-  "version": "0.4.6",
+  "version": "0.4.7",
   "perl": "6.d",
   "authors": [
     "Richard Hainsworth, aka finanalyst"
