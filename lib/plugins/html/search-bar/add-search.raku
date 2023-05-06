@@ -9,8 +9,12 @@ sub ($pp, %processed, %options) {
     # Category is used to split up items, value is what is searched for, url is where it is to be found.
     # eg { "category": "Types", "value": "Distribution::Hash", "url": "/type/Distribution::Hash" }
     # The first three items are supplied for some reason.
-    #| info is chopped to this length.
-    my $inf-length = 110;
+    #| total length of search bar in char
+    my $search-len = 110;
+    #| the number of extra chars in the candidate rendering
+    #| spaces in the break between the value and the info section
+    #| [  ]
+    my $bar-chars = 8;
     my @entries =
         %( :category("Syntax"), :value("# single-line comment"), :url("/language/syntax#Single-line_comments") ),
         %( :category("Syntax"), :value("#` multi-line comment"), :url("/language/syntax#Multi-line_/_embedded_comments") ),
@@ -30,16 +34,27 @@ sub ($pp, %processed, %options) {
     for %processed.kv -> $fn, $podf {
         my $value = $podf.name ~~ / ^ 'type/' (.+) $ / ?? ~$/[0] !! $podf.name;
         my $info = '';
+        # some files dont have a subtitle, so no extra information to show
         with $podf.subtitle {
             if m/ \S / {
                 $info = .subst(/ '<p>' | '</p>' /,'',:g);
-                if ( $info.chars + $podf.title.chars ) > $inf-length {
-                    $info = $podf.title.chars > ( $inf-length - '[ ... ]'.chars )
-                    ?? $podf.title
-                    !! $podf.title ~ " [ { $info.substr( * - ( $inf-length - $podf.title.chars ) ) } ... ]"
+                my $infs = $info.chars;
+                my $vals = $value.chars;
+                my $tts = $podf.title.chars;
+                if ( $vals + $bar-chars + $tts + $infs ) > $search-len {
+                    # if desired line is too long, chop the subtitle, but not the title
+                    if ( $vals + $bar-chars + $tts + 4 ) > $search-len { # 4 is for ..._
+                        $info = '<b>' ~ $podf.title ~ '</b>'
+                    }
+                    else {
+                        $info = '<b>' ~ $podf.title ~ '</b>'
+                            ~ ' [ <i>'
+                            ~  $info.substr( 0, ( $search-len - $vals - $bar-chars - $tts - 4 ) )
+                            ~ '</i> ... ]'
+                    }
                 }
                 else {
-                    $info = $podf.title ~ " [ $info ]"
+                    $info = '<b>' ~ $podf.title ~ '</b>' ~ " [ <i>$info\</i> ]"
                 }
             }
         }
