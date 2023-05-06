@@ -46,9 +46,12 @@ sub set-highlight-basedir( --> Str ) {
 sub test-highlighter( Str $hilite-path --> Bool ) {
     ?("$hilite-path/package-lock.json".IO.f and "$hilite-path/atom-language-perl6".IO.d)
 }
-
 %(
     'block-code' => sub ( %prm, %tml ) {
-        &highlight( %prm<contents> )
+        my token tag { '<' ~ '>' [ '/'? <-[ > ]>+ ] }
+        my @tokens;
+        my $rv = &highlight(%prm<contents>.subst(/ <tag> / , { @tokens.push( ~$/ ); "\xFF\xFF" }, :g));
+        say @tokens;
+        $rv.subst( / "\xFF\xFF" /, { @tokens.shift }, :g )
     }
 )

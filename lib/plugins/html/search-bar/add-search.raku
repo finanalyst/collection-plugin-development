@@ -32,29 +32,20 @@ sub ($pp, %processed, %options) {
         $s.subst(｢\｣, ｢%5C｣, :g).subst('"', '\"', :g).subst(｢?｣, ｢%3F｣, :g)
     }
     for %processed.kv -> $fn, $podf {
-        my $value = $podf.name ~~ / ^ 'type/' (.+) $ / ?? ~$/[0] !! $podf.name;
+        my $value = $podf.title;
         my $info = '';
         # some files dont have a subtitle, so no extra information to show
         with $podf.subtitle {
             if m/ \S / {
                 $info = .subst(/ '<p>' | '</p>' /,'',:g);
-                my $infs = $info.chars;
                 my $vals = $value.chars;
-                my $tts = $podf.title.chars;
-                if ( $vals + $bar-chars + $tts + $infs ) > $search-len {
-                    # if desired line is too long, chop the subtitle, but not the title
-                    if ( $vals + $bar-chars + $tts + 4 ) > $search-len { # 4 is for ..._
-                        $info = '<b>' ~ $podf.title ~ '</b>'
-                    }
-                    else {
-                        $info = '<b>' ~ $podf.title ~ '</b>'
-                            ~ ' [ <i>'
-                            ~  $info.substr( 0, ( $search-len - $vals - $bar-chars - $tts - 4 ) )
-                            ~ '</i> ... ]'
-                    }
+                if ( $vals + $bar-chars + $info.chars ) > $search-len {
+                    $info = '<i>'
+                        ~  $info.substr( 0, ( $search-len - $vals - $bar-chars - 4 ) )
+                        ~ '</i> ... '
                 }
                 else {
-                    $info = '<b>' ~ $podf.title ~ '</b>' ~ " [ <i>$info\</i> ]"
+                    $info = "<i>$info\</i>"
                 }
             }
         }

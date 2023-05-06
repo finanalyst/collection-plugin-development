@@ -1,16 +1,15 @@
-=begin pod
+=begin rakudoc  :kind("Language") :subkind("Language") :category("fundamental")
 =TITLE A file to test blocks
 =SUBTITLE This is not a part of official Raku documentation
 
-=begin input
-This        should be rendered with the same
+=begin code :allow<C B L>
+This        should be B<rendered> with the same
 sort of whitespace
+A L<link|https://new-raku.finanalyst.org/about> is placed here
 
-    as it is inputted
-=end input
+    as C<it is> inputted
+=end code
 
-=end pod
+=end rakudoc
 
-=begin output
-like input
-=end output
+
