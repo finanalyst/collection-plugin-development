@@ -10,6 +10,27 @@ A L<link|https://new-raku.finanalyst.org/about> is placed here
     as C<it is> inputted
 =end code
 
+=head2 Bold
+
+To format a text in bold enclose it in C<B< >>
+=for code :lang<rakudoc>
+Raku is B<awesome>
+
+Raku is B<awesome>
+
+
+C<P<>> codes are handy for breaking out standard elements of
+your documentation set into reusable components that can then be
+incorporated directly into multiple documents. For example:
+
+=begin code :lang<rakudoc>
+=COPYRIGHT
+P<file:/shared/docs/std_copyright.pod>
+
+=DISCLAIMER
+P<http://www.MegaGigaTeraPetaCorp.com/std/disclaimer.txt>
+=end code
+
 =end rakudoc
 
 
