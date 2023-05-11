@@ -431,8 +431,19 @@ p > code {
       color: $heading;
     }
 
-    li ul {
-      border-left: 1px solid $border;
+    list-style: disc;
+    padding-left: $size-4;
+    > ul {
+        margin-left: 1em;
+        list-style: circle;
+        > ul {
+            margin-left: 1em;
+            list-style: square;
+            > ul {
+                margin-left: 1em;
+                list-style: disclosure-closed;
+            }
+        }
     }
 
     a {
@@ -530,6 +541,9 @@ code {
   pre {
     background-color: $code-background;
     color: $code-foreground;
+  }
+  .rakudoc-in-code {
+    padding: 1.25rem 1.5rem;
   }
 }
 

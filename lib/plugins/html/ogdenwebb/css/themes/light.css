@@ -394,11 +394,24 @@ p > code {
 .raku-sidebar .input::placeholder, .raku-sidebar .textarea::placeholder, .raku-sidebar .select select::placeholder {
   color: black;
 }
+.raku-sidebar .menu-list {
+  list-style: disc;
+  padding-left: 1.5rem;
+}
 .raku-sidebar .menu-list ::marker {
   color: #A30031;
 }
-.raku-sidebar .menu-list li ul {
-  border-left: 1px solid #cccccc;
+.raku-sidebar .menu-list > ul {
+  margin-left: 1em;
+  list-style: circle;
+}
+.raku-sidebar .menu-list > ul > ul {
+  margin-left: 1em;
+  list-style: square;
+}
+.raku-sidebar .menu-list > ul > ul > ul {
+  margin-left: 1em;
+  list-style: disclosure-closed;
 }
 .raku-sidebar .menu-list a {
   color: #030303;
@@ -461,6 +474,9 @@ code {
 .raku-code pre {
   background-color: #fafafa;
   color: #030303;
+}
+.raku-code .rakudoc-in-code {
+  padding: 1.25rem 1.5rem;
 }
 
 .hero.error-page .hero-body {

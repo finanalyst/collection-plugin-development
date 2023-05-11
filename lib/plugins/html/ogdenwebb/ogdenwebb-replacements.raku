@@ -236,13 +236,46 @@ use v6.d;
     },
     #placeholder
     block-code => sub (%prm, %tml) { # previous block-code is set by 02-highlighter
-        my token tag { <?after <-[ B C E I K L N P R T U V X Z ]> > '<' ~ '>' [ '/'? <-[ > ]>+ ] }
+        my token tag {
+            <!after [ <[ B C E I K L N P R T U V X Z ]> | [ ':' \S+? ] ] > '<' ~ '>' <-[ > ]>+
+        }
+        my $hl;
+        my Bool $rd = ( %prm<lang>:exists and %prm<lang> eq 'rakudoc');
         my @tokens;
-        %prm<contents> .= subst(/ <tag> / , { @tokens.push( ~$/ ); "\xFF\xFF" }, :g );
-        my $hl = %tml.prior('block-code').(%prm, %tml);
-        $hl .= subst( / '<pre class="' /, '<pre class="cm-s-ayaya ');
-        $hl .= subst( / "\xFF\xFF" /, { @tokens.shift }, :g );
-        $hl .= subst( / '<pre class="' /, '<pre class="cm-s-ayaya ');
+        my $t = %prm<contents>;
+        my $parsed = %prm<contents> ~~ / ^ .*? [ <tag> .*? ]+ $ / ;
+        if $parsed {
+            $t = '';
+            for $/.chunks -> $c {
+                if $c.key eq 'tag' {
+                    if $rd {
+                        $t ~= $c.value
+                    }
+                    else {
+                        $t ~= "\xFF\xFF";
+                        @tokens.push: $c.value.Str;
+                    }
+                }
+                else {
+                    if $rd {
+                        $t ~= $c.value.trans( [ '<'   , '>' ] => [ '&lt;', '&gt;' ]);
+                    }
+                    else {
+                        $t ~= $c.value
+                    }
+                }
+            }
+        }
+        if $rd {
+            $hl = "<div class=\"rakudoc-in-code\">\n$t\n</div>";
+        }
+        else {
+            %prm<contents> = $t if $parsed;
+            $hl = %tml.prior('block-code').(%prm, %tml);
+            $hl .= subst( / '<pre class="' /, '<pre class="cm-s-ayaya ');
+            $hl .= subst( / "\xFF\xFF" /, { @tokens.shift }, :g );
+            $hl .= subst( / '<pre class="' /, '<pre class="cm-s-ayaya ');
+        }
         qq[
             <div class="raku-code raku-lang">
                 <button class="copy-raku-code" title="Copy code"><i class="far fa-clipboard"></i></button>
@@ -273,42 +306,36 @@ use v6.d;
         $tb.subst(/ '<table class="' /, '<table class="table is-bordered centered ')
     },
     toc => sub (%prm, %tml) {
+        my $rv = '';
         if %prm<toc>.defined and %prm<toc>.keys {
-            my $rv = "<ul class=\"menu-list\">\n";
-            my Bool $sub-list = False;
-            my $last-level;
-            for %prm<toc>.list -> $el {
-                with $last-level {
-                    if $el.<level> eq $last-level {
-                        $rv ~= '</li>'
-                    }
-                    else {
-                        if $el.<level> eq 1 {
-                            $rv ~= '</ul></li>';
-                            $sub-list = False
+            $rv = "<ul class=\"menu-list\">\n";
+            my $last-level = 1;
+            for %prm<toc>.list -> %el {
+                my $lev = %el<level>;
+                given $last-level {
+                    when $_ > $lev {
+                        while $last-level > $lev {
+                            $rv ~= "\n</ul>\n";
+                            $last-level--;
                         }
-                        elsif ! $sub-list {
-                            $rv ~= '<ul>';
-                            $sub-list = True;
+                    }
+                    when $_ < $lev {
+                        while $lev > $last-level {
+                            $last-level++;
+                            $rv ~= "\n<ul>\n";
                         }
                     }
                 }
-                $rv ~= '<li>'
+                $rv ~= "\n<li>"
                     ~ '<a href="#'
-                    ~ %tml<escaped>.($el.<target>)
+                    ~ (%el.<target>)
                     ~ '">'
-                    ~ %tml<escaped>.($el.<text> // '')
-                    ~ '</a>';
-                $last-level = $el.<level>;
+                    ~ (%el.<text> // '')
+                    ~ '</a></li>';
             }
-            if $last-level eq 1 {
-                $rv ~= "</li></ul>\n"
-            }
-            else {
-                $rv ~= "</li></ul></li></ul>\n"
-            }
+            $rv ~= "\n</ul>\n";
         }
-        else { '' }
+        $rv
     },
     'format-x' => sub (%prm, %tml) {
         my $indexedheader = %prm<meta>.elems ?? %prm<meta>[0].join(';') !! %prm<text>;
