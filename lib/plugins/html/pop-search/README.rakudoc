@@ -1,0 +1,26 @@
+=begin pod
+=TITLE pop-search is a plugin for Collection
+
+This is a replacement for the search-bar plugin.
+
+C<search-bar> creates a single js function together with the data
+that is delivered to each page, and because
+the data is extensive, there is a delay in delivering it, and caching it.
+
+C<pop-search> creates a js function that delivers some data with each page,
+but also allows for an extended search. This can be accessed either via
+a search page, or in a modal with the same functionality.
+
+The extended pop-up modal has other options can be selected,
+such as a Google search of the site, fuzzy search, selection of categories.
+
+The search bar should be keyboard directed. A key stoke (Alt-S) to get the pop-up.
+Use tabs to navigate between fields. All candidates can be seen and navigated to.
+
+
+=head1 Custom blocks
+B<Extended-search> is a block for a separate page.
+
+=head1 Templates
+
+=end pod

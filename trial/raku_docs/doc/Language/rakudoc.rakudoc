@@ -1,0 +1,2250 @@
+=begin pod :kind("Language") :subkind("Language") :category("reference")
+
+=TITLE Rakudoc - documentation components
+=SUBTITLE A Raku slang for creating documentation and document data to Raku programs.
+
+=head1 Introduction
+
+Rakudoc has a variety of instructions that allow for rich structured documents,
+provide markup hints to renderers without assuming an output format, extract
+information from compiled programs, provide information to programs, and allow for
+custom developer extensions.
+
+This document describes a revised specification of Rakudoc that modifies some parts of the
+original specification that was implemented as Raku was developed, and illustrates some aspects
+that previously were implemented but undocumented.
+
+Rakudoc is extensible and renderers are free to provide extra functionality beyond the minimum
+set of instructions described here, but may not provide extra functionality unless
+it is explicitly defined in L<the enclosing lexical scope|#Custom_blocks>.
+
+=head1 Rendering
+
+Rakudoc can be thought of as having components that are closely connected to a program or module
+that is being documented (code-oriented Rakudoc), and components that can be used for standalone documents, such as the source
+for this webpage or book chapter (page-oriented Rakudoc).
+
+Code-oriented Rakudoc is expected to be "consumed" by users in an IDE editor, while page-oriented Rakudoc is
+consumed in some rendered version,
+such as an HTML web page, or a chapter in an e-book.
+
+When Rakudoc components are viewed in an IDE or editor to provide information
+about variables, methods, roles, classes and the like, the information should be made available in a pop-up
+whenever a documented term is selected in some way (eg., hovering a mouse over it).
+In the editor context Rakudoc blocks and markup should then be treated as a comment to the code. Editors are
+not expected to render the Rakudoc except to show the Rakudoc instructions.
+
+When Rakudoc components are viewed in a rendered (eg. HTML) version, components related to a running
+program may be ignored.
+
+Within the body of a program there may be
+several sections of code, which is called the ambient context, interleaved between sections of Rakudoc.
+
+When a document is written using Rakudoc with the intention that it is to be a standalone document, Raku
+code can be specified in code blocks, which are not considered to be ambient, or code for the program.
+
+Consider a file with a class that is to distributed. When the file is edited in an
+IDE (eg., the class is being developed or maintained) the code-oriented Rakudoc is useful. Furthermore,
+when the class is imported into another Raku program
+the IDE will be able to access the information in the declarator blocks attached to terms without
+needing for the source code to be available. However, by
+including page-oriented Rakudoc in the same file, documentation can be written for the class. By passing
+the same source file through a renderer, a documentation file (eg., a README.md file for a github repo) can be
+generated.
+
+This document describes the minimum version of Rakudoc that a renderer or editor must recognise and
+some expected rendering behaviors for standalone renderers.
+
+The Rakudoc design assumes certain types of customisablity, such
+as new blocks or markup codes. In order to access blocks or functionality not described in this document,
+the file containing such Rakudoc instructions should contain a C<use> statement with a module that provides
+the information needed to render the block. The information provided by the module may be renderer-specific.
+
+=head1 Instructions
+
+Rakudoc has four main types of components:
+=defn Blocks
+These define complete text components, such as a new paragraph. New blocks can be defined.
+
+=defn Markup codes
+These typically define inline items embedded within a block. Some Markup codes only affect visual rendering of their contents,
+others may have side-effects (such as including items into an index or glossary). New markup codes can be defined.
+
+=defn Meta data tags
+These provide information to a block, which may have side-effects or alter the way a block should be rendered.
+
+=defn Directives
+These define how blocks work.
+
+=head2 Block syntax
+
+Blocks (the block name 'para' is used to illustrate the syntax) may be specified in three ways:
+=begin item
+B<Abbreviated form>
+The name of the block immediately follows an C<=> sign, which must be the first non-whitespace character
+on the line. Everything after the block name is considered the content of the block, eg.
+    =begin code
+        =para This text is the content of the block
+
+        after a blank line a new block is started
+    =end code
+
+Meta data tabs placed after an abbreviated block name are considered part of the block contents,
+with one exception, namely the ornithorpe character C<#>. The character (when not escaped) is removed from the contents
+and a C<:numbered> meta data option is associated with the block.
+=end item
+=begin item
+B<Extended form>
+An extended block begins with the directive C<=for> is the first non-whitespace on a line, followed by the name of the block,
+followed by metadata (see metadata below). The next non-blank lines after the metadata (see below)
+comprise the content of the block.
+    =begin code
+        =for para :meta<data>
+        This text is the content of the block
+
+        after a blank line a new block is started
+    =end code
+
+The general syntax is:
+=begin code
+     =for BLOCK_TYPE  OPTIONAL CONFIG INFO
+     =                OPTIONAL EXTRA CONFIG INFO
+     BLOCK DATA
+=end code
+=end item
+=begin item
+B<Delimited form>
+A delimited block starts with the directive C<=begin> as the first non-white space on a line, followed by
+the name of the block, followed optionally by metadata, followed by content lines, and is only terminated
+by a C<=end> directive followed by the same block name. A delimited block that is not terminated by
+an C<=end same-block-name> instruction throws an error.
+    =begin code
+        =begin para :meta<data>
+        This text is the content of the block
+
+        The blank line is also a part of the block
+        =end para
+    =end code
+The general syntax is:
+=begin code
+     =begin BLOCK_TYPE  OPTIONAL CONFIG INFO
+     =                  OPTIONAL EXTRA CONFIG INFO
+     BLOCK CONTENTS
+     =end BLOCK_TYPE
+=end code
+=end item
+
+=head2 Markup code syntax
+
+The general syntax of a Markup code is
+=for code
+<Opener><open marker><content>|<meta list><close marker>
+
+=defn <Opener>
+This is a single upper case letter, or a unicode entity with UPPER property
+
+=defn <open marker>
+This is either of C«<» or C<«> ( = C«E<00AB>» )
+
+=defn <content>
+This is a string not containing C<|> (= C«E<007C>» ) but it can contain markup code.
+
+=defn <meta list>
+Is a list of strings delimited by C<,>, or a list of list of strings delimited by C<;>
+
+=defn <close marker>
+Is the closing pair to the <open marker>, namely C«>» or C<»> ( = C«E<00BB>» )
+
+=head2 Metadata syntax
+
+Metadata is always specified using Raku-ish option pairs. That is, any of:
+
+=begin table
+ Value is...       Specify with...           Or with...           Or with...
+ ===============   ===================       ==============       ===========
+ List              :key[$e1, $e2, ...]       :key($e1, $e2, ...)  :key<$e1 $e2 ...>
+ Hash              :key{$k1=>$v1, $k2=>$v2}
+ Boolean (true)    :key                      :key(True)           :key[True]
+ Boolean (false)   :!key                     :key(False)          :key[False]
+ String            :key<str>                 :key('str')          :key("str")
+ Int               :key(42)                  :key[42]             :42key
+ Number            :key(2.3)                 :key[2.3]
+=end table
+
+Where '$e1, $e2, ...' are list elements of type String, Int, Number, or
+Boolean. Lists may have mixed element types. Note that one-element
+lists are converted to the type of their element (String, Int, Number, or
+Boolean). Also note that big integers can be used if required.
+
+For hashes, '$k1, $k2, ...' are keys of type Str and '$v1, $v2, ...'
+are values of type String, Int, Number, or Boolean.
+
+Strings are delimited by single or double quotes. Whitespace is not significant
+outside of strings. Hash keys need not be quote-delimited unless they contain
+significant whitespace. Strings entered inside angle brackets become lists if
+any whitespace is used inside the angle brackets.
+
+All option keys and values must be constants since Rakudoc is a
+specification language, not a programming language. Specifically, option
+values cannot be closures.
+
+The metadata of an Extended or Abbreviated block may extend beyond the first line declaring the
+block. Each subsequent line must start
+with an C<=> in the first virtual column, meaning that it must vertically
+align with the C<=> of the Rakudoc Block declaration,
+and it must be followed
+by at least one horizontal whitespace character.
+
+For example:
+=begin code
+     =for head1 :a-first-line-key<firstvalue> :another-first-line-key<xyz>
+     =          :a-second-line-key(42)
+     = :a-third-line-key<third>
+     Content for the header block
+=end code
+
+=head2 Directive syntax
+
+=item B<=begin> starts a line and specifies the start of a delimited block
+=item B<=end> starts a line and specifies the end of a delimited block
+=item B<=for> starts a line and specifies the start of an extended block
+=begin item
+B<=alias>
+=begin code
+    =alias ALIAS_NAME Text for substitution
+    =                 Optional extra text
+=end code
+
+=end item
+=begin item
+B<=config>
+The general syntax for configuration directives is:
+=begin code  :allow< R >
+    =config R<BLOCK_TYPE>  R<CONFIG OPTIONS>
+    =                   R<OPTIONAL EXTRA CONFIG OPTIONS>
+=end code
+=end item
+
+=head1 Directives
+
+The C<=begin>, C<=end>, and C<=for> directives are illustrated in multiple examples
+and need no further explanation.
+
+Directives are similar in form to C<block> instructions, but they do not
+have the extended or delimited forms. If a directive name is preceded by
+a C<=begin>, C<=for> or C<=end>, then an error will be thrown.
+
+=head2 Aliases
+
+The C<=alias> directive provides a way to define lexically scoped
+synonyms for longer Pod sequences, (meta)object declarators from the
+code, or even entire chunks of ambient source. These synonyms can then
+be inserted into subsequent Pod using the
+L<C<A<> formatting code>|#Alias_placements>.
+
+An C<=alias> is lexically scoped to the surrounding Rakudoc block.
+
+The alias block takes two arguments. The first is an
+identifier (which is usually specified in uppercase, though this is
+not mandatory). The second argument consists of one or more
+lines of replacement text.
+
+This creates a lexically scoped Rakudoc macro that can be invoked during
+document generation by placing the identifier (i.e. the first argument
+of the alias) in an C<A<>> formatting code. This formatting code is then
+replaced by the text returned by new macro.
+
+The replacement text returned by the alias macro begins at the first
+non-whitespace character after the alias's identifier, and continues to
+the end of the line. You can extend the replacement text over multiple
+lines by starting the following line(s) with an C<=> (at the same level
+of indentation as the C<=alias> directive itself) followed by at least
+one whitespace. Each additional line of replacement text uses the original
+line's (virtual) left margin, as specified by the indentation of the
+replacement text on the C<=alias> line.
+
+For example:
+
+=begin code
+    =alias PROGNAME    Earl Irradiatem Evermore
+    =alias VENDOR      4D Kingdoms
+    =alias TERMS_URLS  =item L<http://www.4dk.com/eie>
+    =                  =item L<http://www.4dk.co.uk/eie.io/>
+    =                  =item L<http://www.fordecay.ch/canttouchthis>
+
+    The use of A<PROGNAME> is subject to the terms and conditions
+    laid out by A<VENDOR>, as specified at:
+
+        A<TERMS_URLS>
+
+=end code
+
+would produce:
+
+=begin para :nested
+    The use of Earl Irradiatem Evermore is subject to the terms and
+    conditions laid out by 4D Kingdoms Inc, as specified at:
+
+        =item L<http://www.4dk.com/eie>
+        =item L<http://www.4dk.co.uk/eie.io/>
+        =item L<http://www.fordecay.ch/canttouchthis>
+
+=end para
+
+The advantage of using aliases is, obviously, that the same alias can be
+reused in multiple places in the documentation. Then, if the replacement
+text ever has to be changed, it need only be modified in a single place:
+
+=begin code
+    =alias PROGNAME    Count Krunchem Constantly
+    =alias VENDOR      Last Chance Receivers Intl
+    =alias TERMS_URLS  L<http://www.c11.com/generic_conditions>
+=end code
+
+=head2 Config
+
+All block forms can be associated with metadata options. Typically the
+metadata are specified for a block using the B<extended> or B<delimited>
+forms.
+
+The same option can be added to multiple blocks, this can be done using a C<config>
+directive, and then the B<abbreviated> form can be used in the L<same lexical scope|#Lexical_scope>.
+
+For example, suppose within some section of a document, it is desired that all
+C<=item> blocks are numbered, then C<=config item :numbered> could be specified.
+
+=begin code :allow< V >
+    =head Unnumbered lists
+    =item This is not numbered
+    =item Neither is this
+
+    V<=>config item :numbered
+    =head Numbered lists
+    =item This is numbered
+    =item This is also numbered
+    =head2 A heading in the same context
+    =item and this is number, but starting from 1
+
+    =head Starting another scope
+    =item This is not a numbered item
+=end code
+
+=head2 Document termination
+
+The C<=finish> directive indicates the end of any ambient text within
+the document. This means that the parser will treat all the remaining
+text in the file as a string.
+
+Any text after the C<=finish> block can be accessed as a string within the program
+(the ambient code) via the C<$=finish> variable.
+This can be used to provide data to a program, such as a test.
+=begin code :allow< V >
+    use JSON::Fast;
+    my %h = from-json $=finish;
+    say %h.raku;
+    # more lines of code
+
+    V<=>finish
+    { "key1": "a string value", "key2": "another value" }
+=end code
+This will generate the following output
+=begin code
+    {:key1("a string value"), :key2("another value")}
+=end code
+
+=head1 Code oriented Rakudoc
+
+The following Rakudoc intructions are primarily intended for use when editing within an editor.
+Standalone renderers may ignore them.
+
+X<|Syntax,#|>X<|Syntax,#=>
+=head2 Declarator blocks
+
+Declarator blocks differ from other blocks by not having a specific type,
+instead they are attached to some source code.
+
+Declarator blocks are introduced by a special comment: either C<#|> or C<#=>,
+which must be immediately followed by either a space or an opening curly brace.
+If followed by a space, the block is terminated by the end of line;
+if followed by one or more opening curly braces, the block is terminated by
+the matching sequence of closing curly braces.
+
+Rakudoc Markup codes may be used inside declarator blocks.
+
+Blocks starting with C<#|> are attached to the code after them,
+and blocks starting with C<#=> are attached to the code before them.
+
+Since declarator blocks are attached to source code, they can be used to
+document classes, roles, subroutines and in general any statement or block.
+
+The C<WHY> method can be used on these classes, roles, subroutines etc. to
+return the attached Rakudoc value.
+
+=begin code
+#| Base class for magicians
+class Magician {
+  has Int $.level;
+  has Str @.spells;
+}
+
+#| Fight mechanics
+sub duel(Magician $a, Magician $b) {
+}
+#= Magicians only, no mortals.
+
+say Magician.WHY; # OUTPUT: «Base class for magicians␤»
+say &duel.WHY.leading; # OUTPUT: «Fight mechanics␤»
+say &duel.WHY.trailing; # OUTPUT: «Magicians only, no mortals.␤»
+=end code
+
+These declarations can extend multiple blocks:
+
+=begin code
+#|( This is an example of stringification:
+    * Numbers turn into strings
+    * Regexes operate on said strings
+    * C<with> topicalizes and places result into $_
+)
+sub search-in-seq( Int $end, Int $number ) {
+    with (^$end).grep( /^$number/ ) {
+        .say for $_<>;
+    }
+}
+#=« Uses
+    * topic
+    * decont operator
+»
+=end code
+
+Another useful idiom is to combine trailing declarators and a MAIN sub.
+These comments will be picked up automatically by USAGE.
+
+=begin code
+    sub MAIN(
+        Str $first,    #= the first CLI parameter
+        Int :$verbose, #= an integer to indicate output, 0 = no output
+    )
+=end code
+
+By using a matched pair of parenthesis constructs such as C<()> or C<«»> the
+comments can extend multiple lines.
+
+This instruction will not normally translate to
+a multi-line display by standalone renderers.
+
+=head2 Data blocks
+
+C<=data> blocks may appear anywhere within a source file, and as
+many times as required.
+
+The corresponding variable, C<$=data> holds an object that does both the Associative
+and Positional roles.
+
+Each C<=data> block can be given a C<:key> option, to name it. The contents
+of any C<=data> block with a key are accessible (as a single string) via
+the Associative aspect of C<$=data> object. For example:
+
+=begin code :allow<B>
+
+    =begin data :key<Virtues>
+    Laziness
+    Impatience
+    Hubris
+    =end data
+
+    say 'The three virtues are:';
+    say $=data<Virtues>;
+
+=end code
+
+The contents of any C<=data> block that does not have a C<:key> are
+accessible (as a single string) via the Positional aspect of
+C<$=data>. Unkeyed C<=data> blocks are stored in the same order
+they appear in the file. For example:
+
+=begin code
+
+    say 'The second anti_Virtue is: ', $=data[1];
+
+    =data Industry
+    =data Patience
+    =data Humility
+
+=end code
+
+Note that, as the preceding example illustrates, because Rakudoc is a
+compile-time phenomenon, it is possible to specify C<=data> blocks
+I<after> the point in the source where their contents will be used
+(provided they're not being used in a C<BEGIN>, of course).
+
+When C<$=data> itself is stringified, it returns the concatenation of all
+the unkeyed C<=data> blocks the parser has seen.
+
+C<=data> blocks are never rendered by the standalone Rakudoc renderers.
+
+=head1 Page oriented Rakudoc
+
+The Rakudoc instructions in this section are primarily intended for standalone rendering.
+However, page-oriented and code-oriented Rakudoc should be intermixed with Raku
+code in a single file as this helps to create code that is well-documented.
+
+When a Raku compiler parses a file, line contents are expected to be Raku code (ambient text).
+When a Rakudoc block is finished, the next line is assumed to be ambient text.
+
+=begin code
+    #start of file
+    my $text; # ambient code
+
+    =head this is some text
+    this line continues the header
+
+    #this line is now ambient code and so must be specified as a comment
+=end code
+
+A C<rakudoc> block reverses this assumption.
+=begin code
+    #start of file
+    my $text; # ambient code
+    =begin rakudoc
+
+    =head this is some text
+    this line continues the header
+
+    this line is not ambient code and so will be treated as an ordinary
+    paragraph
+    =end rakudoc
+    # this line is now ambient code
+=end code
+
+Files that are intended to contain page-oriented documentation alone should be entirely
+enclosed in C<rakudoc> block.
+
+A C<pod> block is another name for C<rakudoc>.
+
+=head2 Headings
+
+Headings can be defined using C<=headN>,
+where N is greater than zero (e.g., C<=head1>, C<=head2>, …).
+C<=head> is an alias for C<=head1>.
+
+=begin code
+=head1 A top level heading
+
+=head2 A second level heading
+
+=head3 A third level heading
+=end code
+
+=head3 Numbered headings
+
+You can specify that a heading is numbered using the C<:numbered> option. For example:
+=begin code
+    =for head1 :numbered
+    The Problem
+
+    =for head1 :numbered
+    The Solution
+
+        =for head2 :numbered
+        Analysis
+
+            =for head3
+            Overview
+
+            =for head3
+            Details
+
+        =for head2 :numbered
+        Design
+
+    =for head1 :numbered
+    The Implementation
+=end code
+
+which would produce:
+
+=begin code
+1. The Problem
+
+2. The Solution
+
+    2.1. Analysis
+
+        Overview
+
+        Details
+
+    2.2: Design
+
+3. The Implementation
+=end code
+
+It is usually better to preset a numbering scheme for each heading level, in a series of configuration blocks:
+=begin code
+    =config head1 :numbered
+    =config head2 :numbered
+    =config head3 :!numbered
+
+    =head1 The Problem
+    =head1 The Solution
+    =head2   Analysis
+    =head3     Overview
+    =head3     Details
+    =head2   Design
+    =head1 The Implementation
+=end code
+
+Alternatively, as a short-hand, if the first whitespace-delimited word in a heading
+consists of a single literal B<#> character, the B<#> is removed and the heading is
+treated as if it had a C<:numbered> option:
+=begin code
+    =head1 # The Problem
+    =head1 # The Solution
+    =head2   # Analysis
+    =head3       Overview
+    =head3       Details
+    =head2   # Design
+    =head1 # The Implementation
+=end code
+
+Note that, even though renderers are not required to distinctly render more than the
+first four levels of heading, they are required to correctly honour arbitrarily
+nested numberings. That is:
+=begin code
+    =head6 # The Rescue of the Kobayashi Maru
+=end code
+
+should produce something like:
+=begin code
+2.3.8.6.1.9. The Rescue of the Kobayashi Maru
+=end code
+
+=head2 Lexical scope
+
+A lexical scope is important for the C<=config> and C<=alias> directives. In addition,
+some renderers may generate secondary pages from primary source files, for example,
+gathering together the same method names in multiple classes. It is desirable for all the
+relevant blocks to be gathered together.
+
+=head3 Sections
+
+The <section> block will typically only be used in the delimited form so that
+the document writer can define the lexical scope. The <=begin section>
+declaration starts a new lexical scope, and the C<=end section> returns the scope to the
+previous one. An C<=end section> does not ever change the scope to ambient code,
+which a C<=end rakudoc> would.
+
+When a C<=begin section> is not present, a Renderer may apply the following heuristic to determine
+the lexical scope (assumming X, Y, and Z are digits such that C«0 < X < Y < Z »):
+=item A C<=headY> declaration starts a new lexical scope (C<=head> C<=> C<=head1>).
+=item The next C<=headY> declaration ends the lexical scope of the previous <=headY>
+=item A C<=headZ> declaration following a C<=headY> is within the lexical scope
+of the preceding <=headY> declaration, and does not end it.
+
+=item A C<=headX> declaration ends the scope of the preceding C<=headY> declaration.
+
+Note that a C<=begin section> declaration overrides the heuristic, meaning that multiple
+C<=headX> declarations can be placed within the same lexical scope.
+
+A renderer is not expected to render blocks differently when they are embedded in a C<section> block.
+
+Providing metadata to a C<=begin section> block definition is B<not> the same as declaring meta data using a
+C<=config> directive. Meta data in a config is provided to all blocks in the lexical scope. Meta data
+in the C<=begin section> declaration is only applied to the section.
+
+For example, suppose the following Rakudoc text was included in a source file
+=begin code
+    =begin section :dev-note(v2.3.2-, 'removed due to conflict with chancellors')
+    =head2 role fool
+
+    This role is especially important in authoritarian kingdoms to remind kings of their humanity
+
+    =end section
+=end code
+Further, a user provides to a renderer that they wish to view documentation valid today, which
+corresponds (for example) to C<v3.1.1>, the because C<v3.1.1> is after C<v2.3.2> the section above is not rendered.
+
+If however, a user indicates they wish to view documentation for C<v2>, the renderer would render the section above,
+including an indication the section will be removed in C<v2.3.2>.
+
+=head3 Document scope
+
+A C<=begin rakudoc> (or equivalently C<=begin pod>) declaration also defines a new scope,
+and also has the effect that code following it is not considered Raku code.
+
+An <=end rakudoc> will normally return scope to the ambient code.
+This also means that C<rakudoc> blocks should not be nested, while <section> blocks
+may be nested.
+
+The first C<=begin rakudoc> declaration in a document starts the Rakudoc scope of the document.
+Meta data following the first such declaration are made available to all blocks in the document.
+
+=head2 Ordinary paragraphs
+
+An ordinary paragraph consists of text that is to be formatted into a document
+at the current level of nesting, with whitespace squeezed, lines filled, and any
+special inline mark-up applied.
+
+Ordinary paragraphs consist of one or more consecutive lines of text,
+each of which starts with a non-whitespace character.
+The paragraph is terminated by the first blank line or block directive.
+
+For example:
+
+=begin code
+=head1 This is a heading block
+
+This is an ordinary paragraph.
+Its text  will   be     squeezed     and
+short lines filled. It is terminated by
+the first blank line.
+
+This is another ordinary paragraph.
+Its     text    will  also be squeezed and
+short lines filled. It is terminated by
+the trailing directive on the next line.
+
+=head2 This is another heading block
+
+This is yet another ordinary paragraph,
+at the first virtual column set by the
+previous directive
+=end code
+
+Ordinary paragraphs do not require an explicit marker or delimiters (within a
+C<rakudoc> block).
+
+Alternatively, there is also an explicit C<=para> marker that can be used
+to explicitly mark a paragraph, which would be necessary outside a
+C<rakudoc> block.
+
+=begin code
+=para
+This is an ordinary paragraph.
+Its text  will   be     squeezed     and
+short lines filled.
+=end code
+
+which is rendered as:
+
+=para
+This is an ordinary paragraph.
+Its text  will   be     squeezed     and
+short lines filled.
+
+In addition, the longer C<=begin para> and C<=end para> form can be used.
+
+For example:
+
+=begin code
+
+=begin para
+This is an ordinary paragraph.
+Its text  will   be     squeezed     and
+short lines filled.
+
+This is still part of the same paragraph,
+which continues until an...
+=end para
+=end code
+
+As demonstrated by the previous example, within a delimited C<=begin para> and
+C<=end para> block, any blank lines are preserved.
+
+=head2 Nesting or indenting a block
+
+Rakudoc provides a C<=nested> block that marks all its contents as being nested:
+=begin code
+    =begin nested
+    We are all of us in the gutter,
+
+    but some of us are looking at the stars!
+        =begin nested
+        -- Oscar Wilde
+        =end nested
+    =end nested
+=end code
+
+=begin nested
+We are all of us in the gutter,
+
+but some of us are looking at the stars!
+    =begin nested
+    -- Oscar Wilde
+    =end nested
+=end nested
+
+Nesting blocks can contain any other kind of block, including implicit paragraph and code blocks.
+Note that the relative physical indentation of the blocks plays no role in determining
+their ultimate nesting. The preceding example could equally have been specified:
+=begin code
+    =begin nested
+    We are all of us in the gutter,
+
+    but some of us are looking at the stars!
+    =begin nested
+    -- Oscar Wilde
+    =end nested
+    =end nested
+=end code
+
+=begin nested
+We are all of us in the gutter,
+
+but some of us are looking at the stars!
+=begin nested
+-- Oscar Wilde
+=end nested
+=end nested
+
+=head2 Verbatim blocks
+
+Normally a writer does not want to consider the way text flows on a page, for ends of
+lines to be considered the same as a space, and for extra spaces to be eliminated.
+However, the exact placing of whitespace is important, especially for code.
+
+=head3 Code blocks
+
+Code blocks are used to specify pre-formatted text (typically source code), which should be rendered without rejustification,
+without whitespace-squeezing, and by default B<without> recognizing any inline Markup codes. Code blocks also have an
+implicit nesting associated with them. Typically these blocks are used to show examples of code, mark-up, or
+other textual specifications, and are rendered using a fixed-width font.
+
+A code block may be implicitly specified as one or more lines of text, each of which starts with a
+whitespace character at the block's virtual left margin. The implicit code block is then terminated by a blank line.
+For example:
+=begin code
+    This ordinary paragraph introduces a code block:
+
+        $this = 1 * code('block');
+        $which.is_specified(:by<indenting>);
+=end code
+
+Implicit code blocks may only be used within C<rakudoc>, C<section>, C<item>, C<defn>, or C<nested> blocks.
+
+There is also an explicit C<=code> block (which can be specified within any other block type,
+not just C<=rakudoc>, C<=item>, etc.):
+=begin code
+     The C<loud_update()> subroutine adds feedback:
+
+        =begin code
+
+        sub loud_update ($who, $status) {
+            say "$who -> $status";
+
+            silent_update($who, $status);
+        }
+
+        =end code
+=end code
+As the previous example demonstrates, within an explicit C<=code> block the code can start at the (virtual) left margin.
+Furthermore, lines that start with whitespace characters after that margin have subsequent whitespace preserved exactly
+(in addition to the implicit nesting of the code). Explicit C<=code> blocks may also contain empty lines.
+
+=head5 Preprocessing and postprocessing of code
+
+Almost always the code in a document is related to a language, by default Raku. But examples of Ruby, C, and Rakudoc
+also appear in the Raku documentation sources.
+
+A renderer should use syntax highlighting to render code in a code block. The metadata option to specify
+a language is C<:lang< ... >>. If a language is unknown to a renderer, then it may apply the syntax highlighting for Raku,
+or a renderer may apply some other heuristic.
+
+Some of the examples in the Rakudoc sources are tested using an external processor, which needs test related information
+that can be provided in metadata tags.
+
+=head3 I/O blocks
+
+Rakudoc provides blocks for specifying the input and output of programs. These are
+similar to C<code> blocks and accept the C<:allow> meta tab options.
+
+=for nested
+B<Note> The Rakudo compiler does not (yet) produce C<Pod::Block>s for Input or Output
+and instead produces C<Pod::Block::Code> for C<=code>, C<=input> and C<=output>.
+
+The C<=input> block is used to specify pre-formatted keyboard input,
+which should be rendered without re-justification or squeezing of whitespace.
+
+The C<=output> block is used to specify pre-formatted terminal or file output,
+which should also be rendered without re-justification or whitespace-squeezing.
+=begin code
+
+    =begin output
+            Name:    Baracus, B.A.
+            Rank:    Sgt
+            Serial:  1PTDF007
+
+            Do you want additional personnel details? K<y>
+
+            Height:  180cm/5'11"
+            Weight:  104kg/230lb
+            Age:     49
+
+            Print? K<n>
+        =end output
+
+=end code
+
+=head3 Markup within verbatim blocks
+
+Although C<=code> blocks automatically disregard all Markup codes, occasionally you may still
+need to specify some Markup within a code block. For example, you may wish to
+emphasize a particular keyword in an example (using a C<B<>> code). Or you may want to indicate that
+part of the example is metasyntactic (using the C<R<>> code). Or you might need to insert a non-ASCII
+character (using the C<E<>> code).
+
+You can specify a list of Markup codes that should still be recognized within a code block using
+the C<:allow> option. The value of the C<:allow> option must be a list of the (single-letter)
+names of one or more Markup codes. Those codes will then remain active inside the code block.
+For example:
+=begin code
+    =begin code :allow< B R >
+    sub demo {
+        B<say> 'Hello R<name>';
+        I<note> 'The I format is not recognised';
+    }
+    =end code
+=end code
+
+would be rendered:
+
+=begin code :allow< B R >
+sub demo {
+    B<say> 'Hello R<name>';
+    I<note> 'The I format is not recognised';
+    }
+=end code
+
+=head2 Lists
+
+Lists in Rakudoc are specified as a series of contiguous C<=item> blocks.
+No special "container" directives or other delimiters are required to enclose the entire list.
+
+Note that C<=item> is just an abbreviation for C<=item1>.
+
+Item blocks within the same list are not physically nested.
+That is, lower-level items should not be specified inside higher-level items:
+=begin code
+    =comment WRONG...
+    =begin item1          --------------
+    The choices are:                    |
+    =item2 Liberty        ==< Level 2   |==<  Level 1
+    =item2 Death          ==< Level 2   |
+    =item2 Beer           ==< Level 2   |
+    =end item1            --------------
+
+    =comment CORRECT...
+    =begin item1          ---------------
+    The choices are:                     |==< Level 1
+    =end item1            ---------------
+    =item2 Liberty        ==================< Level 2
+    =item2 Death          ==================< Level 2
+    =item2 Beer           ==================< Level 2
+=end code
+
+=head3 Unordered lists
+
+Lists in Rakudoc are by default unordered. For example:
+
+=begin code
+The three suspects are:
+
+=item  Happy
+=item  Sleepy
+=item  Grumpy
+=end code
+
+The three suspects are:
+
+=item  Happy
+=item  Sleepy
+=item  Grumpy
+
+The bulletting strategy used for different levels within a nested list is entirely up to the renderer.
+
+=head3 Ordered lists
+
+An item is part of an ordered list if the item has a :numbered configuration option:
+=begin code
+     =for item1 :numbered
+     Visito
+
+     =for item2 :numbered
+     Veni
+
+     =for item2 :numbered
+     Vidi
+
+     =for item2 :numbered
+     Vici
+=end code
+This would produce something like:
+=begin code
+1. Visito
+
+1.1. Veni
+
+1.2. Vidi
+
+1.3. Vici
+=end code
+
+although the numbering scheme is entirely at the discretion of the renderer.
+
+Alternatively, if the first word of the item consists of a single B<#> character,
+the item is treated as having a C<:numbered> option:
+=begin code
+     =item1  # Visito
+     =item2     # Veni
+     =item2     # Vidi
+     =item2     # Vici
+=end code
+
+To specify an unnumbered list item that starts with a literal B<>, either make
+the octothorpe verbatim:
+=begin code
+    =item V<#> introduces a comment
+=end code
+
+or explicitly mark the item itself as being unnumbered:
+=begin code
+    =for item :!numbered
+    # introduces a comment
+=end code
+
+The numbering of successive C<=item1> list items increments automatically,
+but is reset to 1 whenever any other kind of non-ambient Pod block appears
+between two C<=item1> blocks. For example:
+=begin code
+    The options are:
+
+    =item1 # Liberty
+    =item1 # Death
+    =item1 # Beer
+
+    The tools are:
+
+    =item1 # Revolution
+    =item1 # Deep-fried peanut butter sandwich
+    =item1 # Keg
+=end code
+would produce:
+=begin code
+The options are:
+
+1. Liberty
+
+2. Death
+
+3. Beer
+
+The tools are:
+
+1. Revolution
+
+2. Deep-fried peanut butter sandwich
+
+3. Keg
+=end code
+The numbering of nested items (C<=item2>, C<=item3>, etc.) only resets (to 1) when
+the higher-level item's numbering either resets or increments.
+
+To prevent a numbered C<=item1> from resetting after a non-item block,
+you can specify the C<:continued> option:
+=begin code
+     =for item1
+     # Retreat to remote Himalayan monastery
+
+     =for item1
+     # Learn the hidden mysteries of space and time
+
+     I<????>
+
+     =for item1 :continued
+     # Prophet!
+=end code
+which produces:
+=begin code
+1. Retreat to remote Himalayan monastery
+
+2. Learn the hidden mysteries of space and time
+
+????
+
+3. Prophet!
+
+=end code
+
+=head3 Definition lists
+
+Lists that define terms or commands use C<=defn>, equivalent to the C<DL> lists
+in HTML
+
+=begin code
+=defn Happy
+When you're not blue.
+
+=defn Blue
+When you're not happy.
+=end code
+
+will be rendered as
+
+=defn Happy
+When you're not blue.
+
+=defn Blue
+When you're not happy.
+
+=head4 Multi-level lists
+
+Lists may be multi-level, with items at each level specified using the
+C<=item1>, C<=item2>, C<=item3>, etc. blocks.
+(The indentation depends on the rendering engine and does not need to be included
+in the Rakudoc markup.) Upto four levels are normally differentiated.
+
+For example:
+
+=begin code
+=item1  Animal
+=item2     Vertebrate
+=item3     Mammals
+=item4     Primates
+=item2     Invertebrate
+
+=item1  Phase
+=item2     Solid
+=item3        Crystaline
+=item3        Amorphous
+=item2     Liquid
+=item2     Gas
+=end code
+
+=item1  Animal
+=item2     Vertebrate
+=item3     Mammals
+=item4     Primates
+=item2     Invertebrate
+
+=item1  Phase
+=item2     Solid
+=item3        Crystaline
+=item3        Amorphous
+=item2     Liquid
+=item2     Gas
+
+=head3 Multi-paragraph lists
+
+Using the delimited form of the C<=item> block (C<=begin item> and C<=end item>),
+we can specify items that contain multiple paragraphs.
+
+For example:
+
+=begin code
+Let's consider two common proverbs:
+
+=begin item
+I<The rain in Spain falls mainly on the plain.>
+
+This is a common myth and an unconscionable slur on the Spanish
+people, the majority of whom are extremely attractive.
+=end item
+
+=begin item
+I<The early bird gets the worm.>
+
+In deciding whether to become an early riser, it is worth
+considering whether you would actually enjoy annelids
+for breakfast.
+=end item
+
+As you can see, folk wisdom is often of dubious value.
+=end code
+Renders as:
+
+Let's consider two common proverbs:
+
+=begin item
+I<The rain in Spain falls mainly on the plain.>
+
+This is a common myth and an unconscionable slur on the Spanish
+people, the majority of whom are extremely attractive.
+=end item
+
+=begin item
+I<The early bird gets the worm.>
+
+In deciding whether to become an early riser, it is worth
+considering whether you would actually enjoy annelids
+for breakfast.
+=end item
+
+As you can see, folk wisdom is often of dubious value.
+
+=head2 Tables
+
+Simple tables can be specified in Rakudoc using a C<=table> block,
+while more complex tables can defined using C<=grid> block.
+
+The following metadata can be applied to both C<table> and C<grid>
+blocks.
+
+A table may be given an associated description or title using the
+C<:caption> option.
+
+The C<:header-rows( ... )> option specifies the rows to be used as headers.
+The argument may be a list of row numbers (starting from zero) or
+a range. Negative row numbers will throw an error.
+
+The C<:label-columns( ... )> option specifies the columns to be used as
+labels. Negative column numbers will throw an error.
+
+The renderer will render cells in the specified rows and columns in
+a different manner to other table cells.
+
+=head3 Simple tables
+
+Columns are separated by two or more consecutive whitespace characters
+(double-space),
+or by a vertical line (C<|>) or a border intersection (C<+>), either of
+which must be separated from any content by at least one whitespace
+character.  Note that only one column separator type is allowed in a single line,
+but different lines are allowed to use different visible column separator types
+(that style is not recommended).  Using a mixture of visible and non-visible
+column separator types in a table is an error.
+
+Rows can be specified in one of two ways: either one row per line, with
+no separators; or multiple lines per row with explicit horizontal
+separators (whitespace, intersections (C<+>), or horizontal lines: C<->,
+C<=>, C<_>) between I<every> row. Either style can also have an
+explicitly separated header row at the top. If rows are using the
+two-whitespace-character separator, the row cells should be carefully
+aligned to ensure the table is interpreted as the user intended.
+
+Each individual table cell is separately formatted, as if it were a
+nested C<=para>. Note that table rows are expected to have the same number
+of cells.
+
+This means you can create tables compactly, line-by-line:
+
+=begin code
+    =table
+        The Shoveller   Eddie Stevens     King Arthur's singing shovel
+        Blue Raja       Geoffrey Smith    Master of cutlery
+        Mr Furious      Roy Orson         Ticking time bomb of fury
+        The Bowler      Carol Pinnsler    Haunted bowling ball
+=end code
+
+or line-by-line with multi-line headers:
+
+=begin code
+    =table
+        Superhero     | Secret          |
+                      | Identity        | Superpower
+        ==============|=================|================================
+        The Shoveller | Eddie Stevens   | King Arthur's singing shovel
+        Blue Raja     | Geoffrey Smith  | Master of cutlery
+        Mr Furious    | Roy Orson       | Ticking time bomb of fury
+        The Bowler    | Carol Pinnsler  | Haunted bowling ball
+=end code
+
+or with multi-line headers I<and> multi-line data:
+
+=begin code
+    =begin table :caption('The Other Guys')
+
+                        Secret
+        Superhero       Identity          Superpower
+        =============   ===============   ===================
+        The Shoveller   Eddie Stevens     King Arthur's
+                                          singing shovel
+
+        Blue Raja       Geoffrey Smith    Master of cutlery
+
+        Mr Furious      Roy Orson         Ticking time bomb
+                                          of fury
+
+        The Bowler      Carol Pinnsler    Haunted bowling ball
+
+    =end table
+=end code
+
+=head4 Valid tables
+
+Following are examples of valid tables.
+
+=begin code
+=begin table
+        The Shoveller   Eddie Stevens     King Arthur's singing shovel
+        Blue Raja       Geoffrey Smith    Master of cutlery
+        Mr Furious      Roy Orson         Ticking time bomb of fury
+        The Bowler      Carol Pinnsler    Haunted bowling ball
+=end table
+=end code
+
+=begin code
+=table
+    Constants           1
+    Variables           10
+    Subroutines         33
+    Everything else     57
+
+=end code
+
+=begin code
+=for table
+    mouse    | mice
+    horse    | horses
+    elephant | elephants
+
+=end code
+
+=begin code
+=table
+    Animal | Legs |    Eats
+    =======================
+    Zebra  +   4  + Cookies
+    Human  +   2  +   Pizza
+    Shark  +   0  +    Fish
+
+=end code
+
+=begin code
+=table
+        Superhero     | Secret          |
+                      | Identity        | Superpower
+        ==============|=================|================================
+        The Shoveller | Eddie Stevens   | King Arthur's singing shovel
+
+=end code
+
+=begin code
+=begin table
+
+                        Secret
+        Superhero       Identity          Superpower
+        =============   ===============   ===================
+        The Shoveller   Eddie Stevens     King Arthur's
+                                          singing shovel
+
+        Blue Raja       Geoffrey Smith    Master of cutlery
+
+        Mr Furious      Roy Orson         Ticking time bomb
+                                          of fury
+
+        The Bowler      Carol Pinnsler    Haunted bowling ball
+
+=end table
+=end code
+
+=begin code
+=table
+    X | O |
+   ---+---+---
+      | X | O
+   ---+---+---
+      |   | X
+
+=end code
+
+=begin code
+=table
+    X   O
+   ===========
+        X   O
+   ===========
+            X
+
+=end code
+
+=begin code
+=begin table
+
+foo
+bar
+
+=end table
+=end code
+
+=head4 Invalid tables
+
+Following are examples of invalid tables, and they should
+trigger an unhandled exception during parsing.
+
+=item Mixed column separator types in the same row are not allowed:
+
+=begin code
+=begin table
+r0c0 +  r0c1 | r0c3
+=end table
+=end code
+
+=item  Mixed visual and whitespace column separator types in the same table
+are not allowed:
+
+=begin code :skip-test<pod error>
+=begin table
+r0c0 +  r0c1 | r0c3
+r1c0    r0c1   r0c3
+=end table
+=end code
+
+=item Two consecutive interior row separators are not allowed:
+
+=begin code :skip-test<pod error>
+=begin table
+r0c0 |  r0c1
+============
+============
+r1c0 |  r1c1
+=end table
+=end code
+
+=head4 Unexpected tables
+
+Following are examples of valid tables that are probably intended to
+be two columns, but the columns are not aligned well so each
+will parse as a single-column table.
+
+=begin item
+Unaligned columns with WS column separators:
+
+Notice the second row has the two words separated by only B<one> WS
+character, while it takes at least B<two> adjacent WS characters to define
+a column separation. B<This is a valid table but will be parsed as a
+single-column table>.
+
+    =begin code
+        =begin table
+        r0c0    r0c1
+         r1c0 r0c1
+        =end table
+    =end code
+
+=end item
+
+=begin item
+Unaligned columns with visual column separators:
+
+Notice the second row has the two words separated by a visible
+character (V<'|'>) but the character is not recognized as a column
+separator because it doesn't have an adjacent WS character on both
+sides of it.  Although this is a legal table, the result will not
+be what the user intended because the first row has two
+columns while the second row has only one column, and it will thus have
+an empty second column.
+
+=begin code
+=begin table
+r0c0  |  r0c1
+ r1c0 |r0c1
+=end table
+=end code
+=end item
+
+=head3 Grids
+
+A simple table is useful for most purposes, but when the output requirements
+are more complex, it is difficult if not impossible to define a table with
+the simple markup shown above. For example, embedding a table inside
+a table cell can lead to fragile formatting.
+
+In such cases, the C<grid> block is provided. In a grid, the rows and cells
+are defined by the document author, using C<row> and C<cell> blocks.
+
+A grid is typically defined in the delimited form because more complex definition requirements
+are easier to visualise this way. The other forms will work if the general block rules are
+followed.
+
+A grid has a fixed number of rows and columns and cells are typically placed by specifying
+the row and column numbers for its start position using the C<:row( X )> and C<:column(Y)> meta options.
+It is also possible for a cell to span
+more than one row using the C<:row-span(N)> option, and more than one column using the
+C<:column-span(M)> option, where M and N are integers greater than zero.
+
+It is possible to specify the alignment of the contents of a cell using the meta options
+C<:vertically-align<V-ALIGN>> (or equivalently C<:v-align<V-ALIGN>>)
+and C<:horizontally-align<H-ALIGN>> (or equivalently C<:h-align<H-ALIGN>>), where
+=defn H-ALIGN
+one of 'left', 'center', 'right'
+
+=defn V-ALIGN
+one of 'top', 'middle', 'bottom'
+
+It is for the renderer to determine whether and how these alignments are implemented.
+For instance, text oriented renderers may not be able to make vertical alignments.
+
+By default a cell
+=item the first cell declared has a row number 0 and a column number 0
+=item has the same row number as the previous cell
+=item a column position one greater than the previous cell
+=item a row span of 1
+=item a column span of 1
+=item setting a column number to zero ( C<:column(0)> ) increases the row number
+of the next cell declared by 1.
+
+=item a V-ALIGN of 'middle'
+=item a H-ALIGN of 'center'
+
+So by omitting the C<:row>, C<:column>, C<:row-span>, and C<:column-span> options a row of cells
+can be defined.
+
+A new row can be defined by declaring a cell with C<:column(0)>
+
+The C<row> block type is defined within a C<grid> block as syntactic sugar for
+C< =cell :column(0)>
+
+In addition to the C<:caption>, C<:header-rows>, and C<:label-columns> meta tabs that
+are defined for both C<table> and C<grid>, the C<grid> block recognises the following
+meta data options, which are specified when declaring the grid block:
+=defn C<:column-align( H-ALIGN ; COLS )>
+Align the contents of the cells in the columns specified by COLS to H-ALIGN.
+COLS is *, an integer, list of integers, or range. Integers must be greater than 0.
+
+=defn C<:row-align( V-ALIGN ; ROWS )>
+Align the contents of the cells in the columns specified by ROWS to V-ALIGN
+ROWS is *, an integer, list of integers, or range. Integers must be greater than 0.
+
+=defn C<:base-row(N)>
+Use row N to calculate the number of columns in the grid. By default, the number
+of columns in the grid is calculated from the row with the most cell units (the span
+value of the last declared cell in a row). To get the alignment of cells correct
+it is easier to set the column number by reference to a header row.
+
+The column and row alignments defined at the grid level override the default cell alignments,
+but a cell alignment specified within a C<cell> block overrides the grid level alignment.
+
+The C<cell> and C<row> blocks are not specified outside a C<grid> block. A render is expected to
+render them as unknown blocks if they are not within the lexical context of a C<grid> block.
+
+=head4 Grid examples
+=begin code
+=grid
+=cell The Shoveller
+=cell Eddie Stevens
+=cell King Arthur's singing shovel
+=row Blue Raja
+=cell Geoffrey Smith
+=cell Master of cutlery
+=row Mr Furious
+=cell Roy Orson
+=cell Ticking time bomb of fury
+=row The Bowler
+=cell Carol Pinnsler
+=cell Haunted bowling ball
+=end code
+will yield something like
+=begin code
+        The Shoveller   Eddie Stevens     King Arthur's singing shovel
+           Blue Raja    Geoffrey Smith         Master of cutlery
+          Mr Furious      Roy Orson        Ticking time bomb of fury
+          The Bowler     Carol Pinnsler      Haunted bowling ball
+=end code
+
+while
+=begin code
+
+=next
+=for grid :column-align<left, * >
+=cell The Shoveller
+=cell Eddie Stevens
+=cell King Arthur's singing shovel
+=row Blue Raja
+=cell Geoffrey Smith
+=cell Master of cutlery
+=row Mr Furious
+=cell Roy Orson
+=cell Ticking time bomb of fury
+=row The Bowler
+=cell Carol Pinnsler
+=cell Haunted bowling ball
+
+=end code
+
+would yield
+
+=begin code
+    The Shoveller   Eddie Stevens     King Arthur's singing shovel
+    Blue Raja       Geoffrey Smith    Master of cutlery
+    Mr Furious      Roy Orson         Ticking time bomb of fury
+    The Bowler      Carol Pinnsler    Haunted bowling ball
+=end code
+
+Using column-spans
+=begin code
+
+=next
+=begin grid :column-align<left, * >
+=cell The Shoveller
+=cell Eddie Stevens
+=cell King Arthur's singing shovel
+=begin cell :column-span(2)
+Blue Raja
+=end cell
+=cell Master of cutlery
+=row Mr Furious
+=cell Roy Orson
+=cell Ticking time bomb of fury
+=for cell :column(2)
+Haunted bowling ball
+
+=end grid
+=end code
+
+=begin code
+    The Shoveller   Eddie Stevens     King Arthur's singing shovel
+    Blue Raja                         Master of cutlery
+    Mr Furious      Roy Orson         Ticking time bomb of fury
+                                      Haunted bowling ball
+=end code
+
+=head2 Rakudoc comments
+
+Rakudoc comments are comments that Rakudoc renderers ignore.
+
+Comments are useful for I<meta>documentation (documenting the documentation).
+Single-line comments use the C<=comment> marker:
+
+=begin code
+=comment Add more here about the algorithm
+=end code
+
+For multi-line comments, use a delimited C<comment> block:
+
+=begin code
+=begin comment
+This comment is
+multi-line.
+=end comment
+=end code
+
+=head2 Semantic blocks
+
+All uppercase block typenames are reserved for specifying standard
+documentation, publishing, source components, or metainformation. The following
+must be recognised:
+
+=begin code
+=NAME
+=AUTHOR
+=VERSION
+=TITLE
+=SUBTITLE
+=LICENSE
+=SYNOPSIS
+=end code
+
+A semantic block is expected to be rendered as a C<Head1>, but a Renderer
+may have a different rendering.
+
+The contents of a Semantic block may be used by an external program.
+
+The contents of a Semantic block will be placed in the Table of Contents
+table, unless the C<:toc>, C<:headlevel>, and or C<:caption> options are set.
+
+=head2 User defined blocks
+
+When a block name is not one of those specified above, it is interpretted as user defined
+block. User defined blocks may appear in a document with C<use> must be rendered by
+a Renderer verbatim.
+
+=head1 Meta data
+
+A powerful feature of Rakudoc is the ability to associate meta data with a block. Meta
+data can be used to change the way a block is rendered, or to allow a renderer
+to access data in the cloud, or receive data from a microservice.
+
+Some meta data tabs are defined for certain blocks and a renderer must produce
+the behaviour described in this section (or in the section for the relevant block),
+to the extent possible for a given output format,
+
+A renderer may ignore meta data tabs not specified in this document, or define
+other meta data tabs that it will recognise.
+
+=head2 Table of contents and index
+
+When a renderer parses a file containing Rakudoc, Heading and C<X<>> mark up information is collected. This
+information can be rendered using a C<P<>> markup code, or maybe used in another way by the renderer
+(eg., creating a sidebar with the Table of Contents).
+
+Named blocks are considered by default to be equivalent to C<=head> for the purposes of a
+Table of Contents. The exceptions are C<para>, C<nested>, C<code>, C<input> and C<output> blocks.
+
+This default can be changed with the C<:toc> and C<:headlevel> meta tabs.
+
+Setting C<:toc> on a
+block will include the contents of the block in the Table of Contents. This is usually not desired,
+so the C<:caption<...> > meta tab can be used to provide a text for the Table of Contents.
+
+Setting C<:!toc> will prevent a block's information from being included in the Table of Contents.
+
+Setting C<:headlevel(N)>, where N is an Integer greater than 0, will cause the block information to
+be treated in the same way as a C<headN> heading is treated. Setting N to less than 1 has the same
+effect as C<:!toc>. If it is not explicitly set, <:toc> will set the headlevel to 1.
+
+=head2 Developer notes
+
+When a set of source files is related to a project with versions (such as the Raku language),
+documentation may get out of date, or be anticipated.
+
+A developer note can be attached to a block using the C<:dev-note> meta data tab, or specified
+inline with the C< D< ... > > markup code. Both the meta data tab and the markup code have two
+arguments, the first is the version specification, and the second is an optional text note.
+
+The version specification is one of C<*>, C<version-> , C<version1=version2>, or C<version+>, where
+=item B<version> is specified according to the semantic versioning rules, in the form C<vM.N.P>,
+where
+=item2 M, N, P are all integers greater than or equal to 0
+=item2 if N or P are missing, they are assumed to be 0.
+=item B<*> means all versions.
+=item B<version-> means I<before> version, eg., v2.4.1- means upto but not including v2.4.1
+=item B<version+> means I<after> version, eg., v3.4.2+ means after and including v3.4.2
+=item B<version1=version2> means I<after version1 but before version2>, eg., v2.4.1=v3.4.2 means
+after v2.4.1 but before v3.4.2
+
+With no extra information about which version should be displayed, a renderer should have a way to include
+both the string and the version specification.
+
+Alternatively, if there is information about the version to be shown, a renderer should only show blocks that
+correspond to the version information. A block that does not have a C<:dev-note> is treated as if it has
+C<:dev-note<*>>.
+
+An example is given in the description of the L<C<section> block |#Sections>
+
+=head1 Markup codes
+
+Markup codes provide a way to add inline mark-up to a piece of text.
+
+All Rakudoc Markup codes consist of a single capital letter followed immediately
+by a set of single or double angle brackets; Unicode double angle brackets may
+be used.
+
+Markup codes may nest other Markup codes.
+
+The following codes are available: B<B>, B<C>, B<E>, B<I>, B<K>, B<L>, B<N>,
+B<P>, B<R>, B<T>, B<U>, B<V>, B<X>, and B<Z>.
+
+=head2 Bold
+
+To format a text in bold enclose it in C<B< >>
+=for code
+Raku is B<awesome>
+
+Raku is B<awesome>
+
+=head2 Italic
+
+To format a text in italic enclose it in C<I< >>
+=for code
+Raku is I<awesome>
+
+Raku is I<awesome>
+
+=head2 Underlined
+
+To underline a text enclose it in C<U< >>
+=for code
+Raku is U<awesome>
+
+Raku is U<awesome>
+
+=head2 Code
+
+To flag text as code and treat it verbatim enclose it in C<C< >>
+=for code
+C<my $var = 1; say $var;>
+
+C<my $var = 1; say $var;>
+
+=head2 Links
+
+To create a link enclose it in C<L< >>
+
+The general syntax is C< L< label|target > >
+
+where the optional label is text that is rendered and the target may include a schema.
+If the label is omitted, then the target is used as the label.
+
+The target location can be a URL (first example), a local Rakudoc document
+(second example), or a document in a Raku distribution, depending on the schema.
+
+=for code
+Raku homepage L<https://raku.org>
+L<Raku homepage|https://raku.org>
+
+Raku homepage L<https://raku.org>
+
+L<Raku homepage|https://raku.org>
+
+Here the schema is C<http> or C<https>. If the target contains a C<#> character, then
+it indicates a location within a page.
+
+=for code
+Structure L</language/rakudoc#Links|/language/rakudoc#Links>
+L<Structure|/language/rakudoc#Links>
+
+Structure L</language/rakudoc#Links|/language/rakudoc#Links>
+
+L<Structure|/language/rakudoc#Links>
+
+Here the schema is absent and for a web page served, for example from C<docs.raku.org>, it means the same
+as C<https://docs.raku.org/language/rakudoc#Links>
+
+To create a link to a section in the same document:
+=for code
+Comments L<#Comments>
+L<Comments|#Comments>
+
+Comments L<#Comments>
+
+L<Comments|#Comments>
+
+=for code
+Importing from a JSON string using L<from-json|doc://JSON::Fast#from-json>
+
+Here the C<doc://> schema means a Raku distribution called C<JSON::Fast> and an internal link within
+the documentation file. The name of the Raku distribution can be fully qualified in the same
+way as for a C<META6.json> file.
+
+Alongside the normal way of describing a path, viz. C«L<Some reference|path/to/filename>», it is also
+possible to use the module-style notation, e.g., C«L<Some reference|path::to::filename>».
+
+=head2 Placement links
+
+A second kind of link E<mdash> the C<P<>> or B<placement link> E<mdash> works
+in the opposite direction. Instead of directing focus out to another
+document, it allows you to assimilate the contents of another document
+into your own.
+
+In other words, the C<P<>> Markup code takes a URI and (where possible)
+inserts the contents of the corresponding document inline in place of the
+code itself.
+
+C<P<>> codes are handy for breaking out standard elements of
+your documentation set into reusable components that can then be
+incorporated directly into multiple documents. For example:
+
+=begin code
+=COPYRIGHT
+P<file:/shared/docs/std_copyright.rakudoc>
+
+=DISCLAIMER
+P<http://www.MegaGigaTeraPetaCorp.com/std/disclaimer.txt>
+=end code
+
+might produce:
+
+=begin nested
+B<Copyright>
+
+=nested This document is copyright (c) MegaGigaTeraPetaCorp, 2006. All rights reserved.
+
+B<Disclaimer>
+
+=begin nested
+ABSOLUTELY NO WARRANTY IS IMPLIED. NOT EVEN OF ANY KIND. WE HAVE SOLD
+YOU THIS SOFTWARE WITH NO HINT OF A SUGGESTION THAT IT IS EITHER USEFUL
+OR USABLE. AS FOR GUARANTEES OF CORRECTNESS...DON'T MAKE US LAUGH! AT
+SOME TIME IN THE FUTURE WE MIGHT DEIGN TO SELL YOU UPGRADES THAT PURPORT
+TO ADDRESS SOME OF THE APPLICATION'S MANY DEFICIENCIES, BUT NO PROMISES
+THERE EITHER. WE HAVE MORE LAWYERS ON STAFF THAN YOU HAVE TOTAL
+EMPLOYEES, SO DON'T EVEN *THINK* ABOUT SUING US. HAVE A NICE DAY.
+=end nested
+=end nested
+
+If a renderer cannot find or access the external data source for a
+placement link, it must issue a warning and render the URI directly in
+some form, possibly as an outwards link. For example:
+
+=begin nested
+B<Copyright>
+
+=nested See: C<file:/shared/docs/std_copyright.rakudoc>
+
+B<Disclaimer>
+
+=nested See: L<http://www.MegaGigaTeraPetaCorp.com/std/disclaimer.txt>
+=end nested
+
+You can use any of the following URI forms (see L<#Links>) in a
+placement link:
+
+=item C<http:> and C<https:>
+=item C<file:>
+=item C<toc:>
+=item C<index:>
+
+The C<toc:> form is a special pseudo-scheme that inserts a table of contents
+in place of the C<P<>> code. After the colon, list the block types that you
+wish to include in the table of contents. For example, to place a table of
+contents listing only top- and second-level headings:
+
+    P<toc: 1, 2 >
+
+To place a table of contents that lists the top four levels of headings:
+
+    P<toc: 1..4 >
+
+A document may have as many C<P<toc:...>> placements as necessary.
+
+The C<index:> form is a special pseudo-scheme that inserts an index table
+in place of the C<P<>> code.
+
+=head2 Alias placement
+
+A variation on placement codes is the A<> code, which is replaced by the contents of the
+named alias or object specified within its delimiters. For example:
+=begin code
+    =alias PROGNAME    Earl Irradiatem Eventually
+    =alias VENDOR      4D Kingdoms
+    =alias TERMS_URL   L<http://www.4dk.com/eie>
+
+    The use of A<PROGNAME> is subject to the terms and conditions
+    laid out by A<VENDOR>, as specified at A<TERMS_URL>.
+=end code
+
+Any Raku object after the Check Phase, such as an object that starts with a sigil, is
+available within an
+alias placement. Unless the object is already a string type, it is converted to a string during
+document-generation by implicitly calling C<.raku> on it.
+
+So, for example, a document can refer to its own filename (as C<A<$?FILE>>), or to the subroutine inside
+which the specific Pod is nested (as C<A<&?ROUTINE>>), or to the current class (as C<A<$?CLASS>>).
+Similarly, the value of any program constants defined with sigils can be easily reproduced in documentation:
+
+    =begin code
+    # Actual code...
+    constant Num $GROWTH_RATE = 1.6;
+    =begin rakudoc
+    =head4 Standard Growth Rate
+
+    The standard growth rate is assumed to be A<$GROWTH_RATE>.
+    =end rakudoc
+    =end code
+
+Non-mutating method calls on these objects are also allowed, so a document can reproduce the
+surrounding subroutine's signature (C<A<&?ROUTINE.signature>>) or the type of a constant (C<A<$GROWTH_RATE.WHAT>>).
+
+See L<Aliases|#Alias_blocks> for further details of the aliasing macro mechanism.
+
+=head2 Space-preserving text
+
+Any text enclosed in an S<> code is formatted normally, except that every whitespace character
+in it — including any newline — is preserved. These characters are also treated as being
+non-breaking (except for the newlines, of course). For example:
+=begin code
+The emergency signal is: S<
+dot dot dot   dash dash dash   dot dot dot>.
+=end code
+would be formatted like so:
+=begin code
+The emergency signal is:… dot dot dot   dash dash dash    dot dot dot.
+=end code
+rather than:
+=begin code
+The emergency signal is: dot dot dot dash dash dash dot dot dot.
+=end code
+
+=head2 Comments
+
+A comment is text that is never rendered.
+
+To create a comment enclose it in C<Z< >>
+=for code
+Raku is awesome Z<Of course it is!>
+
+Raku is awesome Z<Of course it is!>
+
+=head2 Notes
+
+Notes are rendered as footnotes.
+
+To create a note enclose it in C<N< >>
+=for code
+Raku is multi-paradigmatic N<Supporting Procedural, Object Oriented, and Functional programming>
+
+Raku is multi-paradigmatic N<Supporting Procedural, Object Oriented, and Functional programming>
+
+=head2 Keyboard input
+
+To flag text as keyboard input enclose it in C<K< >>
+=for code
+Enter your name K<John Doe>
+
+Enter your name K<John Doe>
+
+=head2 Replaceable
+
+The C<R<>> Markup code specifies that the contained text is a
+B<replaceable item>, a placeholder, or a metasyntactic variable. It is
+used to indicate a component of a syntax or specification that should
+eventually be replaced by an actual value. For example:
+
+=begin code
+The basic C<ln> command is: C<ln> R<source_file> R<target_file>
+=end code
+
+The basic C<ln> command is: C<ln> R<source_file> R<target_file>
+
+=head2 Terminal output
+
+To flag text as terminal output enclose it in C<T< >>
+=for code :lang<rakudoc>
+Hello T<John Doe>
+
+Hello T<John Doe>
+
+=head2 Unicode
+
+To include Unicode code points or HTML5 character references in a Rakudoc document,
+enclose them in C<E< >>
+
+C<E< >> can enclose a number, which is treated as the decimal Unicode
+value for the desired code point. It can also enclose explicit binary, octal,
+decimal, or hexadecimal numbers using the Raku notations for explicitly based
+numbers.
+
+=begin code
+Raku makes considerable use of the E<171> and E<187> characters.
+
+Raku makes considerable use of the E<laquo> and E<raquo> characters.
+
+Raku makes considerable use of the E<0b10101011> and E<0b10111011> characters.
+
+Raku makes considerable use of the E<0o253> and E<0o273> characters.
+
+Raku makes considerable use of the E<0d171> and E<0d187> characters.
+
+Raku makes considerable use of the E<0xAB> and E<0xBB> characters.
+=end code
+
+Raku makes considerable use of the « and » characters.
+
+=head2 Verbatim text
+
+This code is not implemented by C<Pod::To::HTML>, but is implemented in
+C<Raku::Pod::Render>.
+
+The C<V<>> Markup code treats its entire contents as being B<verbatim>,
+disregarding every apparent Markup code within it. For example:
+
+=for code
+The B<V< V<> >> Markup code disarms other codes
+such as V< I<>, C<>, B<>, and M<> >.
+
+Note, however that the C<V<>> code only changes the way its
+contents are parsed, I<not> the way they are rendered. That is, the
+contents are still wrapped and formatted like plain text, and the
+effects of any Markup codes surrounding the C<V<>> code
+are still applied to its contents. For example the previous example
+is rendered as:
+
+=nested
+The B<V< V<> >> Markup code disarms other codes
+such as V< I<>, C<>, B<>, and M<> >.
+
+=head2 Indexing terms
+
+Anything enclosed in an C<X<>> code is an B<index entry>. The contents
+of the code are both formatted into the document and used as the
+(case-insensitive) index entry:
+
+=begin code :allow<B> :lang<rakudoc>
+An B<X<array>> is an ordered list of scalars indexed by number,
+starting with 0. A B<X<hash>> is an unordered collection of scalar
+values indexed by their associated string key.
+=end code
+
+You can specify an index entry in which the indexed text and the index
+entry are different, by separating the two with a vertical bar:
+
+=begin code :allow<B> :lang<rakudoc>
+An B<X<array|arrays>> is an ordered list of scalars indexed by number,
+starting with 0. A B<X<hash|hashes>> is an unordered collection of
+scalar values indexed by their associated string key.
+=end code
+
+In the two-part form, the index entry comes after the bar and is
+case-sensitive.
+
+You can specify hierarchical index entries by separating indexing levels
+with commas:
+
+=begin code :allow<B> :lang<rakudoc>
+An X<array|B<arrays, definition of>> is an ordered list of scalars
+indexed by number, starting with 0. A X<hash|B<hashes, definition of>>
+is an unordered collection of scalar values indexed by their
+associated string key.
+=end code
+
+You can specify two or more entries for a single indexed text, by separating
+the entries with semicolons:
+
+=begin code :allow<B> :lang<rakudoc>
+A X<hash|B<hashes, definition of; associative arrays>>
+is an unordered collection of scalar values indexed by their
+associated string key.
+=end code
+
+The indexed text can be empty, creating a "zero-width" index entry:
+
+=begin code :allow<B> :lang<rakudoc>
+B<X<|puns, deliberate>>This is called the "Orcish Maneuver"
+because you "OR" the "cache".
+=end code
+
+=head2 Developer notes
+
+A developer note is specified as C<D<visible text|version; Notification text>>, and is
+the inline version of the C<:dev-note> meta data tab.
+
+The primary difference is that the visible text is rendered, while the version specification
+and Notification text are shown in a different manner depending on the renderer. For example,
+if a hover action is activated for an HTML version, then the Notification text and version
+will be shown as a pop-up.
+
+A renderer may change the rendering if a user supplies a request to see only versions outside
+the version range.
+
+=head1 Summary
+
+=head2 Directives
+=table
+    Directive       Specifies
+    _________       ____________________________________________________
+    alias           Define a Pod macro
+    begin           Start of an explicitly terminated block
+    config          Lexical modifications to a block or Markup code
+    end             Explicit termination of a begin block
+    finish          No ambient blocks after this point
+    for             Start of an implicitly (blank-line) terminated block
+
+=head2 Blocks
+=table
+    Block typename   Specifies
+    ______________   ___________________________________________________
+    code             Verbatim pre-formatted sample source code
+    input            Pre-formatted sample input
+    output           Pre-formatted sample output
+    comment          Content to be ignored by all renderers
+    head             First-level heading
+    headR<N>         I<N>th-level heading
+    defn             Definition of a term
+    item             First-level list item
+    itemR<N>         I<N>th-level list item
+    nested           Nest block contents within the current context
+    para             Ordinary paragraph
+    rakudoc          No "ambient" blocks inside
+    section          Defines a section
+    pod              Legacy version of rakudoc
+    table            Simple rectangular table
+    grid             Complex table that can embed a table
+    graphic          Insert an image from a url
+    data             Raku data section
+    R<RESERVED>      Semantic blocks (SYNOPSIS, TITLE, etc.)
+    R<Typename>      User-defined block
+
+=head2 Meta data tabs
+=begin table :allow<C>
+    Meta data tab       Blocks applied to   Description
+    ______________      _________________   ___________
+    allow               C<=code>            Change default of verbatim blocks
+                        C<=input>
+                        C<=output>
+                        C<=table>
+                        C<=grid>
+
+    numbered            C<=headN>           Number the block
+    #                   C<=item>
+
+    !numbered           C<=headN>           Do not number the block in a list
+                        C<=item>
+
+    continued           C<=item>            Continue an existing numbering list
+
+    toc                 C<=para>            Include content or caption in Table of contents
+                        C<=nested>
+                        C<=code>
+                        C<=input>
+                        C<=output>
+                        C<=table>
+                        C<=grid>
+
+    !toc                Custom block        Do not include contents or caption in Table of contents
+                        C<=headN>
+
+    headlevel           Custom block        Define the head level at which the caption is
+                        C<=para>            included in the Table of contents
+                        C<=nested>
+                        C<=code>
+                        C<=input>
+                        C<=output>
+                        C<=table>
+                        C<=grid>
+
+    caption             C<=table>           Caption to be associated with a block in the Table of Contents
+                        C<=grid>
+                        C<=nested>
+                        C<=code>
+                        C<=input>
+                        C<=output>
+                        Custom block
+
+    header-rows         C<=table>           Specify the row/rows rendered as headers
+                        C<=grid>
+
+    label-columns       C<=table>           Specify the column/columns rendered as labels
+                        C<=grid>
+
+    vertically-align    C<=table>           Specify the row/rows whose cells are
+    v-align             C<=grid>            aligned C<:v-align(V-ALIGN, COLS))>
+
+    horizontally-align  C<=table>           Specify the column/columns whose cells are
+    h-align             C<=grid>            aligned C<:h-align(H-ALIGN, ROWS))>
+
+    base-row            C<=table>           Specify the row to be used for column numbering
+                        C<=grid>
+
+    row                 C<=cell>            Specify which row a cell is to be placed on
+
+    column              C<=cell>            Specify which column a cell is to be placed into
+
+    row-span            C<=cell>            Specify the row-span a cell should have in a grid
+
+    column-span         C<=cell>            Specify the column span a cell should have in a grid
+
+    dev-note            C<=table>           Developer information associated with a block
+                        C<=grid>
+                        C<=nested>
+                        C<=code>
+                        C<=input>
+                        C<=output>
+                        Custom block
+                        C<=headN>
+=end table
+
+=head2 Markup codes
+
+=for table :allow<C>
+    Markup code          Specifies
+    __________________   ___________________________________________________
+    C<A<...>>            Replaced by contents of specified macro/object
+    C<B<...>>            Basis/focus of sentence (typically rendered bold)
+    C<C<...>>            Code (typically rendered fixed-width)
+    C<D<...|...;...>>    Developer note (C<D<visible text|version; Notification text>>)
+    C<E<...;...>>        Entity names or numeric codepoints (C<E<entity1;entity2;...>>)
+    C<G<...|...>>        Insert an inline graphic (C<G<alt text|url>>)
+    C<I<...>>            Important (typically rendered in italics)
+    C<K<...>>            Keyboard input (typically rendered fixed-width)
+    C<L<...|...>>        Link (C<L<display text|destination URI>>)
+    C<N<...>>            Note (not rendered inline)
+    C<P<...>>            Placement link
+    C<V<...>>            Replaceable component or metasyntax
+    C<S<...>>            Space characters to be preserved
+    C<T<...>>            Terminal output (typically rendered fixed-width)
+    C<U<...>>            Unusual (typically rendered with underlining)
+    C<V<...>>            Verbatim (internal Markup codes ignored)
+    C<X<...|..,..;...>>  Index entry (C<X<display text|entry,subentry;...>>)
+    C<Z<...>>            Zero-width comment (contents never rendered)
+
+=end pod

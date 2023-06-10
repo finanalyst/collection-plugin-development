@@ -236,46 +236,47 @@ use v6.d;
     },
     #placeholder
     block-code => sub (%prm, %tml) { # previous block-code is set by 02-highlighter
-        my token tag {
-            <!after [ <[ B C E I K L N P R T U V X Z ]> | [ ':' \S+? ] ] > '<' ~ '>' <-[ > ]>+
-        }
-        my $hl;
-        my Bool $rd = ( %prm<lang>:exists and %prm<lang> eq 'rakudoc');
-        my @tokens;
-        my $t = %prm<contents>;
-        my $parsed = %prm<contents> ~~ / ^ .*? [ <tag> .*? ]+ $ / ;
-        if $parsed {
-            $t = '';
-            for $/.chunks -> $c {
-                if $c.key eq 'tag' {
-                    if $rd {
-                        $t ~= $c.value
-                    }
-                    else {
-                        $t ~= "\xFF\xFF";
-                        @tokens.push: $c.value.Str;
-                    }
-                }
-                else {
-                    if $rd {
-                        $t ~= $c.value.trans( [ '<'   , '>' ] => [ '&lt;', '&gt;' ]);
-                    }
-                    else {
-                        $t ~= $c.value
-                    }
-                }
-            }
-        }
-        if $rd {
-            $hl = "<div class=\"rakudoc-in-code\">\n$t\n</div>";
-        }
-        else {
-            %prm<contents> = $t if $parsed;
-            $hl = %tml.prior('block-code').(%prm, %tml);
-            $hl .= subst( / '<pre class="' /, '<pre class="cm-s-ayaya ');
-            $hl .= subst( / "\xFF\xFF" /, { @tokens.shift }, :g );
-            $hl .= subst( / '<pre class="' /, '<pre class="cm-s-ayaya ');
-        }
+#        my token tag {
+#            <!after [ <[ B C E I K L N P R T U V X Z ]> | [ ':' \S+? ] ] > '<' ~ '>' <-[ > ]>+
+#        }
+#        my $hl;
+#        my Bool $rd = ( %prm<lang>:exists and %prm<lang> eq 'rakudoc');
+#        my @tokens;
+#        my $t = %prm<contents>;
+#        my $parsed = %prm<contents> ~~ / ^ .*? [ <tag> .*? ]+ $ / ;
+#        if $parsed {
+#            $t = '';
+#            for $/.chunks -> $c {
+#                if $c.key eq 'tag' {
+#                    if $rd {
+#                        $t ~= $c.value
+#                    }
+#                    else {
+#                        $t ~= "\xFF\xFF";
+#                        @tokens.push: $c.value.Str;
+#                    }
+#                }
+#                else {
+#                    if $rd {
+#                        $t ~= $c.value.trans( [ '<'   , '>' ] => [ '&lt;', '&gt;' ]);
+#                    }
+#                    else {
+#                        $t ~= $c.value
+#                    }
+#                }
+#            }
+#        }
+#        if $rd {
+#            $hl = "<div class=\"rakudoc-in-code\">\n$t\n</div>";
+#        }
+#        else {
+#            %prm<contents> = $t if $parsed;
+#            $hl = %tml.prior('block-code').(%prm, %tml);
+#            $hl .= subst( / '<pre class="' /, '<pre class="cm-s-ayaya ');
+#            $hl .= subst( / "\xFF\xFF" /, { @tokens.shift }, :g );
+#            $hl .= subst( / '<pre class="' /, '<pre class="cm-s-ayaya ');
+#        }
+            my $hl = %tml.prior('block-code').(%prm, %tml);
         qq[
             <div class="raku-code raku-lang">
                 <button class="copy-raku-code" title="Copy code"><i class="far fa-clipboard"></i></button>

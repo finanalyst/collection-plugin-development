@@ -1,3 +1,32 @@
 .ui-menu-item-wrapper.ui-state-active {
+  background-color: #3A3D4E;
+}
+
+.navbar-search-autocomplete {
+  color: gainsboro;
+  background-color: #282c2e;
+  box-shadow: 1px 2px 2px 0px rgba(0, 0, 0, 0.07);
+  border: 1px solid #3A3D4E;
+}
+.navbar-search-autocomplete li {
+  padding: 0 5px;
+}
+.navbar-search-autocomplete li.ui-autocomplete-category {
+  color: #f00048;
+  font-weight: 600;
+}
+.navbar-search-autocomplete li:hover, .navbar-search-autocomplete li[aria-selected=true] {
+  cursor: pointer;
   background-color: #1c1f21;
+}
+.navbar-search-autocomplete li mark {
+  background: transparent;
+  color: rgb(255, 122, 122);
+  font-weight: bold;
+}
+.navbar-search-autocomplete .autocomplete-result-category {
+  color: #EED891;
+}
+.navbar-search-autocomplete .autocomplete-result-category:hover {
+  background-color: unset;
 }

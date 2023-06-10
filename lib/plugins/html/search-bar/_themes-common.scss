@@ -1,0 +1,38 @@
+@import "../ogdenwebb/scss/base/_variables.scss";
+
+// Autocompletion popup
+.navbar-search-autocomplete {
+  color: darken($text, 10);
+  background-color: $scheme-main-ter;
+  box-shadow: $shadow;
+  border: 1px solid $border;
+
+  li {
+    padding: 0 5px;
+    &.ui-autocomplete-category {
+        color: $red;
+        font-weight: $weight-semibold;
+    }
+    &:hover, &[aria-selected="true"] {
+      cursor: pointer;
+      background-color: darken($scheme-main-ter, 5);
+    }
+
+    mark {
+      background: transparent;
+      color: rgba(255, 122, 122, 1);
+      font-weight: bold;
+    }
+  }
+
+  .autocomplete-result-category {
+    // background-color: $heading;
+    color: $heading;
+    // border-top: 1px solid $border;
+    // border-bottom: 2px solid $border;
+
+    &:hover {
+      background-color: unset;
+    }
+  }
+}
