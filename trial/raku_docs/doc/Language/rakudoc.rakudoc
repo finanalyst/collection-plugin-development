@@ -16,7 +16,7 @@ that previously were implemented but undocumented.
 
 Rakudoc is extensible and renderers are free to provide extra functionality beyond the minimum
 set of instructions described here, but may not provide extra functionality unless
-it is explicitly defined in L<the enclosing lexical scope|#Custom_blocks>.
+it is explicitly defined in L<the enclosing block scope|#Block_scope>.
 
 =head1 Rendering
 
@@ -236,20 +236,20 @@ a C<=begin>, C<=for> or C<=end>, then an error will be thrown.
 
 =head2 Aliases
 
-The C<=alias> directive provides a way to define lexically scoped
-synonyms for longer Pod sequences, (meta)object declarators from the
+The C<=alias> directive provides a way to define block-scoped
+synonyms for longer Rakudoc sequences, (meta)object declarators from the
 code, or even entire chunks of ambient source. These synonyms can then
 be inserted into subsequent Pod using the
 L<C<A<> formatting code>|#Alias_placements>.
 
-An C<=alias> is lexically scoped to the surrounding Rakudoc block.
+An C<=alias> is scoped to the surrounding Rakudoc block.
 
 The alias block takes two arguments. The first is an
 identifier (which is usually specified in uppercase, though this is
 not mandatory). The second argument consists of one or more
 lines of replacement text.
 
-This creates a lexically scoped Rakudoc macro that can be invoked during
+This creates a block scoped Rakudoc macro that can be invoked during
 document generation by placing the identifier (i.e. the first argument
 of the alias) in an C<A<>> formatting code. This formatting code is then
 replaced by the text returned by new macro.
@@ -308,7 +308,7 @@ metadata are specified for a block using the B<extended> or B<delimited>
 forms.
 
 The same option can be added to multiple blocks, this can be done using a C<config>
-directive, and then the B<abbreviated> form can be used in the L<same lexical scope|#Lexical_scope>.
+directive, and then the B<abbreviated> form can be used in the L<same block scope|#Block_scope>.
 
 For example, suppose within some section of a document, it is desired that all
 C<=item> blocks are numbered, then C<=config item :numbered> could be specified.
@@ -619,9 +619,9 @@ should produce something like:
 2.3.8.6.1.9. The Rescue of the Kobayashi Maru
 =end code
 
-=head2 Lexical scope
+=head2 Block scope
 
-A lexical scope is important for the C<=config> and C<=alias> directives. In addition,
+A block scope is important for the C<=config> and C<=alias> directives. In addition,
 some renderers may generate secondary pages from primary source files, for example,
 gathering together the same method names in multiple classes. It is desirable for all the
 relevant blocks to be gathered together.
@@ -629,27 +629,27 @@ relevant blocks to be gathered together.
 =head3 Sections
 
 The <section> block will typically only be used in the delimited form so that
-the document writer can define the lexical scope. The <=begin section>
-declaration starts a new lexical scope, and the C<=end section> returns the scope to the
+the document writer can define the block scope. The <=begin section>
+declaration starts a new block scope, and the C<=end section> returns the scope to the
 previous one. An C<=end section> does not ever change the scope to ambient code,
 which a C<=end rakudoc> would.
 
 When a C<=begin section> is not present, a Renderer may apply the following heuristic to determine
-the lexical scope (assumming X, Y, and Z are digits such that C«0 < X < Y < Z »):
-=item A C<=headY> declaration starts a new lexical scope (C<=head> C<=> C<=head1>).
-=item The next C<=headY> declaration ends the lexical scope of the previous <=headY>
-=item A C<=headZ> declaration following a C<=headY> is within the lexical scope
+the block scope (assumming X, Y, and Z are digits such that C«0 < X < Y < Z »):
+=item A C<=headY> declaration starts a new block scope (C<=head> C<=> C<=head1>).
+=item The next C<=headY> declaration ends the block scope of the previous <=headY>
+=item A C<=headZ> declaration following a C<=headY> is within the block scope
 of the preceding <=headY> declaration, and does not end it.
 
 =item A C<=headX> declaration ends the scope of the preceding C<=headY> declaration.
 
 Note that a C<=begin section> declaration overrides the heuristic, meaning that multiple
-C<=headX> declarations can be placed within the same lexical scope.
+C<=headX> declarations can be placed within the same block scope.
 
 A renderer is not expected to render blocks differently when they are embedded in a C<section> block.
 
 Providing metadata to a C<=begin section> block definition is B<not> the same as declaring meta data using a
-C<=config> directive. Meta data in a config is provided to all blocks in the lexical scope. Meta data
+C<=config> directive. Meta data in a config is provided to all blocks in the block scope. Meta data
 in the C<=begin section> declaration is only applied to the section.
 
 For example, suppose the following Rakudoc text was included in a source file
@@ -1515,7 +1515,7 @@ The column and row alignments defined at the grid level override the default cel
 but a cell alignment specified within a C<cell> block overrides the grid level alignment.
 
 The C<cell> and C<row> blocks are not specified outside a C<grid> block. A render is expected to
-render them as unknown blocks if they are not within the lexical context of a C<grid> block.
+render them as unknown blocks if they are not within the block scope of a C<grid> block.
 
 =head4 Grid examples
 =begin code
@@ -1710,6 +1710,27 @@ correspond to the version information. A block that does not have a C<:dev-note>
 C<:dev-note<*>>.
 
 An example is given in the description of the L<C<section> block |#Sections>
+
+=head2 Explicit anchors
+
+A C<=head> block declaration may be given an explicit anchor with C<:anchor<...> >.
+
+Normally when a C<head> block is specified, an implicit anchor is created by the renderer. The algorithm
+for the anchor is to replace C<WS> with the C<_> character. A check is made to ensure that the
+anchor is unique to the document.
+
+This anchor can then be used in C<L<>> markup.
+
+The problem is that if a heading text is edited, the automatic anchor will change. Any C< L<> >
+links will then be incorrect.
+
+The C<:anchor<...>> meta data tab avoid this problem because the document author can specify
+the anchor that must be associated with a header.
+
+If two anchors with the same name but different
+headers are encountered by the renderer, it may differentiate them by adding C<_1> to the second
+anchor (C<_2> to the third and so on). It is the author's responsibility to ensure that all the
+explicit anchors in a file are unique.
 
 =head1 Markup codes
 
@@ -2114,13 +2135,13 @@ the version range.
     _________       ____________________________________________________
     alias           Define a Pod macro
     begin           Start of an explicitly terminated block
-    config          Lexical modifications to a block or Markup code
+    config          Block scope modifications to a block or Markup code
     end             Explicit termination of a begin block
     finish          No ambient blocks after this point
     for             Start of an implicitly (blank-line) terminated block
 
 =head2 Blocks
-=table
+=for table :allow<I, R>
     Block typename   Specifies
     ______________   ___________________________________________________
     code             Verbatim pre-formatted sample source code
@@ -2153,6 +2174,8 @@ the version range.
                         C<=output>
                         C<=table>
                         C<=grid>
+
+    anchor              C<=headN>           specify the anchor for a heading
 
     numbered            C<=headN>           Number the block
     #                   C<=item>
