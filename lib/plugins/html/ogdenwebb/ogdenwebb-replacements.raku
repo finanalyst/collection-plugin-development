@@ -276,7 +276,7 @@ use v6.d;
                 <label>$syntax-label\</label>
                 <div>$code\</div>
             </div>
-        ];
+        ]
     },
     heading => sub (%prm, %tml) {
         my $txt = %prm<text> // '';
