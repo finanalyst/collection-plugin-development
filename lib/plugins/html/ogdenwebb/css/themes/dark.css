@@ -437,10 +437,19 @@ code {
   color: #EED891;
 }
 
+pre.browser-hl {
+  padding: 0;
+}
+
 .raku-code {
   border-bottom: 3px solid #3A3D4E;
   box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.07);
   border: 1px solid #3A3D4E;
+}
+.raku-code label {
+  float: right;
+  font-size: xx-small;
+  font-style: italic;
 }
 .raku-code .code-button {
   background: #8DB2EB;

@@ -418,10 +418,19 @@ code {
   color: #A30031;
 }
 
+pre.browser-hl {
+  padding: 0;
+}
+
 .raku-code {
   border-bottom: 3px solid #cccccc;
   box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.07);
   border: 1px solid #cccccc;
+}
+.raku-code label {
+  float: right;
+  font-size: xx-small;
+  font-style: italic;
 }
 .raku-code .code-button {
   background: #004FB3;
