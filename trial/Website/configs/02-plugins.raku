@@ -4,7 +4,7 @@
     plugins-required => %(
         :setup('raku-doc-setup', ),
         :render<
-            font-awesome tablemanager ogdenwebb
+            hiliter font-awesome tablemanager ogdenwebb
             website camelia simple-extras listfiles images deprecate-span filterlines
             secondaries typegraph pop-search generated
             leafletmap latex-render graphviz
