@@ -437,47 +437,6 @@ code {
   color: #EED891;
 }
 
-pre.browser-hl {
-  padding: 0;
-}
-
-.raku-code {
-  border-bottom: 3px solid #3A3D4E;
-  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.07);
-  border: 1px solid #3A3D4E;
-}
-.raku-code label {
-  float: right;
-  font-size: xx-small;
-  font-style: italic;
-}
-.raku-code .code-button {
-  background: #8DB2EB;
-  color: #1B1D1E;
-  border: #3A3D4E;
-}
-.raku-code .code-button:hover {
-  background-color: #4c86e0;
-}
-.raku-code .code-name {
-  color: #EED891;
-}
-.raku-code .code-output {
-  background: #282c2e;
-  border-top: 1px solid #3A3D4E;
-}
-.raku-code .code-output-title {
-  border-bottom: 1px solid #3A3D4E;
-  color: #EED891;
-}
-.raku-code pre {
-  background-color: #212426;
-  color: #f5f5f5;
-}
-.raku-code .rakudoc-in-code {
-  padding: 1.25rem 1.5rem;
-}
-
 .hero.error-page .hero-body {
   background: #1B1D1E;
 }
@@ -515,13 +474,6 @@ ul.rakudoc-item > ul > ul {
 ul.rakudoc-item > ul > ul > ul {
   margin-left: 2em;
   list-style: disclosure-closed;
-}
-
-button.copy-raku-code {
-  cursor: pointer;
-  opacity: 0.5;
-  padding: 0 0.25rem 0.25rem 0.25rem;
-  position: absolute;
 }
 
 .pod-output {

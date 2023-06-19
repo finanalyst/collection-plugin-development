@@ -471,52 +471,6 @@ code {
   color: $heading;
 }
 
-pre.browser-hl { padding: 0; }
-
-.raku-code {
-  border-bottom: 3px solid $border;
-  box-shadow: $shadow-below;
-  border: 1px solid $border;
-
-  label {
-    float: right;
-    font-size: xx-small;
-    font-style: italic;
-  }
-
-  .code-button {
-    background: $primary;
-    color: $scheme-main;
-    border: $border;
-
-    &:hover {
-      background-color: $primary-dark;
-    }
-  }
-
-  .code-name {
-    color: $heading;
-  }
-
-  .code-output {
-    background: $code-output-background;
-    border-top: 1px solid $border;
-  }
-
-  .code-output-title {
-    border-bottom: 1px solid $border;
-    color: $heading;
-  }
-
-  pre {
-    background-color: $code-background;
-    color: $code-foreground;
-  }
-  .rakudoc-in-code {
-    padding: 1.25rem 1.5rem;
-  }
-}
-
 // Error pages.
 .hero.error-page .hero-body {
   background: $background;
@@ -556,12 +510,6 @@ ul.rakudoc-item {
             }
         }
     }
-}
-button.copy-raku-code {
-    cursor: pointer;
-    opacity: 0.5;
-    padding: 0 0.25rem 0.25rem 0.25rem;
-    position: absolute;
 }
 .pod-output {
     font-family: "Lucida Console", "Courier New", monospace;

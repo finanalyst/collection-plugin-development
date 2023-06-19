@@ -1,0 +1,10 @@
+=begin pod
+=TITLE page-styling is to style the Raku documentation suite
+
+The plugin is a revision of the ogdenwebb plugin
+
+=head1 Custom blocks
+
+=head1 Templates
+
+=end pod
