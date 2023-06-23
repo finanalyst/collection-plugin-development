@@ -3,38 +3,116 @@
 =TITLE Rakudoc - documentation components
 =SUBTITLE A Raku slang for creating documentation and document data to Raku programs.
 
+=head1 SYNOPSIS
+
+Consider the two ways in which documentation is used.
+
+=head2 Case 1: You are writing documentation to aid software design
+=begin code :allow<V> :lang<raku>
+    unit class Beginners;
+    #| a variable to hold number of people
+    has $.participants;
+    #| data that is initially provided by default, but will be overwritten
+    has $.new-participant = $=finish;
+    ... # code
+    V<=>finish
+    default data string for a new participant
+=end code
+
+A Rakudoc compliant editor or Integrated Design Environment will pick up the text following C<#|>
+and put them into a pop-up menu whenever you select (eg by hovering over) a use of C<$.participants>.
+
+The C<=finish> statement is the last piece of code. Everything after it is treated as a string and placed
+in the C<$=finish> variable.
+
+There are other possibilities described below.
+
+=head2 Case2: You are writing documentation to accompany some software
+
+Consider the following short description:
+
+=begin code :lang<rakudoc>
+    =begin rakudoc
+    =TITLE Tutorial about Flavorizing
+    =SUBTITLE
+    A short tutorial on Flavorizing your quarks
+
+    =head1 Starting out
+
+    In the section you will learn about how to create flavors to quarks produced
+    by the I<Imagiton>.
+    It goes without say that these techniques should B<NOT> be carried out
+    without a precocious child nearby; they will strain the imagination of
+    an ossified adult.
+
+    =head2 What is a flavour
+
+    It is well-known (see the L<Wikipedia article|https://en.wikipedia.org/wiki/Flavour_(particle_physics)>
+    that quarks N<a quark is a constituent of a hadron> come in six flavors, for example,
+    =item Up
+    =item Down
+    =item Bottom
+
+    Z< Lots more text>
+    =end rakudoc
+=end code
+
+To indicate that all of the markup above is not Raku code, it is enclosed in a C<block> called I<rakudoc>.
+This is an example of the B<delimited> form of the B<Rakudoc> block because it has C<=begin> and C<=end> directives.
+
+The C<=TITLE>, C<=SUBTITLE>, and C<=SYNOPSIS> are I<semantic blocks> containing information that can be searched
+by other tools. For all other purposes, they can be considered to the same as C<=head> I<blocks>.
+
+A C<=head> block begins a top-level heading. The <=head2> is a second level heading. What follows this sort of block,
+which is called an B<abbreviated> block, is the text of the heading.
+
+The C<=item> components are abbreviated blocks with text for a list.
+There is no need to start or stop a list explicitly, the Renderer will place consecutive
+C<=items> in a list. The next paragraph or block will end the list.
+
+Within the text, there are some inline markup instructions, which have the form B<Upper Unicode character> B<< < >> B<< > >>.
+In the example above, we used C<I B N L Z>. These are for Italic, Bold, N(a footnote), Link, and Zero(a comment).
+
+Sometimes a document writer will want to include more information in a block, such as making the list a
+numbered list. This sort of data can be supplied in metadata options (not shown in the example here).
+
+Also a block can enclose other blocks. So they can be written in three different ways.
+
+There are also more Markup instructions.
+
+More explanation is given below about blocks, directives, markup instructions and metadata options.
+
 =head1 Introduction
 
-Rakudoc has a variety of instructions that allow for rich structured documents,
+Rakudoc has a variety of B<components> that allow for rich structured documents,
 provide markup hints to renderers without assuming an output format, extract
 information from compiled programs, provide information to programs, and allow for
 custom developer extensions.
 
-This document describes a revised specification of Rakudoc that modifies some parts of the
-original specification that was implemented as Raku was developed, and illustrates some aspects
-that previously were implemented but undocumented.
+This document describes a revision of Rakudoc modifying the
+original speculation L<S26|https://design.raku.org/S26.html> that was implemented as Raku was developed.
+Rakudoc is intended to be backwards compatible with the POD6 Markup language based on S26.
 
 Rakudoc is extensible and renderers are free to provide extra functionality beyond the minimum
-set of instructions described here, but may not provide extra functionality unless
-it is explicitly defined in L<the enclosing block scope|#Block_scope>.
+set of instructions described here.
 
-=head1 Rendering
+=head1 Two use cases for Rakudoc
 
 Rakudoc can be thought of as having components that are closely connected to a program or module
 that is being documented (code-oriented Rakudoc), and components that can be used for standalone documents, such as the source
 for this webpage or book chapter (page-oriented Rakudoc).
 
-Code-oriented Rakudoc is expected to be "consumed" by users in an IDE editor, while page-oriented Rakudoc is
-consumed in some rendered version,
+Code-oriented Rakudoc is expected to be "consumed" by users in an editor or Integrated Design Environment (IDE),
+while page-oriented Rakudoc is consumed in some rendered version,
 such as an HTML web page, or a chapter in an e-book.
 
-When Rakudoc components are viewed in an IDE or editor to provide information
+When Rakudoc components are viewed in an editor or IDE to provide information
 about variables, methods, roles, classes and the like, the information should be made available in a pop-up
 whenever a documented term is selected in some way (eg., hovering a mouse over it).
 In the editor context Rakudoc blocks and markup should then be treated as a comment to the code. Editors are
-not expected to render the Rakudoc except to show the Rakudoc instructions.
+not expected to render the Rakudoc other than to show the Rakudoc components verbatim.
 
-When Rakudoc components are viewed in a rendered (eg. HTML) version, components related to a running
+When Rakudoc components are viewed in a rendered (for example, HTML) version, components related to a running
 program may be ignored.
 
 Within the body of a program there may be
@@ -53,72 +131,75 @@ the same source file through a renderer, a documentation file (eg., a README.md 
 generated.
 
 This document describes the minimum version of Rakudoc that a renderer or editor must recognise and
-some expected rendering behaviors for standalone renderers.
+some expected rendering behaviors for standalone renderers. I<Expected behaviors> means that a Renderer
+should approximate the expected behavior to the extent possible given the output format, and the
+approximation should be a reasonable interpretation of the standard described here.
 
 The Rakudoc design assumes certain types of customisablity, such
-as new blocks or markup codes. In order to access blocks or functionality not described in this document,
+as new blocks or markup instructions. In order to access blocks or functionality not described in this document,
 the file containing such Rakudoc instructions should contain a C<use> statement with a module that provides
 the information needed to render the block. The information provided by the module may be renderer-specific.
 
-=head1 Instructions
+=head1 Components
 
-Rakudoc has four main types of components:
+Rakudoc has four main types of components, which are listed in terms of the effect they have on other compoents.
+
+=defn Directives
+These define how blocks work. Directives may look like blocks, but they operate on blocks. New directives
+cannot be defined.
+
 =defn Blocks
 These define complete text components, such as a new paragraph. New blocks can be defined.
 
-=defn Markup codes
-These typically define inline items embedded within a block. Some Markup codes only affect visual rendering of their contents,
-others may have side-effects (such as including items into an index or glossary). New markup codes can be defined.
+=defn Markup instructions
+These typically define inline items embedded within a block. Some Markup instructions only affect visual rendering of their contents,
+others may have side-effects (such as including items into an index or glossary). New markup instructions can be defined.
 
-=defn Meta data tags
+=defn Meta data options
 These provide information to a block, which may have side-effects or alter the way a block should be rendered.
+A document writer can associate any meta data option to any block or Markup instruction. A renderer is only
+required to comply with those named in this document.
 
-=defn Directives
-These define how blocks work.
+=head2 Directive syntax
 
-=head2 Block syntax
+These are the syntax forms for each directive.
 
-Blocks (the block name 'para' is used to illustrate the syntax) may be specified in three ways:
+=item B<=begin> starts a line and specifies the start of a delimited block
+=item B<=end> starts a line and specifies the end of a delimited block
+=item B<=for> starts a line and specifies the start of an extended block
+=item B<=finish> starts a line and ends ambient code and is followed by text
 =begin item
-B<Abbreviated form>
-The name of the block immediately follows an C<=> sign, which must be the first non-whitespace character
-on the line. Everything after the block name is considered the content of the block, eg.
-    =begin code
-        =para This text is the content of the block
-
-        after a blank line a new block is started
-    =end code
-
-Meta data tabs placed after an abbreviated block name are considered part of the block contents,
-with one exception, namely the ornithorpe character C<#>. The character (when not escaped) is removed from the contents
-and a C<:numbered> meta data option is associated with the block.
-=end item
-=begin item
-B<Extended form>
-An extended block begins with the directive C<=for> is the first non-whitespace on a line, followed by the name of the block,
-followed by metadata (see metadata below). The next non-blank lines after the metadata (see below)
-comprise the content of the block.
-    =begin code
-        =for para :meta<data>
-        This text is the content of the block
-
-        after a blank line a new block is started
-    =end code
-
-The general syntax is:
-=begin code
-     =for BLOCK_TYPE  OPTIONAL CONFIG INFO
-     =                OPTIONAL EXTRA CONFIG INFO
-     BLOCK DATA
+B<=alias>
+The general syntax for an alias directive is:
+=begin code :lang<rakudoc>
+    =alias ALIAS_NAME Text for substitution
+    =                 Optional extra text
 =end code
 =end item
 =begin item
+B<=config>
+The general syntax for configuration directives is:
+=begin code  :allow< R > :lang<rakudoc>
+    =config R<BLOCK_TYPE>  R<CONFIG OPTIONS>
+    =                   R<OPTIONAL EXTRA CONFIG OPTIONS>
+=end code
+The special form C<MARKUP_INSTRUCTION-X> in place of C<BLOCK_TYPE>, where X is a Unicode
+Upper character, applies the C<CONFIG OPTIONS> to the X markup instruction.
+=end item
+
+=head2 Block syntax
+
+Even though visually similar in some contexts, a block is not a directive, and vice versa.
+
+Blocks (the block name 'para' is used to illustrate the syntax) may be specified in three ways:
+=begin item
 B<Delimited form>
+
 A delimited block starts with the directive C<=begin> as the first non-white space on a line, followed by
 the name of the block, followed optionally by metadata, followed by content lines, and is only terminated
 by a C<=end> directive followed by the same block name. A delimited block that is not terminated by
 an C<=end same-block-name> instruction throws an error.
-    =begin code
+    =begin code :lang<rakudoc>
         =begin para :meta<data>
         This text is the content of the block
 
@@ -126,34 +207,85 @@ an C<=end same-block-name> instruction throws an error.
         =end para
     =end code
 The general syntax is:
-=begin code
+=begin code :lang<rakudoc>
      =begin BLOCK_TYPE  OPTIONAL CONFIG INFO
      =                  OPTIONAL EXTRA CONFIG INFO
      BLOCK CONTENTS
      =end BLOCK_TYPE
 =end code
 =end item
+=begin item
+B<Extended form>
 
-=head2 Markup code syntax
+An extended block begins with the directive C<=for> as the first non-whitespace on a line, followed by the name of the block,
+followed by metadata (see metadata below). The next non-blank lines after the metadata (see below)
+comprise the content of the block.
+    =begin code :lang<rakudoc>
+        =for para :meta<data>
+        This text is the content of the block
 
-The general syntax of a Markup code is
-=for code
+        after a blank line a new block is started
+    =end code
+
+The general syntax is:
+=begin code :lang<rakudoc>
+     =for BLOCK_TYPE  OPTIONAL CONFIG INFO
+     =                OPTIONAL EXTRA CONFIG INFO
+     BLOCK DATA
+=end code
+=end item
+=begin item
+B<Abbreviated form>
+
+The name of the block immediately follows an C<=> sign, which must be the first non-whitespace character
+on the line. Everything after the block name is considered the content of the block, eg.
+    =begin code :lang<rakudoc>
+        =para This text is the content of the block
+
+        after a blank line a new block is started
+    =end code
+
+Meta data tabs placed after an abbreviated block name are considered part of the block contents.
+
+=nested There is one exception, namely the ornithorpe character C<#>. The character (when not escaped) is removed from the contents
+and a C<:numbered> meta data option is associated with the block.
+
+=end item
+
+=head2 Markup instruction syntax
+
+The general syntax of a Markup instruction is
+=for code :lang<rakudoc>
 <Opener><open marker><content>|<meta list><close marker>
 
-=defn <Opener>
+=begin item
+B<<Opener>>
+
 This is a single upper case letter, or a unicode entity with UPPER property
+=end item
+=begin item
+B<<open marker>>
 
-=defn <open marker>
 This is either of C«<» or C<«> ( = C«E<00AB>» )
+=end item
+=begin item
+B<<content>>
 
-=defn <content>
-This is a string not containing C<|> (= C«E<007C>» ) but it can contain markup code.
+This is a string not containing C<|> (= C«E<007C>» ) but it can contain markup instruction.
+=end item
+=begin item
+B<<meta list>>
 
-=defn <meta list>
-Is a list of strings delimited by C<,>, or a list of list of strings delimited by C<;>
+Is a list of strings delimited by C<,> or C<;>, depending on the semantic imposed by the <Opener>
+=end item
+=begin item
+B<<close marker>>
 
-=defn <close marker>
 Is the closing pair to the <open marker>, namely C«>» or C<»> ( = C«E<00BB>» )
+=end item
+
+Examples: This is B<bold> text, and this is in I<italics>.
+And this is a L<link to the Raku Programming Language|https://raku.org>.
 
 =head2 Metadata syntax
 
@@ -196,34 +328,12 @@ and it must be followed
 by at least one horizontal whitespace character.
 
 For example:
-=begin code
+=begin code :lang<rakudoc>
      =for head1 :a-first-line-key<firstvalue> :another-first-line-key<xyz>
      =          :a-second-line-key(42)
      = :a-third-line-key<third>
      Content for the header block
 =end code
-
-=head2 Directive syntax
-
-=item B<=begin> starts a line and specifies the start of a delimited block
-=item B<=end> starts a line and specifies the end of a delimited block
-=item B<=for> starts a line and specifies the start of an extended block
-=begin item
-B<=alias>
-=begin code
-    =alias ALIAS_NAME Text for substitution
-    =                 Optional extra text
-=end code
-
-=end item
-=begin item
-B<=config>
-The general syntax for configuration directives is:
-=begin code  :allow< R >
-    =config R<BLOCK_TYPE>  R<CONFIG OPTIONS>
-    =                   R<OPTIONAL EXTRA CONFIG OPTIONS>
-=end code
-=end item
 
 =head1 Directives
 
@@ -265,7 +375,7 @@ replacement text on the C<=alias> line.
 
 For example:
 
-=begin code
+=begin code :lang<rakudoc>
     =alias PROGNAME    Earl Irradiatem Evermore
     =alias VENDOR      4D Kingdoms
     =alias TERMS_URLS  =item L<http://www.4dk.com/eie>
@@ -281,7 +391,7 @@ For example:
 
 would produce:
 
-=begin para :nested
+=begin nested
     The use of Earl Irradiatem Evermore is subject to the terms and
     conditions laid out by 4D Kingdoms Inc, as specified at:
 
@@ -289,13 +399,13 @@ would produce:
         =item L<http://www.4dk.co.uk/eie.io/>
         =item L<http://www.fordecay.ch/canttouchthis>
 
-=end para
+=end nested
 
 The advantage of using aliases is, obviously, that the same alias can be
 reused in multiple places in the documentation. Then, if the replacement
 text ever has to be changed, it need only be modified in a single place:
 
-=begin code
+=begin code :lang<rakudoc>
     =alias PROGNAME    Count Krunchem Constantly
     =alias VENDOR      Last Chance Receivers Intl
     =alias TERMS_URLS  L<http://www.c11.com/generic_conditions>
@@ -313,7 +423,7 @@ directive, and then the B<abbreviated> form can be used in the L<same block scop
 For example, suppose within some section of a document, it is desired that all
 C<=item> blocks are numbered, then C<=config item :numbered> could be specified.
 
-=begin code :allow< V >
+=begin code :allow< V > :lang<rakudoc>
     =head Unnumbered lists
     =item This is not numbered
     =item Neither is this
@@ -338,7 +448,7 @@ text in the file as a string.
 Any text after the C<=finish> block can be accessed as a string within the program
 (the ambient code) via the C<$=finish> variable.
 This can be used to provide data to a program, such as a test.
-=begin code :allow< V >
+=begin code :allow< V > :lang<raku>
     use JSON::Fast;
     my %h = from-json $=finish;
     say %h.raku;
@@ -348,13 +458,13 @@ This can be used to provide data to a program, such as a test.
     { "key1": "a string value", "key2": "another value" }
 =end code
 This will generate the following output
-=begin code
+=begin code :lang<raku>
     {:key1("a string value"), :key2("another value")}
 =end code
 
 =head1 Code oriented Rakudoc
 
-The following Rakudoc intructions are primarily intended for use when editing within an editor.
+The following Rakudoc components are primarily intended for use when editing within an editor.
 Standalone renderers may ignore them.
 
 X<|Syntax,#|>X<|Syntax,#=>
@@ -369,7 +479,7 @@ If followed by a space, the block is terminated by the end of line;
 if followed by one or more opening curly braces, the block is terminated by
 the matching sequence of closing curly braces.
 
-Rakudoc Markup codes may be used inside declarator blocks.
+Rakudoc Markup instructions may be used inside declarator blocks.
 
 Blocks starting with C<#|> are attached to the code after them,
 and blocks starting with C<#=> are attached to the code before them.
@@ -380,7 +490,7 @@ document classes, roles, subroutines and in general any statement or block.
 The C<WHY> method can be used on these classes, roles, subroutines etc. to
 return the attached Rakudoc value.
 
-=begin code
+=begin code :lang<raku>
 #| Base class for magicians
 class Magician {
   has Int $.level;
@@ -399,7 +509,7 @@ say &duel.WHY.trailing; # OUTPUT: «Magicians only, no mortals.␤»
 
 These declarations can extend multiple blocks:
 
-=begin code
+=begin code :lang<raku>
 #|( This is an example of stringification:
     * Numbers turn into strings
     * Regexes operate on said strings
@@ -419,7 +529,7 @@ sub search-in-seq( Int $end, Int $number ) {
 Another useful idiom is to combine trailing declarators and a MAIN sub.
 These comments will be picked up automatically by USAGE.
 
-=begin code
+=begin code :lang<raku>
     sub MAIN(
         Str $first,    #= the first CLI parameter
         Int :$verbose, #= an integer to indicate output, 0 = no output
@@ -444,7 +554,7 @@ Each C<=data> block can be given a C<:key> option, to name it. The contents
 of any C<=data> block with a key are accessible (as a single string) via
 the Associative aspect of C<$=data> object. For example:
 
-=begin code :allow<B>
+=begin code :allow<B> :lang<rakudoc>
 
     =begin data :key<Virtues>
     Laziness
@@ -462,7 +572,7 @@ accessible (as a single string) via the Positional aspect of
 C<$=data>. Unkeyed C<=data> blocks are stored in the same order
 they appear in the file. For example:
 
-=begin code
+=begin code :lang<raku>
 
     say 'The second anti_Virtue is: ', $=data[1];
 
@@ -491,7 +601,7 @@ code in a single file as this helps to create code that is well-documented.
 When a Raku compiler parses a file, line contents are expected to be Raku code (ambient text).
 When a Rakudoc block is finished, the next line is assumed to be ambient text.
 
-=begin code
+=begin code :lang<rakudoc>
     #start of file
     my $text; # ambient code
 
@@ -502,7 +612,7 @@ When a Rakudoc block is finished, the next line is assumed to be ambient text.
 =end code
 
 A C<rakudoc> block reverses this assumption.
-=begin code
+=begin code :lang<rakudoc>
     #start of file
     my $text; # ambient code
     =begin rakudoc
@@ -527,7 +637,7 @@ Headings can be defined using C<=headN>,
 where N is greater than zero (e.g., C<=head1>, C<=head2>, …).
 C<=head> is an alias for C<=head1>.
 
-=begin code
+=begin code :lang<rakudoc>
 =head1 A top level heading
 
 =head2 A second level heading
@@ -538,7 +648,7 @@ C<=head> is an alias for C<=head1>.
 =head3 Numbered headings
 
 You can specify that a heading is numbered using the C<:numbered> option. For example:
-=begin code
+=begin code :lang<rakudoc>
     =for head1 :numbered
     The Problem
 
@@ -563,7 +673,7 @@ You can specify that a heading is numbered using the C<:numbered> option. For ex
 
 which would produce:
 
-=begin code
+=begin code :lang<rakudoc>
 1. The Problem
 
 2. The Solution
@@ -580,7 +690,7 @@ which would produce:
 =end code
 
 It is usually better to preset a numbering scheme for each heading level, in a series of configuration blocks:
-=begin code
+=begin code :lang<rakudoc>
     =config head1 :numbered
     =config head2 :numbered
     =config head3 :!numbered
@@ -597,7 +707,7 @@ It is usually better to preset a numbering scheme for each heading level, in a s
 Alternatively, as a short-hand, if the first whitespace-delimited word in a heading
 consists of a single literal B<#> character, the B<#> is removed and the heading is
 treated as if it had a C<:numbered> option:
-=begin code
+=begin code :lang<rakudoc>
     =head1 # The Problem
     =head1 # The Solution
     =head2   # Analysis
@@ -610,12 +720,12 @@ treated as if it had a C<:numbered> option:
 Note that, even though renderers are not required to distinctly render more than the
 first four levels of heading, they are required to correctly honour arbitrarily
 nested numberings. That is:
-=begin code
+=begin code :lang<rakudoc>
     =head6 # The Rescue of the Kobayashi Maru
 =end code
 
 should produce something like:
-=begin code
+=begin code :lang<rakudoc>
 2.3.8.6.1.9. The Rescue of the Kobayashi Maru
 =end code
 
@@ -653,7 +763,7 @@ C<=config> directive. Meta data in a config is provided to all blocks in the blo
 in the C<=begin section> declaration is only applied to the section.
 
 For example, suppose the following Rakudoc text was included in a source file
-=begin code
+=begin code :lang<rakudoc>
     =begin section :dev-note(v2.3.2-, 'removed due to conflict with chancellors')
     =head2 role fool
 
@@ -691,7 +801,7 @@ The paragraph is terminated by the first blank line or block directive.
 
 For example:
 
-=begin code
+=begin code :lang<rakudoc>
 =head1 This is a heading block
 
 This is an ordinary paragraph.
@@ -718,7 +828,7 @@ Alternatively, there is also an explicit C<=para> marker that can be used
 to explicitly mark a paragraph, which would be necessary outside a
 C<rakudoc> block.
 
-=begin code
+=begin code :lang<rakudoc>
 =para
 This is an ordinary paragraph.
 Its text  will   be     squeezed     and
@@ -736,7 +846,7 @@ In addition, the longer C<=begin para> and C<=end para> form can be used.
 
 For example:
 
-=begin code
+=begin code :lang<rakudoc>
 
 =begin para
 This is an ordinary paragraph.
@@ -754,7 +864,7 @@ C<=end para> block, any blank lines are preserved.
 =head2 Nesting or indenting a block
 
 Rakudoc provides a C<=nested> block that marks all its contents as being nested:
-=begin code
+=begin code :lang<rakudoc>
     =begin nested
     We are all of us in the gutter,
 
@@ -777,7 +887,7 @@ but some of us are looking at the stars!
 Nesting blocks can contain any other kind of block, including implicit paragraph and code blocks.
 Note that the relative physical indentation of the blocks plays no role in determining
 their ultimate nesting. The preceding example could equally have been specified:
-=begin code
+=begin code :lang<rakudoc>
     =begin nested
     We are all of us in the gutter,
 
@@ -806,14 +916,14 @@ However, the exact placing of whitespace is important, especially for code.
 =head3 Code blocks
 
 Code blocks are used to specify pre-formatted text (typically source code), which should be rendered without rejustification,
-without whitespace-squeezing, and by default B<without> recognizing any inline Markup codes. Code blocks also have an
+without whitespace-squeezing, and by default B<without> recognizing any inline Markup instructions. Code blocks also have an
 implicit nesting associated with them. Typically these blocks are used to show examples of code, mark-up, or
 other textual specifications, and are rendered using a fixed-width font.
 
 A code block may be implicitly specified as one or more lines of text, each of which starts with a
 whitespace character at the block's virtual left margin. The implicit code block is then terminated by a blank line.
 For example:
-=begin code
+=begin code :lang<raku>
     This ordinary paragraph introduces a code block:
 
         $this = 1 * code('block');
@@ -824,7 +934,7 @@ Implicit code blocks may only be used within C<rakudoc>, C<section>, C<item>, C<
 
 There is also an explicit C<=code> block (which can be specified within any other block type,
 not just C<=rakudoc>, C<=item>, etc.):
-=begin code
+=begin code :lang<raku>
      The C<loud_update()> subroutine adds feedback:
 
         =begin code
@@ -851,7 +961,7 @@ a language is C<:lang< ... >>. If a language is unknown to a renderer, then it m
 or a renderer may apply some other heuristic.
 
 Some of the examples in the Rakudoc sources are tested using an external processor, which needs test related information
-that can be provided in metadata tags.
+that can be provided in metadata options.
 
 =head3 I/O blocks
 
@@ -867,7 +977,7 @@ which should be rendered without re-justification or squeezing of whitespace.
 
 The C<=output> block is used to specify pre-formatted terminal or file output,
 which should also be rendered without re-justification or whitespace-squeezing.
-=begin code
+=begin code :lang<rakudoc>
 
     =begin output
             Name:    Baracus, B.A.
@@ -887,18 +997,18 @@ which should also be rendered without re-justification or whitespace-squeezing.
 
 =head3 Markup within verbatim blocks
 
-Although C<=code> blocks automatically disregard all Markup codes, occasionally you may still
+Although C<=code> blocks automatically disregard all Markup instructions, occasionally you may still
 need to specify some Markup within a code block. For example, you may wish to
 emphasize a particular keyword in an example (using a C<B<>> code). Or you may want to indicate that
 part of the example is metasyntactic (using the C<R<>> code). Or you might need to insert a non-ASCII
 character (using the C<E<>> code).
 
-You can specify a list of Markup codes that should still be recognized within a code block using
+You can specify a list of Markup instructions that should still be recognized within a code block using
 the C<:allow> option. The value of the C<:allow> option must be a list of the (single-letter)
-names of one or more Markup codes. Those codes will then remain active inside the code block.
+names of one or more Markup instructions. Those codes will then remain active inside the code block.
 For example:
-=begin code
-    =begin code :allow< B R >
+=begin code :lang<raku>
+    =begin code :allow< B R > :lang<rakudoc>
     sub demo {
         B<say> 'Hello R<name>';
         I<note> 'The I format is not recognised';
@@ -908,7 +1018,7 @@ For example:
 
 would be rendered:
 
-=begin code :allow< B R >
+=begin code :allow< B R > :lang<raku>
 sub demo {
     B<say> 'Hello R<name>';
     I<note> 'The I format is not recognised';
@@ -924,7 +1034,7 @@ Note that C<=item> is just an abbreviation for C<=item1>.
 
 Item blocks within the same list are not physically nested.
 That is, lower-level items should not be specified inside higher-level items:
-=begin code
+=begin code :lang<rakudoc>
     =comment WRONG...
     =begin item1          --------------
     The choices are:                    |
@@ -946,7 +1056,7 @@ That is, lower-level items should not be specified inside higher-level items:
 
 Lists in Rakudoc are by default unordered. For example:
 
-=begin code
+=begin code :lang<rakudoc>
 The three suspects are:
 
 =item  Happy
@@ -965,7 +1075,7 @@ The bulletting strategy used for different levels within a nested list is entire
 =head3 Ordered lists
 
 An item is part of an ordered list if the item has a :numbered configuration option:
-=begin code
+=begin code :lang<rakudoc>
      =for item1 :numbered
      Visito
 
@@ -979,7 +1089,7 @@ An item is part of an ordered list if the item has a :numbered configuration opt
      Vici
 =end code
 This would produce something like:
-=begin code
+=begin code :lang<rakudoc>
 1. Visito
 
 1.1. Veni
@@ -993,21 +1103,24 @@ although the numbering scheme is entirely at the discretion of the renderer.
 
 Alternatively, if the first word of the item consists of a single B<#> character,
 the item is treated as having a C<:numbered> option:
-=begin code
+=begin code :lang<rakudoc>
      =item1  # Visito
      =item2     # Veni
      =item2     # Vidi
      =item2     # Vici
 =end code
 
-To specify an unnumbered list item that starts with a literal B<>, either make
+=nested B<Note> that this is the only type of metadata that can be explicitly associated
+with an abbreviated form block.
+
+To specify an unnumbered list item that starts with a literal B<#>, either make
 the octothorpe verbatim:
-=begin code
+=begin code :lang<rakudoc>
     =item V<#> introduces a comment
 =end code
 
 or explicitly mark the item itself as being unnumbered:
-=begin code
+=begin code :lang<rakudoc>
     =for item :!numbered
     # introduces a comment
 =end code
@@ -1015,7 +1128,7 @@ or explicitly mark the item itself as being unnumbered:
 The numbering of successive C<=item1> list items increments automatically,
 but is reset to 1 whenever any other kind of non-ambient Pod block appears
 between two C<=item1> blocks. For example:
-=begin code
+=begin code :lang<rakudoc>
     The options are:
 
     =item1 # Liberty
@@ -1029,7 +1142,7 @@ between two C<=item1> blocks. For example:
     =item1 # Keg
 =end code
 would produce:
-=begin code
+=begin code :lang<rakudoc>
 The options are:
 
 1. Liberty
@@ -1051,7 +1164,7 @@ the higher-level item's numbering either resets or increments.
 
 To prevent a numbered C<=item1> from resetting after a non-item block,
 you can specify the C<:continued> option:
-=begin code
+=begin code :lang<rakudoc>
      =for item1
      # Retreat to remote Himalayan monastery
 
@@ -1064,7 +1177,7 @@ you can specify the C<:continued> option:
      # Prophet!
 =end code
 which produces:
-=begin code
+=begin code :lang<rakudoc>
 1. Retreat to remote Himalayan monastery
 
 2. Learn the hidden mysteries of space and time
@@ -1078,9 +1191,13 @@ which produces:
 =head3 Definition lists
 
 Lists that define terms or commands use C<=defn>, equivalent to the C<DL> lists
-in HTML
+in HTML.
 
-=begin code
+A definition contains two parts: a term and defining text. The term is the first string
+after C<=defn> terminated by an end of line. The defining text is the next string.
+A renderer is expected to distinguish between the term and the defining text.
+
+=begin code :lang<rakudoc>
 =defn Happy
 When you're not blue.
 
@@ -1096,7 +1213,7 @@ When you're not blue.
 =defn Blue
 When you're not happy.
 
-=head4 Multi-level lists
+=head3 Multi-level lists
 
 Lists may be multi-level, with items at each level specified using the
 C<=item1>, C<=item2>, C<=item3>, etc. blocks.
@@ -1105,7 +1222,7 @@ in the Rakudoc markup.) Upto four levels are normally differentiated.
 
 For example:
 
-=begin code
+=begin code :lang<rakudoc>
 =item1  Animal
 =item2     Vertebrate
 =item3     Mammals
@@ -1140,7 +1257,7 @@ we can specify items that contain multiple paragraphs.
 
 For example:
 
-=begin code
+=begin code :lang<rakudoc>
 Let's consider two common proverbs:
 
 =begin item
@@ -1227,7 +1344,7 @@ of cells.
 
 This means you can create tables compactly, line-by-line:
 
-=begin code
+=begin code :lang<rakudoc>
     =table
         The Shoveller   Eddie Stevens     King Arthur's singing shovel
         Blue Raja       Geoffrey Smith    Master of cutlery
@@ -1237,7 +1354,7 @@ This means you can create tables compactly, line-by-line:
 
 or line-by-line with multi-line headers:
 
-=begin code
+=begin code :lang<rakudoc>
     =table
         Superhero     | Secret          |
                       | Identity        | Superpower
@@ -1250,7 +1367,7 @@ or line-by-line with multi-line headers:
 
 or with multi-line headers I<and> multi-line data:
 
-=begin code
+=begin code :lang<rakudoc>
     =begin table :caption('The Other Guys')
 
                         Secret
@@ -1273,7 +1390,7 @@ or with multi-line headers I<and> multi-line data:
 
 Following are examples of valid tables.
 
-=begin code
+=begin code :lang<rakudoc>
 =begin table
         The Shoveller   Eddie Stevens     King Arthur's singing shovel
         Blue Raja       Geoffrey Smith    Master of cutlery
@@ -1282,7 +1399,7 @@ Following are examples of valid tables.
 =end table
 =end code
 
-=begin code
+=begin code :lang<rakudoc>
 =table
     Constants           1
     Variables           10
@@ -1291,7 +1408,7 @@ Following are examples of valid tables.
 
 =end code
 
-=begin code
+=begin code :lang<rakudoc>
 =for table
     mouse    | mice
     horse    | horses
@@ -1299,7 +1416,7 @@ Following are examples of valid tables.
 
 =end code
 
-=begin code
+=begin code :lang<rakudoc>
 =table
     Animal | Legs |    Eats
     =======================
@@ -1309,7 +1426,7 @@ Following are examples of valid tables.
 
 =end code
 
-=begin code
+=begin code :lang<rakudoc>
 =table
         Superhero     | Secret          |
                       | Identity        | Superpower
@@ -1318,7 +1435,7 @@ Following are examples of valid tables.
 
 =end code
 
-=begin code
+=begin code :lang<rakudoc>
 =begin table
 
                         Secret
@@ -1337,7 +1454,7 @@ Following are examples of valid tables.
 =end table
 =end code
 
-=begin code
+=begin code :lang<rakudoc>
 =table
     X | O |
    ---+---+---
@@ -1347,7 +1464,7 @@ Following are examples of valid tables.
 
 =end code
 
-=begin code
+=begin code :lang<rakudoc>
 =table
     X   O
    ===========
@@ -1357,7 +1474,7 @@ Following are examples of valid tables.
 
 =end code
 
-=begin code
+=begin code :lang<rakudoc>
 =begin table
 
 foo
@@ -1373,7 +1490,7 @@ trigger an unhandled exception during parsing.
 
 =item Mixed column separator types in the same row are not allowed:
 
-=begin code
+=begin code :lang<rakudoc>
 =begin table
 r0c0 +  r0c1 | r0c3
 =end table
@@ -1382,7 +1499,7 @@ r0c0 +  r0c1 | r0c3
 =item  Mixed visual and whitespace column separator types in the same table
 are not allowed:
 
-=begin code :skip-test<pod error>
+=begin code :skip-test<pod error> :lang<rakudoc>
 =begin table
 r0c0 +  r0c1 | r0c3
 r1c0    r0c1   r0c3
@@ -1391,7 +1508,7 @@ r1c0    r0c1   r0c3
 
 =item Two consecutive interior row separators are not allowed:
 
-=begin code :skip-test<pod error>
+=begin code :skip-test<pod error> :lang<rakudoc>
 =begin table
 r0c0 |  r0c1
 ============
@@ -1414,7 +1531,7 @@ character, while it takes at least B<two> adjacent WS characters to define
 a column separation. B<This is a valid table but will be parsed as a
 single-column table>.
 
-    =begin code
+    =begin code :lang<rakudoc>
         =begin table
         r0c0    r0c1
          r1c0 r0c1
@@ -1434,7 +1551,7 @@ be what the user intended because the first row has two
 columns while the second row has only one column, and it will thus have
 an empty second column.
 
-=begin code
+=begin code :lang<rakudoc>
 =begin table
 r0c0  |  r0c1
  r1c0 |r0c1
@@ -1518,7 +1635,7 @@ The C<cell> and C<row> blocks are not specified outside a C<grid> block. A rende
 render them as unknown blocks if they are not within the block scope of a C<grid> block.
 
 =head4 Grid examples
-=begin code
+=begin code :lang<rakudoc>
 =grid
 =cell The Shoveller
 =cell Eddie Stevens
@@ -1534,7 +1651,7 @@ render them as unknown blocks if they are not within the block scope of a C<grid
 =cell Haunted bowling ball
 =end code
 will yield something like
-=begin code
+=begin code :lang<rakudoc>
         The Shoveller   Eddie Stevens     King Arthur's singing shovel
            Blue Raja    Geoffrey Smith         Master of cutlery
           Mr Furious      Roy Orson        Ticking time bomb of fury
@@ -1542,7 +1659,7 @@ will yield something like
 =end code
 
 while
-=begin code
+=begin code :lang<rakudoc>
 
 =next
 =for grid :column-align<left, * >
@@ -1563,7 +1680,7 @@ while
 
 would yield
 
-=begin code
+=begin code :lang<rakudoc>
     The Shoveller   Eddie Stevens     King Arthur's singing shovel
     Blue Raja       Geoffrey Smith    Master of cutlery
     Mr Furious      Roy Orson         Ticking time bomb of fury
@@ -1571,7 +1688,7 @@ would yield
 =end code
 
 Using column-spans
-=begin code
+=begin code :lang<rakudoc>
 
 =next
 =begin grid :column-align<left, * >
@@ -1591,7 +1708,7 @@ Haunted bowling ball
 =end grid
 =end code
 
-=begin code
+=begin code :lang<rakudoc>
     The Shoveller   Eddie Stevens     King Arthur's singing shovel
     Blue Raja                         Master of cutlery
     Mr Furious      Roy Orson         Ticking time bomb of fury
@@ -1605,13 +1722,13 @@ Rakudoc comments are comments that Rakudoc renderers ignore.
 Comments are useful for I<meta>documentation (documenting the documentation).
 Single-line comments use the C<=comment> marker:
 
-=begin code
+=begin code :lang<rakudoc>
 =comment Add more here about the algorithm
 =end code
 
 For multi-line comments, use a delimited C<comment> block:
 
-=begin code
+=begin code :lang<rakudoc>
 =begin comment
 This comment is
 multi-line.
@@ -1624,7 +1741,7 @@ All uppercase block typenames are reserved for specifying standard
 documentation, publishing, source components, or metainformation. The following
 must be recognised:
 
-=begin code
+=begin code :lang<rakudoc>
 =NAME
 =AUTHOR
 =VERSION
@@ -1644,7 +1761,7 @@ table, unless the C<:toc>, C<:headlevel>, and or C<:caption> options are set.
 
 =head2 User defined blocks
 
-When a block name is not one of those specified above, it is interpretted as user defined
+When a block name is not one of those specified above, it is interpreted as user defined
 block. User defined blocks may appear in a document with C<use> must be rendered by
 a Renderer verbatim.
 
@@ -1654,17 +1771,38 @@ A powerful feature of Rakudoc is the ability to associate meta data with a block
 data can be used to change the way a block is rendered, or to allow a renderer
 to access data in the cloud, or receive data from a microservice.
 
-Some meta data tabs are defined for certain blocks and a renderer must produce
+Some meta data options are defined for certain blocks and a renderer must produce
 the behaviour described in this section (or in the section for the relevant block),
 to the extent possible for a given output format,
 
-A renderer may ignore meta data tabs not specified in this document, or define
+A renderer may ignore meta data options not specified in this document, or define
 other meta data tabs that it will recognise.
+
+=head2 Anchors
+
+Whenever a C<=head> block is rendered, it is associated with an anchor, so that when
+a link of the form C<L<link to an internal heading|#Table of contents and index>>
+(Note that the link is to the headings content), the renderer will place a link to the
+correct place in the output format. The anchor will also be used in the Table of Contents.
+
+In order for a link to work correctly, the anchor must be unique. The renderer is free to chose
+the algorithm it uses for the internal anchor. This is because different outputs, such as
+MarkDown and HTML, have different formats for anchors.
+
+An author may want to shorten an internal link to a title, and also to place an anchor on every
+block.
+
+The C<:id<name of a link>> metadata option can be attached to any block. The renderer is
+expected to create a link with that name to the start of the block. It is for the author
+of the document to ensure that all links are unique.
+
+Again the Renderer may mangle the link name internally because different output formats may
+place restrictions on the characters that can be used in a link.
 
 =head2 Table of contents and index
 
 When a renderer parses a file containing Rakudoc, Heading and C<X<>> mark up information is collected. This
-information can be rendered using a C<P<>> markup code, or maybe used in another way by the renderer
+information can be rendered using a C<P<>> markup instruction, or maybe used in another way by the renderer
 (eg., creating a sidebar with the Table of Contents).
 
 Named blocks are considered by default to be equivalent to C<=head> for the purposes of a
@@ -1688,7 +1826,7 @@ When a set of source files is related to a project with versions (such as the Ra
 documentation may get out of date, or be anticipated.
 
 A developer note can be attached to a block using the C<:dev-note> meta data tab, or specified
-inline with the C< D< ... > > markup code. Both the meta data tab and the markup code have two
+inline with the C< D< ... > > markup instruction. Both the meta data tab and the markup instruction have two
 arguments, the first is the version specification, and the second is an optional text note.
 
 The version specification is one of C<*>, C<version-> , C<version1=version2>, or C<version+>, where
@@ -1711,36 +1849,15 @@ C<:dev-note<*>>.
 
 An example is given in the description of the L<C<section> block |#Sections>
 
-=head2 Explicit anchors
+=head1 Markup instructions
 
-A C<=head> block declaration may be given an explicit anchor with C<:anchor<...> >.
+Markup instructions provide a way to add inline mark-up to a piece of text.
 
-Normally when a C<head> block is specified, an implicit anchor is created by the renderer. The algorithm
-for the anchor is to replace C<WS> with the C<_> character. A check is made to ensure that the
-anchor is unique to the document.
-
-This anchor can then be used in C<L<>> markup.
-
-The problem is that if a heading text is edited, the automatic anchor will change. Any C< L<> >
-links will then be incorrect.
-
-The C<:anchor<...>> meta data tab avoid this problem because the document author can specify
-the anchor that must be associated with a header.
-
-If two anchors with the same name but different
-headers are encountered by the renderer, it may differentiate them by adding C<_1> to the second
-anchor (C<_2> to the third and so on). It is the author's responsibility to ensure that all the
-explicit anchors in a file are unique.
-
-=head1 Markup codes
-
-Markup codes provide a way to add inline mark-up to a piece of text.
-
-All Rakudoc Markup codes consist of a single capital letter followed immediately
+All Rakudoc Markup instructions consist of a single capital letter followed immediately
 by a set of single or double angle brackets; Unicode double angle brackets may
 be used.
 
-Markup codes may nest other Markup codes.
+Markup instructions may nest other Markup instructions.
 
 The following codes are available: B<B>, B<C>, B<E>, B<I>, B<K>, B<L>, B<N>,
 B<P>, B<R>, B<T>, B<U>, B<V>, B<X>, and B<Z>.
@@ -1748,7 +1865,7 @@ B<P>, B<R>, B<T>, B<U>, B<V>, B<X>, and B<Z>.
 =head2 Bold
 
 To format a text in bold enclose it in C<B< >>
-=for code
+=for code :lang<rakudoc>
 Raku is B<awesome>
 
 Raku is B<awesome>
@@ -1756,7 +1873,7 @@ Raku is B<awesome>
 =head2 Italic
 
 To format a text in italic enclose it in C<I< >>
-=for code
+=for code :lang<rakudoc>
 Raku is I<awesome>
 
 Raku is I<awesome>
@@ -1764,7 +1881,7 @@ Raku is I<awesome>
 =head2 Underlined
 
 To underline a text enclose it in C<U< >>
-=for code
+=for code :lang<rakudoc>
 Raku is U<awesome>
 
 Raku is U<awesome>
@@ -1772,7 +1889,7 @@ Raku is U<awesome>
 =head2 Code
 
 To flag text as code and treat it verbatim enclose it in C<C< >>
-=for code
+=for code :lang<rakudoc>
 C<my $var = 1; say $var;>
 
 C<my $var = 1; say $var;>
@@ -1789,7 +1906,7 @@ If the label is omitted, then the target is used as the label.
 The target location can be a URL (first example), a local Rakudoc document
 (second example), or a document in a Raku distribution, depending on the schema.
 
-=for code
+=for code :lang<rakudoc>
 Raku homepage L<https://raku.org>
 L<Raku homepage|https://raku.org>
 
@@ -1800,7 +1917,7 @@ L<Raku homepage|https://raku.org>
 Here the schema is C<http> or C<https>. If the target contains a C<#> character, then
 it indicates a location within a page.
 
-=for code
+=for code :lang<rakudoc>
 Structure L</language/rakudoc#Links|/language/rakudoc#Links>
 L<Structure|/language/rakudoc#Links>
 
@@ -1812,7 +1929,7 @@ Here the schema is absent and for a web page served, for example from C<docs.rak
 as C<https://docs.raku.org/language/rakudoc#Links>
 
 To create a link to a section in the same document:
-=for code
+=for code :lang<rakudoc>
 Comments L<#Comments>
 L<Comments|#Comments>
 
@@ -1820,7 +1937,7 @@ Comments L<#Comments>
 
 L<Comments|#Comments>
 
-=for code
+=for code :lang<rakudoc>
 Importing from a JSON string using L<from-json|doc://JSON::Fast#from-json>
 
 Here the C<doc://> schema means a Raku distribution called C<JSON::Fast> and an internal link within
@@ -1837,7 +1954,7 @@ in the opposite direction. Instead of directing focus out to another
 document, it allows you to assimilate the contents of another document
 into your own.
 
-In other words, the C<P<>> Markup code takes a URI and (where possible)
+In other words, the C<P<>> Markup instruction takes a URI and (where possible)
 inserts the contents of the corresponding document inline in place of the
 code itself.
 
@@ -1845,7 +1962,7 @@ C<P<>> codes are handy for breaking out standard elements of
 your documentation set into reusable components that can then be
 incorporated directly into multiple documents. For example:
 
-=begin code
+=begin code :lang<rakudoc>
 =COPYRIGHT
 P<file:/shared/docs/std_copyright.rakudoc>
 
@@ -1913,9 +2030,9 @@ in place of the C<P<>> code.
 
 =head2 Alias placement
 
-A variation on placement codes is the A<> code, which is replaced by the contents of the
+A variation on the placement instruction is the C<A<>> instruction, which is replaced by the contents of the
 named alias or object specified within its delimiters. For example:
-=begin code
+=begin code :lang<rakudoc>
     =alias PROGNAME    Earl Irradiatem Eventually
     =alias VENDOR      4D Kingdoms
     =alias TERMS_URL   L<http://www.4dk.com/eie>
@@ -1933,7 +2050,7 @@ So, for example, a document can refer to its own filename (as C<A<$?FILE>>), or 
 which the specific Pod is nested (as C<A<&?ROUTINE>>), or to the current class (as C<A<$?CLASS>>).
 Similarly, the value of any program constants defined with sigils can be easily reproduced in documentation:
 
-    =begin code
+    =begin code :lang<rakudoc>
     # Actual code...
     constant Num $GROWTH_RATE = 1.6;
     =begin rakudoc
@@ -1948,21 +2065,28 @@ surrounding subroutine's signature (C<A<&?ROUTINE.signature>>) or the type of a 
 
 See L<Aliases|#Alias_blocks> for further details of the aliasing macro mechanism.
 
+=head2 Graphic placement
+
+Another variant on the placement instruction is the C<G<>> instruction.
+
+Like C<P<>>, the C<G<Alt text|url schema>> takes appropriately formatted image
+data from the url and places it inline.
+
 =head2 Space-preserving text
 
 Any text enclosed in an S<> code is formatted normally, except that every whitespace character
 in it — including any newline — is preserved. These characters are also treated as being
 non-breaking (except for the newlines, of course). For example:
-=begin code
+=begin code :lang<rakudoc>
 The emergency signal is: S<
 dot dot dot   dash dash dash   dot dot dot>.
 =end code
 would be formatted like so:
-=begin code
+=begin code :lang<rakudoc>
 The emergency signal is:… dot dot dot   dash dash dash    dot dot dot.
 =end code
 rather than:
-=begin code
+=begin code :lang<rakudoc>
 The emergency signal is: dot dot dot dash dash dash dot dot dot.
 =end code
 
@@ -1971,7 +2095,7 @@ The emergency signal is: dot dot dot dash dash dash dot dot dot.
 A comment is text that is never rendered.
 
 To create a comment enclose it in C<Z< >>
-=for code
+=for code :lang<rakudoc>
 Raku is awesome Z<Of course it is!>
 
 Raku is awesome Z<Of course it is!>
@@ -1981,7 +2105,7 @@ Raku is awesome Z<Of course it is!>
 Notes are rendered as footnotes.
 
 To create a note enclose it in C<N< >>
-=for code
+=for code :lang<rakudoc>
 Raku is multi-paradigmatic N<Supporting Procedural, Object Oriented, and Functional programming>
 
 Raku is multi-paradigmatic N<Supporting Procedural, Object Oriented, and Functional programming>
@@ -1989,19 +2113,19 @@ Raku is multi-paradigmatic N<Supporting Procedural, Object Oriented, and Functio
 =head2 Keyboard input
 
 To flag text as keyboard input enclose it in C<K< >>
-=for code
+=for code :lang<rakudoc>
 Enter your name K<John Doe>
 
 Enter your name K<John Doe>
 
 =head2 Replaceable
 
-The C<R<>> Markup code specifies that the contained text is a
+The C<R<>> Markup instruction specifies that the contained text is a
 B<replaceable item>, a placeholder, or a metasyntactic variable. It is
 used to indicate a component of a syntax or specification that should
 eventually be replaced by an actual value. For example:
 
-=begin code
+=begin code :lang<rakudoc>
 The basic C<ln> command is: C<ln> R<source_file> R<target_file>
 =end code
 
@@ -2025,7 +2149,7 @@ value for the desired code point. It can also enclose explicit binary, octal,
 decimal, or hexadecimal numbers using the Raku notations for explicitly based
 numbers.
 
-=begin code
+=begin code :lang<rakudoc>
 Raku makes considerable use of the E<171> and E<187> characters.
 
 Raku makes considerable use of the E<laquo> and E<raquo> characters.
@@ -2046,22 +2170,22 @@ Raku makes considerable use of the « and » characters.
 This code is not implemented by C<Pod::To::HTML>, but is implemented in
 C<Raku::Pod::Render>.
 
-The C<V<>> Markup code treats its entire contents as being B<verbatim>,
-disregarding every apparent Markup code within it. For example:
+The C<V<>> Markup instruction treats its entire contents as being B<verbatim>,
+disregarding every apparent Markup instruction within it. For example:
 
-=for code
-The B<V< V<> >> Markup code disarms other codes
+=for code :lang<rakudoc>
+The B<V< V<> >> Markup instruction disarms other codes
 such as V< I<>, C<>, B<>, and M<> >.
 
 Note, however that the C<V<>> code only changes the way its
 contents are parsed, I<not> the way they are rendered. That is, the
 contents are still wrapped and formatted like plain text, and the
-effects of any Markup codes surrounding the C<V<>> code
+effects of any Markup instructions surrounding the C<V<>> code
 are still applied to its contents. For example the previous example
 is rendered as:
 
 =nested
-The B<V< V<> >> Markup code disarms other codes
+The B<V< V<> >> Markup instruction disarms other codes
 such as V< I<>, C<>, B<>, and M<> >.
 
 =head2 Indexing terms
@@ -2135,13 +2259,13 @@ the version range.
     _________       ____________________________________________________
     alias           Define a Pod macro
     begin           Start of an explicitly terminated block
-    config          Block scope modifications to a block or Markup code
+    config          Block scope modifications to a block or Markup instruction
     end             Explicit termination of a begin block
     finish          No ambient blocks after this point
     for             Start of an implicitly (blank-line) terminated block
 
 =head2 Blocks
-=for table :allow<I, R>
+=for table
     Block typename   Specifies
     ______________   ___________________________________________________
     code             Verbatim pre-formatted sample source code
@@ -2149,10 +2273,10 @@ the version range.
     output           Pre-formatted sample output
     comment          Content to be ignored by all renderers
     head             First-level heading
-    headR<N>         I<N>th-level heading
+    headN            Nth-level heading
     defn             Definition of a term
     item             First-level list item
-    itemR<N>         I<N>th-level list item
+    itemN            Nth-level list item
     nested           Nest block contents within the current context
     para             Ordinary paragraph
     rakudoc          No "ambient" blocks inside
@@ -2162,112 +2286,186 @@ the version range.
     grid             Complex table that can embed a table
     graphic          Insert an image from a url
     data             Raku data section
-    R<RESERVED>      Semantic blocks (SYNOPSIS, TITLE, etc.)
-    R<Typename>      User-defined block
+    RESERVED         Semantic blocks (SYNOPSIS, TITLE, etc.)
+    Custom-Name      User-defined block
 
-=head2 Meta data tabs
-=begin table :allow<C>
-    Meta data tab       Blocks applied to   Description
+=head2 Meta data options
+=begin table
+    Meta data option    Blocks applied to   Description
     ______________      _________________   ___________
-    allow               C<=code>            Change default of verbatim blocks
-                        C<=input>
-                        C<=output>
-                        C<=table>
-                        C<=grid>
-
-    anchor              C<=headN>           specify the anchor for a heading
-
-    numbered            C<=headN>           Number the block
-    #                   C<=item>
-
-    !numbered           C<=headN>           Do not number the block in a list
-                        C<=item>
-
-    continued           C<=item>            Continue an existing numbering list
-
-    toc                 C<=para>            Include content or caption in Table of contents
-                        C<=nested>
-                        C<=code>
-                        C<=input>
-                        C<=output>
-                        C<=table>
-                        C<=grid>
-
-    !toc                Custom block        Do not include contents or caption in Table of contents
-                        C<=headN>
-
-    headlevel           Custom block        Define the head level at which the caption is
-                        C<=para>            included in the Table of contents
-                        C<=nested>
-                        C<=code>
-                        C<=input>
-                        C<=output>
-                        C<=table>
-                        C<=grid>
-
-    caption             C<=table>           Caption to be associated with a block in the Table of Contents
-                        C<=grid>
-                        C<=nested>
-                        C<=code>
-                        C<=input>
-                        C<=output>
+    allow                                   Change default of verbatim blocks
+    ______________      _________________   ___________
+                        code
+    ______________      _________________   ___________
+                        input
+    ______________      _________________   ___________
+                        output
+    ______________      _________________   ___________
+                        table
+    ______________      _________________   ___________
+                        grid
+    ______________      _________________   ___________
+    id                                      Specify the anchor for a block
+    ______________      _________________   ___________
+                        all blocks
+    ______________      _________________   ___________
+    numbered                                Number the block
+    ______________      _________________   ___________
+    #                   headN
+    ______________      _________________   ___________
+                        item
+    ______________      _________________   ___________
+    !numbered                               Do not number the block in a list
+    ______________      _________________   ___________
+                        headN
+    ______________      _________________   ___________
+                        item
+    ______________      _________________   ___________
+    continued                               Continue an existing numbering list
+    ______________      _________________   ___________
+                        item
+    ______________      _________________   ___________
+    toc                                     Include content or caption in Table of contents
+    ______________      _________________   ___________
+                        para
+    ______________      _________________   ___________
+                        nested
+    ______________      _________________   ___________
+                        code
+    ______________      _________________   ___________
+                        input
+    ______________      _________________   ___________
+                        output
+    ______________      _________________   ___________
+                        table
+    ______________      _________________   ___________
+                        grid
+    ______________      _________________   ___________
+    !toc                                    Do not include contents or caption in Table of contents
+    ______________      _________________   ___________
                         Custom block
-
-    header-rows         C<=table>           Specify the row/rows rendered as headers
-                        C<=grid>
-
-    label-columns       C<=table>           Specify the column/columns rendered as labels
-                        C<=grid>
-
-    vertically-align    C<=table>           Specify the row/rows whose cells are
-    v-align             C<=grid>            aligned C<:v-align(V-ALIGN, COLS))>
-
-    horizontally-align  C<=table>           Specify the column/columns whose cells are
-    h-align             C<=grid>            aligned C<:h-align(H-ALIGN, ROWS))>
-
-    base-row            C<=table>           Specify the row to be used for column numbering
-                        C<=grid>
-
-    row                 C<=cell>            Specify which row a cell is to be placed on
-
-    column              C<=cell>            Specify which column a cell is to be placed into
-
-    row-span            C<=cell>            Specify the row-span a cell should have in a grid
-
-    column-span         C<=cell>            Specify the column span a cell should have in a grid
-
-    dev-note            C<=table>           Developer information associated with a block
-                        C<=grid>
-                        C<=nested>
-                        C<=code>
-                        C<=input>
-                        C<=output>
+    ______________      _________________   ___________
+                        headN
+    ______________      _________________   ___________
+    headlevel                               Define the head level at which the caption is
+    ______________      _________________   ___________
+                        Custom block        included in the Table of contents
+    ______________      _________________   ___________
+                        para
+    ______________      _________________   ___________
+                        nested
+    ______________      _________________   ___________
+                        code
+    ______________      _________________   ___________
+                        input
+    ______________      _________________   ___________
+                        output
+    ______________      _________________   ___________
+                        table
+    ______________      _________________   ___________
+                        grid
+    ______________      _________________   ___________
+    caption                                 Caption to be associated with a block in the Table of Contents
+    ______________      _________________   ___________
+                        table
+    ______________      _________________   ___________
+                        grid
+    ______________      _________________   ___________
+                        nested
+    ______________      _________________   ___________
+                        code
+    ______________      _________________   ___________
+                        input
+    ______________      _________________   ___________
+                        output
+    ______________      _________________   ___________
                         Custom block
-                        C<=headN>
+    ______________      _________________   ___________
+    header-rows                             Specify the row/rows rendered as headers
+    ______________      _________________   ___________
+                        table
+    ______________      _________________   ___________
+                        grid
+    ______________      _________________   ___________
+    label-columns                           Specify the column/columns rendered as labels
+    ______________      _________________   ___________
+                        table
+    ______________      _________________   ___________
+                        grid
+    ______________      _________________   ___________
+    vertically-align                        Specify the row/rows whose cells are
+    ______________      _________________   ___________
+    v-align             table               aligned :v-align(V-ALIGN, COLS))
+    ______________      _________________   ___________
+                        grid
+    ______________      _________________   ___________
+    horizontally-align                      Specify the column/columns whose cells are
+    ______________      _________________   ___________
+    h-align             table               aligned :h-align(H-ALIGN, ROWS))
+    ______________      _________________   ___________
+                        grid
+    ______________      _________________   ___________
+    base-row                                Specify the row to be used for column numbering
+    ______________      _________________   ___________
+                        grid
+    ______________      _________________   ___________
+    row                                     Specify which row a cell is to be placed on
+    ______________      _________________   ___________
+                        cell
+    ______________      _________________   ___________
+    column                                  Specify which column a cell is to be placed into
+    ______________      _________________   ___________
+                        cell
+    ______________      _________________   ___________
+    row-span                                Specify the row-span a cell should have in a grid
+    ______________      _________________   ___________
+                        cell
+    ______________      _________________   ___________
+    column-span                             Specify the column span a cell should have in a grid
+    ______________      _________________   ___________
+                        cell
+    ______________      _________________   ___________
+    dev-note                                Developer information associated with a block
+    ______________      _________________   ___________
+                        table
+    ______________      _________________   ___________
+                        grid
+    ______________      _________________   ___________
+                        nested
+    ______________      _________________   ___________
+                        code
+    ______________      _________________   ___________
+                        input
+    ______________      _________________   ___________
+                        output
+    ______________      _________________   ___________
+                        Custom_block
+    ______________      _________________   ___________
+                        headN
+
 =end table
 
-=head2 Markup codes
-
-=for table :allow<C>
-    Markup code          Specifies
-    __________________   ___________________________________________________
-    C<A<...>>            Replaced by contents of specified macro/object
-    C<B<...>>            Basis/focus of sentence (typically rendered bold)
-    C<C<...>>            Code (typically rendered fixed-width)
-    C<D<...|...;...>>    Developer note (C<D<visible text|version; Notification text>>)
-    C<E<...;...>>        Entity names or numeric codepoints (C<E<entity1;entity2;...>>)
-    C<G<...|...>>        Insert an inline graphic (C<G<alt text|url>>)
-    C<I<...>>            Important (typically rendered in italics)
-    C<K<...>>            Keyboard input (typically rendered fixed-width)
-    C<L<...|...>>        Link (C<L<display text|destination URI>>)
-    C<N<...>>            Note (not rendered inline)
-    C<P<...>>            Placement link
-    C<V<...>>            Replaceable component or metasyntax
-    C<S<...>>            Space characters to be preserved
-    C<T<...>>            Terminal output (typically rendered fixed-width)
-    C<U<...>>            Unusual (typically rendered with underlining)
-    C<V<...>>            Verbatim (internal Markup codes ignored)
-    C<X<...|..,..;...>>  Index entry (C<X<display text|entry,subentry;...>>)
-    C<Z<...>>            Zero-width comment (contents never rendered)
+=head2 Markup instructions
+=for table
+    Markup instruction  +   Specifies
+    __________________  +   ___________________________________________________________
+    A<...>              +   Replaced by contents of specified macro/object
+    B<...>              +   Basis/focus of sentence (typically rendered bold)
+    C<...>              +   Code (typically rendered fixed-width)
+    D<...\|...;...>     +   Developer note (D<visible text\|version; Notification text>
+    E<...;...>          +   Entity names or numeric codepoints (E<entity1;entity2;...>
+    G<...\|...>         +   Insert an inline graphic (G<alt text\|url>
+    I<...>              +   Important (typically rendered in italics)
+    K<...>              +   Keyboard input (typically rendered fixed-width)
+    L<...\|...>         +   Link (L<display text\|destination URI>
+    N<...>              +   Note (not rendered inline)
+    P<...>              +   Placement link
+    V<...>              +   Replaceable component or metasyntax
+    S<...>              +   Space characters to be preserved
+    T<...>              +   Terminal output (typically rendered fixed-width)
+    U<...>              +   Unusual (typically rendered with underlining)
+    V<...>              +   Verbatim (internal Markup instructions ignored)
+    X<...\|..,..;...>   +   Index entry (X<display text\|entry,subentry;...>
+    Z\<...>             +   Zero-width comment (contents never rendered)
 
 =end pod
