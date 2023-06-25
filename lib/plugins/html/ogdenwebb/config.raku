@@ -11,12 +11,14 @@
 	:render<move-images.raku>,
 	:template-raku<ogdenwebb-replacements.raku>,
 	:error-report,
-	:!extended-search,
-	:version<0.3.20>,
+	:version<0.3.21>,
 	:add-css<
 		css/main.css
 		css/themes/dark.css css/themes/light.css
 	>, # order of css files is important
 	:jquery( ['core.js', 3], ),
-	:information<add-css jquery>,
+	:jquery-link(
+		['src="https://rawgit.com/farzher/fuzzysort/master/fuzzysort.js"', 1],
+	),
+	:information<add-css jquery jquery-link>,
 )

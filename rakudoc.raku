@@ -1,41 +1,28 @@
 #!/usr/bin/env raku
 use v6.d;
-my grammar Markers {
-    rule marker {
-        "\xff\xff" ~ "\xff\xff" .+?
-    }
-    rule TOP {
-        [<marker> .*? ]+ $
-    }
-}
-my $t = $=finish;
+say $=pod.raku;
+=begin pod
 
-#my $parsed = $t ~~ / ( "\xFF\xFF" ~ "\xFF\xFF" ( .+? ) .*? ]+ $ /;
-#my $parsed = Markers.parse( $t );
-my @tokens;
-my $nt;
-for $parsed.chunks -> $c {
-    if ~$c.key eq 'marker' {
-        @tokens.push( $c.value<content> );
-        $nt ~= "\xFF\xFF"
-    }
-    else {
-        $nt ~= $c.value
-    }
-}
-#my $parsed = $t.subst( / <marker> /,{ say "chunk is: ｢$_｣ and content is { $/<content> }"; @tokens.push( .<content> ); "\xff\xff" },:g);
-say @tokens;
-say "old: $t";
-say "new: $nt";
-=finish
-    =begin code :allow< B R >
-    sub demo {
-        B<say> 'Hello R<name>';
-        I<note> 'The I format is not recognised';
-    }
-    =end code
+=begin table
+    Markup instruction  +   Specifies
+    __________________  +   ___________________________________________________________
+    A<...>              +   Replaced by contents of specified macro/object
+    B<...>              +   Basis/focus of sentence (typically rendered bold)
+    C<...>              +   Code (typically rendered fixed-width)
+    D<...\|...;...>     +   Developer note (D<visible text\|version; Notification text>
+    E<...;...>          +   Entity names or numeric codepoints (E<entity1;entity2;...>
+    G<...\|...>         +   Insert an inline graphic (G<alt text\|url>
+    I<...>              +   Important (typically rendered in italics)
+    K<...>              +   Keyboard input (typically rendered fixed-width)
+    L<...\|...>         +   Link (L<display text\|destination URI>
+    N<...>              +   Note (not rendered inline)
+    P<...>              +   Placement link
+    V<...>              +   Replaceable component or metasyntax
+    S<...>              +   Space characters to be preserved
+    T<...>              +   Terminal output (typically rendered fixed-width)
+    U<...>              +   Unusual (typically rendered with underlining)
+    V<...>              +   Verbatim (internal Markup instructions ignored)
+    X<...\|..,..;...>   +   Index entry (X<display text\|entry,subentry;...>
+    Z<...>              +   Zero-width comment (contents never rendered)
 
-An X<array|ÿÿ<strong>ÿÿarrays, definition ofÿÿ</strong>ÿÿ> is an ordered list of scalars
-indexed by number. A X<hash|ÿÿ<strong>ÿÿhashes, definition ofÿÿ</strong>ÿÿ>
-is an unordered collection of scalar values indexed by their
-associated string key.
+=end pod

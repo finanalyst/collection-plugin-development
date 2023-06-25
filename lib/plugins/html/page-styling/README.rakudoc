@@ -1,7 +1,10 @@
 =begin pod
-=TITLE page-styling is to style the Raku documentation suite
+=TITLE Page-styling provides the wrapping for Raku docmentation files
 
-The plugin is a revision of the ogdenwebb plugin
+The plugin is intended to replace the OgdenWebb plugin.
+
+The principal changes are to put the Table of Contents / Index into a left hand sidebar,
+and the Search into a right-hand sidebar.
 
 =head1 Custom blocks
 

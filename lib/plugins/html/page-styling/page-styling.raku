@@ -9,8 +9,7 @@ use v6.d;
         { %tml<head-block>.(%prm, %tml) }
         <body class="has-navbar-fixed-top">
         { %tml<top-of-page>.(%prm, %tml) }
-        { %tml<header>.(%prm, %tml)  }
-        { %tml<sidebar>.(%prm, %tml)  }
+        { %tml<navigation>.(%prm, %tml)  }
         { %tml<wrapper>.(%prm, %tml)  }
         { %tml<footer>.(%prm, %tml)  }
         { %tml<js-bottom>.({}, {}) }
@@ -19,28 +18,69 @@ use v6.d;
         BLOCK
     },
     'head-block' => sub (%prm, %tml) {
-        "\<head>\n"
-            ~ '<title>' ~ %tml<escaped>.(%prm<title>) ~ " | Raku Documentation\</title>\n"
-            ~ '<meta charset="UTF-8" />' ~ "\n"
-            ~ %tml<favicon>.({}, {})
-            ~ (%prm<metadata> // '')
-            ~ %tml<css>.({}, {})
-            ~ %tml<jq-lib>.({}, {})
-            ~ %tml<js>.({}, {})
-            ~ "\</head>\n"
+        qq:to/HEADBLOCK/
+            <head>
+                <title>{ %tml<escaped>.(%prm<title>) } | Raku Documentation\</title>
+                <meta charset="UTF-8" />
+                { %tml<favicon>.({}, {}) }
+                { %prm<metadata> // '' }
+                { %tml<css>.({}, {}) }
+                { %tml<jq-lib>.({}, {}) }
+                { %tml<js>.({}, {}) }
+            </head>
+            HEADBLOCK
     },
-    'header' => sub (%prm, %tml) {
+    'navigation' => sub (%prm, %tml) {
         qq:to/BLOCK/
         <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
-          <div class="container">
-            { %tml<head-brand>.( %prm, %tml) }
-            <div id="navMenu" class="navbar-menu">
-                { %tml<head-topbar>.( %prm, %tml) }
-                { %tml<head-search>.( %prm, %tml) }
-            </div>
-          </div>
+        { %tml<left-bar-toggle>.( %prm, %tml) }
+        { %tml<head-brand>.( %prm, %tml) }
+        { %tml<head-topbar>.( %prm, %tml) }
+        { %tml<right-bar-toggle>.( %prm, %tml) }
         </nav>
         BLOCK
+    },
+    'left-bar-toggle' => sub (%prm, %tml ) {
+      q:to/BLOCK/
+        <div id="navbar-left-toggle" class="has-tooltip-bottom navbar-start" title="Toggle Table of Contents">
+          <a class="navbar-item navbar-filter-settings navbar-sidebar-btn">
+          <div>
+            <span class="icon-text filter">
+                <span class="icon " aria-hidden="true">
+                <i class="fas fa-cogs"></i>
+                </span>
+                <span class="sidebar-title">Contents</span>
+            </span>
+          </div>
+          <div class="sidebar-arrow">
+              <span class="icon " aria-hidden="true">
+                <i class="fas fa-chevron-right"></i>
+              </span>
+          </div>
+        </a>
+      </div>
+      BLOCK
+    },
+    'right-bar-toggle' => sub (%prm, %tml ) {
+      q:to/BLOCK/
+        <div id="navbar-right-toggle" class="navbar-end has-tooltip-bottom is-hidden-touch" title="Toggle search sidebar">
+            <a class="navbar-item navbar-channels navbar-sidebar-btn">
+            <div class="sidebar-arrow">
+                <span class="icon " aria-hidden="true">
+                <i class="fas fa-chevron-left"></i>
+                </span>
+            </div>
+            <div>
+                <span class="icon-text">
+                <span class="icon " aria-hidden="true">
+                <i class="fas fa-cogs"></i>
+                </span>
+                <span class="sidebar-title">Search</span>
+                </span>
+            </div>
+            </a>
+        </div>
+      BLOCK
     },
     'head-brand' => sub (%prm, %tml ) {
         q:to/BLOCK/
@@ -61,76 +101,47 @@ use v6.d;
     },
     'head-topbar' => sub ( %prm, %tml ) {
         q:to/BLOCK/
-          <div class="navbar-start">
-            <a class="navbar-item" href="/language">
-                Language
-            </a>
-            <a class="navbar-item" href="/types">
-                Types
-            </a>
-            <a class="navbar-item" href="/routines">
-                Routines
-            </a>
-            <a class="navbar-item" href="/programs">
-                Programs
-            </a>
-            <a class="navbar-item" href="https://raku.org">
-                Raku™ Homepage
-            </a>
-            <a class="navbar-item" href="https://kiwiirc.com/client/irc.libera.chat/#raku">
-                Chat with us
-            </a>
-            <div class="navbar-item has-dropdown is-hoverable">
-              <a class="navbar-link">
-                More
-              </a>
-              <div class="navbar-dropdown">
-                <hr class="navbar-divider">
-                <a class="navbar-item" href="/about">
-                  About
+          <div id="navMenu" class="navbar-menu">
+            <div class="navbar-start">
+                <a class="navbar-item" href="/language">
+                    Language
                 </a>
-                <hr class="navbar-divider">
-                <a class="navbar-item has-text-red" href="https://github.com/raku/doc-website/issues">
-                  Report an issue with this site
+                <a class="navbar-item" href="/types">
+                    Types
                 </a>
-                <hr class="navbar-divider">
-                <a class="navbar-item has-text-red" href="https://github.com/raku/doc/issues">
-                  Report an issue with the documentation content
+                <a class="navbar-item" href="/routines">
+                    Routines
                 </a>
-              </div>
+                <a class="navbar-item" href="/programs">
+                    Programs
+                </a>
+                <a class="navbar-item" href="https://raku.org">
+                    Raku™ Homepage
+                </a>
+                <a class="navbar-item" href="https://kiwiirc.com/client/irc.libera.chat/#raku">
+                    Chat with us
+                </a>
+                <div class="navbar-item has-dropdown is-hoverable">
+                  <a class="navbar-link">
+                    More
+                  </a>
+                  <div class="navbar-dropdown">
+                    <hr class="navbar-divider">
+                    <a class="navbar-item" href="/about">
+                      About
+                    </a>
+                    <hr class="navbar-divider">
+                    <a class="navbar-item has-text-red" href="https://github.com/raku/doc-website/issues">
+                      Report an issue with this site
+                    </a>
+                    <hr class="navbar-divider">
+                    <a class="navbar-item has-text-red" href="https://github.com/raku/doc/issues">
+                      Report an issue with the documentation content
+                    </a>
+                  </div>
+                </div>
             </div>
           </div>
-        BLOCK
-    },
-    'head-search' => sub (%prm, %tml ) { # placeholder here. Should be modified by search-bar plugin
-	    '<div class="navbar-end navbar-search-wrapper"></div>'
-    },
-    'sidebar' => sub (%prm, %tml) {
-        return '' unless %prm<toc>;
-        qq:to/BLOCK/
-        <div id="raku-sidebar" class="raku-sidebar-toggle" style="">
-          <a class="button is-primary">
-            <span class="icon">
-            <!-- This is where the chevron arrow will be loaded in the right direction -->
-            </span>
-          </a>
-        </div>
-        <div id="mainSidebar" class="raku-sidebar" style="width:0px; display:none;">
-          <div class="field">
-            <label class="label has-text-centered">Table of Contents</label>
-            <div class="control has-icons-right">
-              <input id="toc-filter" class="input" type="text" placeholder="Filter">
-              <span class="icon is-right has-text-grey">
-                <i class="fas fa-search is-medium"></i>
-              </span>
-            </div>
-          </div>
-          <div class="raku-sidebar-body">
-            <aside id="toc-menu" class="menu">
-            { %prm<toc> }
-            </aside>
-          </div>
-        </div>
         BLOCK
     },
     'wrapper' => sub (%prm, %tml) {
@@ -140,12 +151,45 @@ use v6.d;
         else {
             qq:to/BLOCK/
             <div id="wrapper">
+                <section class="section">
+                <div class="columns">
+                { %tml<toc-sidebar>.(%prm, %tml)  }
+                { %tml<page-main>.(%prm, %tml) }
+                { %tml<search-sidebar>.(%prm, %tml)  }
+                </div>
+                </section>
+            </div>
+            BLOCK
+        }
+    },
+    'search-sidebar' => sub (%prm, %tml ) {
+	    qq:to/BLOCK/
+            <div id="right-column" class="column is-narrow is-hidden-touch" style="width:0px; display:none;">
+                {
+                    if %tml<raku-search-block>:exists { %tml<raku-search-block>.(%prm, %tml) }
+                    else { 'No search function' }
+                }
+            </div>
+        BLOCK
+    },
+    'toc-sidebar' => sub (%prm, %tml) {
+        qq:to/BLOCK/
+            <div id="left-column" class="column is-narrow is-hidden-touch" style="width:0px; display:none;">
+                {
+                    if %tml<raku-toc-block>:exists { %tml<raku-toc-block>.(%prm, %tml) }
+                    else { 'No Table of Contents' }
+                }
+            </div>
+        BLOCK
+    },
+    'page-main' => sub (%prm, %tml ) {
+        qq:to/MAIN/
+            <div id="main-column" class="column column-middle">
             { %tml<page-header>.(%prm, %tml) }
             { %tml<page-content>.(%prm, %tml) }
             { %tml<page-footnotes>.(%prm, %tml) }
             </div>
-            BLOCK
-        }
+        MAIN
     },
     'page-header' => sub (%prm, %tml) {
         qq:to/BLOCK/
@@ -233,50 +277,6 @@ use v6.d;
             </a>
           </div>
         BLOCK
-    },
-    #placeholder
-    block-code => sub (%prm, %tml) { # previous block-code is set by 02-highlighter
-        my regex marker {
-            "\xFF\xFF" ~ "\xFF\xFF" $<content> = (.+?)
-        };
-        # if :lang is set != raku / rakudoc, then enable highlightjs
-        # otherwise pass through Raku syntax highlighter.
-        my $code;
-        my $syntax-label;
-        if %prm<lang>:exists and %prm<lang> ne any(<raku rakudoc Raku Rakudoc>) {
-            $syntax-label = %prm<lang>.tc ~  ' highlighting by highlight-js';
-            $code = qq:to/NOTRAKU/;
-            <pre class="browser-hl"><code class="language-{ %prm<lang> }">{ %prm<contents> }</code></pre>
-            NOTRAKU
-        }
-        else {
-            my @tokens;
-            my $t;
-            my $parsed = %prm<contents> ~~ / ^ .*? [<marker> .*?]+ $/;
-            if $parsed {
-                for $parsed.chunks -> $c {
-                    if $c.key eq 'marker' {
-                        $t ~= "\xFF\xFF";
-                        @tokens.push: $c.value<content>.Str;
-                    }
-                    else {
-                        $t ~= $c.value
-                    }
-                }
-                %prm<contents> = $t;
-            }
-            $syntax-label = (%prm<lang> // 'Raku').tc ~ ' highlighting';
-            $code = %tml.prior('block-code').(%prm, %tml);
-            $code .= subst( / '<pre class="' /, '<pre class="nohighlights cm-s-ayaya ');
-            $code .= subst( / "\xFF\xFF" /, { @tokens.shift }, :g );
-        }
-        qq[
-            <div class="raku-code raku-lang">
-                <button class="copy-code" title="Copy code"><i class="far fa-clipboard"></i></button>
-                <label>$syntax-label\</label>
-                <div>$code\</div>
-            </div>
-        ]
     },
     heading => sub (%prm, %tml) {
         my $txt = %prm<text> // '';

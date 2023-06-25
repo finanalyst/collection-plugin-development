@@ -11,7 +11,7 @@
     "Raku::Pod::Render",
     "Pod::From::Cache",
     "RakuConfig",
-    "Collection",
+    "Collection:ver<0.15.4+>",
     "Terminal::ANSIColor"
   ],
   "build-depends": [],

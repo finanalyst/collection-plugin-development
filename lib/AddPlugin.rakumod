@@ -13,13 +13,9 @@ multi sub MAIN(Str:D $plug, :$mile = 'render', :$format = 'html', Bool :$test = 
     $p-path.IO.mkdir;
     "$p-path/README.rakudoc".IO.spurt(qq:to/TEMP/);
             \=begin pod
-            \=TITLE $plug is a plugin for Collection
+            \=TITLE {$plug.tc} is a Collection plugin
 
             The plugin is for the $mile milestone
-
-            \=head1 Custom blocks
-
-            \=head1 Templates
 
             \=end pod
             TEMP
@@ -28,7 +24,7 @@ multi sub MAIN(Str:D $plug, :$mile = 'render', :$format = 'html', Bool :$test = 
     "$p-path/t/05-basic.rakutest".IO.spurt(q:to/TEST/);
         use v6.d;
         use Test;
-        use Test::CollectionPlugin;
+        use Collection::TestPlugin;
         test-plugin();
         done-testing
         TEST

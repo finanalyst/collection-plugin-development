@@ -18,6 +18,6 @@
 		['src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/haskell.min.js"', 2 ],
 	),
 	:add-css<hiliter-dark.css hiliter-light.css>,
-	:jquery( ['hiliter.js', 4], )
+	:jquery( ['hiliter.js', 4], ),
 	:information<css-link js-link jquery>,
 )
