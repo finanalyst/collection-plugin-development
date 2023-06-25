@@ -9,5 +9,5 @@
 	:name<filterlines>,
 	:render,
 	:template-raku<filter-template.raku>,
-	:version<0.2.1>,
+	:version<0.2.2>,
 )

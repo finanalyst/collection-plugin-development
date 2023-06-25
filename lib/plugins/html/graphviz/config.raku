@@ -8,5 +8,5 @@
 	:name<graphviz>,
 	:render,
 	:template-raku<graphv-templates.raku>,
-	:version<0.2.2>,
+	:version<0.2.3>,
 )

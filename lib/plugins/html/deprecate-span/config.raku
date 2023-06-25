@@ -9,5 +9,5 @@
 	:name<deprecate-span>,
 	:render,
 	:template-raku<deprecation-template.raku>,
-	:version<0.1.1>,
+	:version<0.1.2>,
 )
