@@ -24,7 +24,7 @@ multi sub MAIN(Str:D $plug, :$mile = 'render', :$format = 'html', Bool :$test = 
     "$p-path/t/05-basic.rakutest".IO.spurt(q:to/TEST/);
         use v6.d;
         use Test;
-        use Collection::TestPlugin;
+        use Test::CollectionPlugin;
         test-plugin();
         done-testing
         TEST

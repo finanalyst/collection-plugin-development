@@ -107,7 +107,12 @@ my %hilight-langs = %(
                 $syntax-label = %prm<lang>.tc ~ ' highlighting';
             }
             else {
-                $syntax-label = "｢{ %prm<lang> }｣ language unknown, using Raku highlighting";
+                $syntax-label = "｢{ %prm<lang> }｣ without highlighting";
+                $code = qq:to/NOHIGHS/;
+                    <pre class="nohighlights">
+                    { %prm<contents> }
+                    </pre>
+                    NOHIGHS
             }
         }
         else {
