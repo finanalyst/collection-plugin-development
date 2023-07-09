@@ -42,7 +42,7 @@ use v6.d;
     },
     'left-bar-toggle' => sub (%prm, %tml ) {
       q:to/BLOCK/
-        <div id="navbar-left-toggle" class="has-tooltip-bottom navbar-start" title="Toggle Table of Contents">
+        <div id="navbar-left-toggle" class="has-tooltip-bottom navbar-start" title="Toggle Table of Contents (Ctl-a)">
           <a class="navbar-item navbar-filter-settings navbar-sidebar-btn">
           <div>
             <span class="icon-text filter">
@@ -63,7 +63,7 @@ use v6.d;
     },
     'right-bar-toggle' => sub (%prm, %tml ) {
       q:to/BLOCK/
-        <div id="navbar-right-toggle" class="navbar-end has-tooltip-bottom is-hidden-touch" title="Toggle search sidebar">
+        <div id="navbar-right-toggle" class="navbar-end has-tooltip-bottom is-hidden-touch" title="Toggle search sidebar (Ctl-s">
             <a class="navbar-item navbar-channels navbar-sidebar-btn">
             <div class="sidebar-arrow">
                 <span class="icon " aria-hidden="true">
@@ -101,7 +101,7 @@ use v6.d;
     },
     'head-topbar' => sub ( %prm, %tml ) {
         q:to/BLOCK/
-          <div id="navMenu" class="navbar-menu">
+          <div id="navMenu" class="navbar-item">
             <div class="navbar-start">
                 <a class="navbar-item" href="/language">
                     Language
@@ -164,7 +164,7 @@ use v6.d;
     },
     'search-sidebar' => sub (%prm, %tml ) {
 	    qq:to/BLOCK/
-            <div id="right-column" class="column is-narrow is-hidden-touch" style="width:0px; display:none;">
+            <div id="right-column" class="column is-narrow " style="width:0px; display:none;">
                 {
                     if %tml<raku-search-block>:exists { %tml<raku-search-block>.(%prm, %tml) }
                     else { 'No search function' }
@@ -185,9 +185,11 @@ use v6.d;
     'page-main' => sub (%prm, %tml ) {
         qq:to/MAIN/
             <div id="main-column" class="column column-middle">
-            { %tml<page-header>.(%prm, %tml) }
-            { %tml<page-content>.(%prm, %tml) }
-            { %tml<page-footnotes>.(%prm, %tml) }
+                <div class="container">
+                    { %tml<page-header>.(%prm, %tml) }
+                    { %tml<page-content>.(%prm, %tml) }
+                    { %tml<page-footnotes>.(%prm, %tml) }
+                </div>
             </div>
         MAIN
     },

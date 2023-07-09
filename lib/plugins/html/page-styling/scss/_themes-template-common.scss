@@ -65,10 +65,6 @@ a.navbar-item:focus-within, a.navbar-item.is-active, .navbar-link:focus, .navbar
 }
 
 
-#query::placeholder {
-  color: $input-placeholder-color;
-}
-
 a {
   color: $link;
 
@@ -376,90 +372,6 @@ p > code {
   background-color: $code-background;
   border: 1px solid lighten($code-background, 5);
 }
-
-// Sidebar module
-.raku-sidebar {
-  background-color: $scheme-main-bis;
-  border-right: 1px solid $border;
-  border-bottom: 3px solid $border;
-  // box-shadow: $sidebar-shadow; // delete
-
-  .input::placeholder, .textarea::placeholder, .select select::placeholder {
-    color: $text-dark;
-  }
-
-  .menu-list {
-    ::marker {
-      color: $heading;
-    }
-
-    list-style: disc;
-    padding-left: $size-4;
-    > ul {
-        margin-left: 1em;
-        list-style: circle;
-        > ul {
-            margin-left: 1em;
-            list-style: square;
-            > ul {
-                margin-left: 1em;
-                list-style: disclosure-closed;
-            }
-        }
-    }
-
-    a {
-      color: $text;
-
-
-      &:hover {
-        background: $menu-item-hover-background-color;
-        text-decoration: none;
-      }
-
-      &.is-active {
-        color: $text-invert;
-
-        &:hover {
-          background: $primary;
-        }
-      }
-
-    }
-  }
-}
-
-// Alt sidebar
-.raku-sidebar.category-sidebar {
-  li a.is-active {
-    background-color: $menu-item-active-background-color;
-    border-left: 3px solid $link;
-  }
-
-  a {
-    &.is-active {
-      color: $text;
-
-      &:hover {
-        background: $menu-item-active-background-color;
-      }
-    }
-  }
-}
-
-// Alt sidebar with bottom border
-// .raku-sidebar.category-sidebar {
-
-//  li a {
-//    border-bottom: 1px solid $border;
-//  }
-
-//  li a.is-active {
-//    background-color: $scheme-main-bis;
-//    // border-bottom: 3px solid $link;
-//   }
-// }
-
 
 // Raku code
 a > code {

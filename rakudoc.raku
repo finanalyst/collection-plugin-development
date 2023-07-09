@@ -3,26 +3,46 @@ use v6.d;
 say $=pod.raku;
 =begin pod
 
-=begin table
-    Markup instruction  +   Specifies
-    __________________  +   ___________________________________________________________
-    A<...>              +   Replaced by contents of specified macro/object
-    B<...>              +   Basis/focus of sentence (typically rendered bold)
-    C<...>              +   Code (typically rendered fixed-width)
-    D<...\|...;...>     +   Developer note (D<visible text\|version; Notification text>
-    E<...;...>          +   Entity names or numeric codepoints (E<entity1;entity2;...>
-    G<...\|...>         +   Insert an inline graphic (G<alt text\|url>
-    I<...>              +   Important (typically rendered in italics)
-    K<...>              +   Keyboard input (typically rendered fixed-width)
-    L<...\|...>         +   Link (L<display text\|destination URI>
-    N<...>              +   Note (not rendered inline)
-    P<...>              +   Placement link
-    V<...>              +   Replaceable component or metasyntax
-    S<...>              +   Space characters to be preserved
-    T<...>              +   Terminal output (typically rendered fixed-width)
-    U<...>              +   Unusual (typically rendered with underlining)
-    V<...>              +   Verbatim (internal Markup instructions ignored)
-    X<...\|..,..;...>   +   Index entry (X<display text\|entry,subentry;...>
-    Z<...>              +   Zero-width comment (contents never rendered)
+=begin grid
+    =row :header
+        =for cell :row-span(2)
+        Date
+        =for cell :column-span(3)
+        Samples
+        =for cell :row-span(2)
+        Mean
+    =row :header
+        =cell I<Sample 1>
+        =cell I<Sample 2>
+        =cell I<Sample 3>
+    =row
+    =column
+        =cell 2023-03-08
+        =cell 2023-04-14
+        =cell 2023-06-23
+    =column
+        =cell 0.4
+        =cell 0.8
+        =cell 0.2
+    =column
+        =cell 0.1
+        =cell 0.6
+        =cell 0.9
+    =column
+        =cell 0.3
+        =cell 0.5
+        =cell 0.0
+    =column
+        =cell 0.26667
+        =cell 0.63333
+        =cell 0.36667
+    =row
+        =for cell :label
+        Mean:
+        =cell 0.46667
+        =cell 0.53333
+        =cell 0.26667
+        =cell 0.42222
+=end grid
 
 =end pod

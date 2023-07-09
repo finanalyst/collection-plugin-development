@@ -1,0 +1,12 @@
+%(
+	:auth<collection>,
+	:authors(
+		"finanalyst",
+	),
+	:custom-raku<custom.raku>,
+	:license<Artistic-2.0>,
+	:name<grid-block>,
+	:render<grid-name-space.raku>,
+	:template-raku<grid-templates.raku>,
+	:version<0.1.0>,
+)

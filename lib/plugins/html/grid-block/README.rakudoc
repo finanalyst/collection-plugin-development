@@ -1,0 +1,12 @@
+=begin pod
+=TITLE grid-block is a plugin for Collection
+
+The plugin is to render the new C<=grid> block
+
+=head1 Custom blocks
+grid
+
+=head1 Templates
+grid
+
+=end pod

@@ -15,13 +15,8 @@ sub ($pp, %processed, %options) {
     #| spaces in the break between the value and the info section
     #| [  ]
     my $bar-chars = 8;
-    my @entries =
-        %( :category("Syntax"), :value("# single-line comment"), :url("/language/syntax#Single-line_comments"), :type<source> ),
-        %( :category("Syntax"), :value("#` multi-line comment"), :url("/language/syntax#Multi-line_/_embedded_comments"), :type<source> ),
-        %( :category("Signature"), :value(";; (long name)"), :url("/type/Signature#index-entry-Long_Names"), :type<source> )
-    ;
-    my @extended-entries;
-    my $categories = <Syntax Signature Heading Indexed>.SetHash;
+    my @entries;
+    my $categories = <Heading Indexed>.SetHash;
     # collect info stored from parsing headers
     # structure of processed
     # <filename> => %( :config-data => :kind, @sub-kind, @category )
@@ -35,7 +30,7 @@ sub ($pp, %processed, %options) {
     for %processed.kv -> $fn, $podf {
         my $value = $podf.title;
         my $info = '';
-        # some files dont have a subtitle, so no extra information to show
+        # some files don't have a subtitle, so no extra information to show
         with $podf.subtitle {
             if m/ \S / {
                 $info = .subst(/ '<p>' | '</p>' /,'',:g);
@@ -51,7 +46,7 @@ sub ($pp, %processed, %options) {
             }
         }
         if $fn ~~ / ^ [ 'syntax/' | 'routine/' ] / {
-            @extended-entries.push: %(
+            @entries.push: %(
                 :category($podf.pod-config-data<subkind>.tc),
                 :$value,
                 :$info,
@@ -69,7 +64,7 @@ sub ($pp, %processed, %options) {
             )
         }
         for $podf.raw-toc.grep({ !(.<is-title>) }) {
-            @extended-entries.push: %(
+            @entries.push: %(
                 :category<Heading>,
                 :value(.<text>),
                 :info(': section in <b>' ~ $podf.title ~ '</b>'),
@@ -81,7 +76,7 @@ sub ($pp, %processed, %options) {
             my $value = .key;
             for .value.list {
                 next if .<is-header>;
-                @extended-entries.push: %(
+                @entries.push: %(
                     :category<Indexed>,
                     :$value,
                     :info("[ { .<place> } ] in <b>{ $podf.title }\</b>"),
@@ -110,24 +105,16 @@ sub ($pp, %processed, %options) {
         else { $pre.<value> leg $pos.<value> }
     }
     @entries .= sort( $search-order );
-    'pop-search-bar.js'.IO.spurt: qq:to/JS1/;
-        var items =
-        { JSON::Fast::to-json(@entries) }
+    'sidebar-search-extended.js'.IO.spurt: qq:to/JS2/;
+        var sidebarSearchItems = { JSON::Fast::to-json( @entries ) }
         ;
-        { 'pop-search-temp.js'.IO.slurp }
-        JS1
-    @extended-entries .= sort( $search-order );
-    'pop-search-extended.js'.IO.spurt: qq:to/JS2/;
-        var itemsExtended = { JSON::Fast::to-json( @extended-entries ) }
-        ;
-        for (var i = 0, len = itemsExtended.length; i < len; i++) \{
-            items.push(itemsExtended[i]);
+        for (var i = 0, len = sidebarSearchItems.length; i < len; i++) \{
+            sidebarSearchItems.push(sidebarSearchItems[i]);
         }
-        needExtendedItems = false;
+        needSearchItems = false;
         JS2
 
     [
-        ['assets/scripts/pop-search-bar.js', 'myself', 'pop-search-bar.js'],
-        ['assets/scripts/pop-search-extended.js', 'myself', 'pop-search-extended.js'],
+        ['assets/scripts/sidebar-search-extended.js', 'myself', 'sidebar-search-extended.js'],
     ]
 }

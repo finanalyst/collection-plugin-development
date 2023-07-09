@@ -1,21 +1,3 @@
-// Responsiveness
-@include from($navbar-breakpoint) {
-  .navbar-menu .navbar-start {
-    // NOTE: Does not work on Firefox yet. But since .navbar-search-wrapper's position is absolute, it may not matter.
-    &:has(~ .navbar-search-wrapper #query:focus) {
-      display: none;
-    }
-  }
-
-  #query {
-    transition: width 0.2s ease-out;
-
-    &:focus {
-      width: $search-query-input-width-expanded;
-    }
-  }
-}
-
 @include until($navbar-breakpoint) {
   .navbar-search-wrapper {
     top: 12%;
@@ -46,10 +28,6 @@
   // .navbar-item .control {
   //   width: inherit;
   // }
-
-  #query {
-    width: 100%;
-  }
 
   .navbar-item .field .control:first-child {
     width: 90%;
@@ -122,12 +100,6 @@
   .navbar-search-autocomplete {
     display: block;
     position: absolute;
-  }
-}
-
-@media only screen and (min-width: $tablet) and (max-width: $navbar-breakpoint) {
-  #query {
-    width: $search-query-input-width-tablet;
   }
 }
 

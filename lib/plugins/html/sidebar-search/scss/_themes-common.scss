@@ -1,7 +1,6 @@
 @import "../ogdenwebb/scss/base/_variables.scss";
 
-// Autocompletion popup
-.navbar-search-autocomplete, .modal-search-autocomplete {
+.sidebar-search-autocomplete {
   color: darken($text, 10);
   background-color: $scheme-main-ter;
   box-shadow: $shadow;
