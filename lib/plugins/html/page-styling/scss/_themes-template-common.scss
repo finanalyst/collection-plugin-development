@@ -316,6 +316,8 @@ a.raku-anchor,
 
 .table thead td, .table thead th {
   color: $table-head-cell-color;
+  text-align: center;
+  vertical-align: middle;
 }
 
 .table td, .table th {

@@ -304,6 +304,8 @@ a.raku-anchor:hover,
 
 .table thead td, .table thead th {
   color: #3A3D4E;
+  text-align: center;
+  vertical-align: middle;
 }
 
 .table td, .table th {

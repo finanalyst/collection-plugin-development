@@ -250,10 +250,6 @@ use v6.d;
             ~ qq[[<a class="raku-anchor" title="direct link" href="#$targ">§</a>]]
             ~ qq[[</a></$h>\n]]
     },
-    table => sub (%prm, %tml) {
-        my $tb = %tml.prior('table').(%prm, %tml);
-        $tb.subst(/ '<table class="' /, '<table class="table is-bordered centered ')
-    },
     toc => sub (%prm, %tml) {
         my $rv = '';
         if %prm<toc>.defined and %prm<toc>.keys {

@@ -2,7 +2,7 @@
 =TITLE A file to test blocks
 =SUBTITLE This is not a part of official Raku documentation
 
-=begin grid
+=begin table
     =row :header
         =for cell :row-span(2)
         Date
@@ -42,6 +42,5 @@
         =cell 0.53333
         =cell 0.26667
         =cell 0.42222
-=end grid
-
+=end table
 =end rakudoc

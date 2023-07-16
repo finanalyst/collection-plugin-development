@@ -11,7 +11,7 @@
 	:render<move-images.raku>,
 	:template-raku<page-styling.raku>,
 	:error-report,
-	:version<0.1.1>,
+	:version<0.1.2>,
 	:add-css<
 		css/page-styling-main.css
 		css/page-styling-dark.css css/page-styling-light.css
