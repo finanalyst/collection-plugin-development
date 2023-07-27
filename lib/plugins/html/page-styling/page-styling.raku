@@ -150,48 +150,38 @@ use v6.d;
         }
         else {
             qq:to/BLOCK/
-            <div id="wrapper">
-                <section class="section">
-                <div class="columns">
-                { %tml<toc-sidebar>.(%prm, %tml)  }
-                { %tml<page-main>.(%prm, %tml) }
-                { %tml<search-sidebar>.(%prm, %tml)  }
+            <div id="wrapper" class="section">
+                <aside id="left-column" class="menu is-hidden-touch" style="width:0px; display:none;">
+                    <div class=sidebar is-hidden-mobile" style="height: 80vh; overflow-y: scroll;">
+                        { %tml<toc-sidebar>.(%prm, %tml)  }
+                    </div>
                 </div>
-                </section>
+                <div id="main-column" class="section">
+                    <div class="container">
+                        { %tml<page-main>.(%prm, %tml) }
+                    </div>
+                </div>
+                <div id="right-column" class="section" style="width:0px; display:none;">
+                    <div class="container">
+                        { %tml<search-sidebar>.(%prm, %tml)  }
+                    </div>
+                </div>
             </div>
             BLOCK
         }
     },
     'search-sidebar' => sub (%prm, %tml ) {
-	    qq:to/BLOCK/
-            <div id="right-column" class="column is-narrow " style="width:0px; display:none;">
-                {
-                    if %tml<raku-search-block>:exists { %tml<raku-search-block>.(%prm, %tml) }
-                    else { 'No search function' }
-                }
-            </div>
-        BLOCK
+	    if %tml<raku-search-block>:exists { %tml<raku-search-block>.(%prm, %tml) }
+        else { 'No search function' }
     },
     'toc-sidebar' => sub (%prm, %tml) {
-        qq:to/BLOCK/
-            <div id="left-column" class="column is-narrow is-hidden-touch" style="width:0px; display:none;">
-                {
-                    if %tml<raku-toc-block>:exists { %tml<raku-toc-block>.(%prm, %tml) }
-                    else { 'No Table of Contents' }
-                }
-            </div>
-        BLOCK
+        if %tml<raku-toc-block>:exists { %tml<raku-toc-block>.(%prm, %tml) }
+        else { 'No Table of Contents' }
     },
     'page-main' => sub (%prm, %tml ) {
-        qq:to/MAIN/
-            <div id="main-column" class="column column-middle">
-                <div class="container">
-                    { %tml<page-header>.(%prm, %tml) }
-                    { %tml<page-content>.(%prm, %tml) }
-                    { %tml<page-footnotes>.(%prm, %tml) }
-                </div>
-            </div>
-        MAIN
+        %tml<page-header>.(%prm, %tml)
+        ~ %tml<page-content>.(%prm, %tml)
+        ~ %tml<page-footnotes>.(%prm, %tml)
     },
     'page-header' => sub (%prm, %tml) {
         qq:to/BLOCK/
@@ -295,10 +285,6 @@ use v6.d;
             ~ ( $index-parse.so ?? $index-parse[1] !! $txt )
             ~ qq[[<a class="raku-anchor" title="direct link" href="#$targ">§</a>]]
             ~ qq[[</a></$h>\n]]
-    },
-    table => sub (%prm, %tml) {
-        my $tb = %tml.prior('table').(%prm, %tml);
-        $tb.subst(/ '<table class="' /, '<table class="table is-bordered centered ')
     },
     toc => sub (%prm, %tml) {
         my $rv = '';

@@ -12,13 +12,12 @@
 	:render,
 	:template-raku<sidebar-search-templates.raku>,
 	:version<0.1.1>,
-	:jquery( ['sidebar-search.js',2], ),
-	:information<jquery jquery-link add-css>,
+	:information<css-link>,
 	:add-css<css/sidebar-search-light.css css/sidebar-search-dark.css>,
-	:jquery-link(
-		['src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
-			integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
-			crossorigin="anonymous"', 1],
+	:js-link(
+		['src="https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@10.2.7/dist/autoComplete.min.js"', 1],
 	),
+	:js-script( ['sidebar-search.js',2], ),
+	:css-link<href="https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@10.2.7/dist/css/autoComplete.min.css">,
 	:compare-ignore<sidebar-search-extended.js>,
 )

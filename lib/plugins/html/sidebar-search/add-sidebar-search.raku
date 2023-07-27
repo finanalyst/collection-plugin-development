@@ -104,17 +104,8 @@ sub ($pp, %processed, %options) {
         elsif $pre.<category> ne $pos.<category> { $pre.<category> leg $pos.<category> }
         else { $pre.<value> leg $pos.<value> }
     }
-    @entries .= sort( $search-order );
-    'sidebar-search-extended.js'.IO.spurt: qq:to/JS2/;
-        var sidebarSearchItems = { JSON::Fast::to-json( @entries ) }
-        ;
-        for (var i = 0, len = sidebarSearchItems.length; i < len; i++) \{
-            sidebarSearchItems.push(sidebarSearchItems[i]);
-        }
-        needSearchItems = false;
-        JS2
-
+    'searchData.json'.IO.spurt: JSON::Fast::to-json( @entries.sort( $search-order ) );
     [
-        ['assets/scripts/sidebar-search-extended.js', 'myself', 'sidebar-search-extended.js'],
+        ['assets/searchData.json', 'myself', 'searchData.json'],
     ]
 }

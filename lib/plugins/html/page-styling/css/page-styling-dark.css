@@ -425,11 +425,31 @@ ul.rakudoc-item > ul > ul > ul {
 .pod-output {
   font-family: "Lucida Console", "Courier New", monospace;
   font-weight: 600;
+  position: relative;
+  padding-left: 2.5rem;
+}
+.pod-output:before {
+  content: "output";
+  position: absolute;
+  top: 0;
+  left: 0;
+  writing-mode: vertical-lr;
+  border-right: 1px solid gray;
 }
 
 .pod-input {
   font-family: "Monaco", "Lucida Console", "Courier New", monospace;
   font-weight: 300;
+  position: relative;
+  padding-left: 2.5rem;
+}
+.pod-input:before {
+  content: "input";
+  position: absolute;
+  top: 0;
+  left: 0;
+  writing-mode: vertical-lr;
+  border-right: 1px solid gray;
 }
 
 .pod-nested {
