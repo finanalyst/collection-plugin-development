@@ -401,10 +401,15 @@ use v6.d;
         }
         $beg ~ '[' ~ %tml<escaped>.(%prm<fnNumber>) ~ ']' ~ $end
     },
-    'format-p' => sub (%prm, %tml) {
-        '<div class="pod-placement"><pre>'
+    'format-p' => sub (%prm, %tml) { note %prm;
+        if %prm<no-render> {
+            %prm<contents>
+        }
+        else {
+            '<div class="pod-placement"><pre>'
                 ~ (%prm<contents> // '').=trans(['<pre>', '</pre>'] => ['&lt;pre&gt;', '&lt;/pre&gt;'])
                 ~ "</pre></div>\n"
+        }
     },
     'format-x' => sub (%prm, %tml) {
         my $indexedheader = %prm<meta>.elems ?? %prm<meta>[0].join(';') !! %prm<text>;

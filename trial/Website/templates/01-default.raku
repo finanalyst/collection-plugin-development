@@ -129,10 +129,15 @@ use ProcessedPod;
             ~ '">[' ~ %tml<escaped>.(%prm<fnNumber>)
             ~ "]</a></sup>\n"
     },
-    'format-p' => sub (%prm, %tml) {
-        '<div class="pod-placement"><pre>'
-            ~ (%prm<contents> // '').=trans(['<pre>', '</pre>'] => ['&lt;pre&gt;', '&lt;/pre&gt;'])
-            ~ "</pre></div>\n"
+    'format-p' => sub (%prm, %tml) { note %prm;
+        if %prm<no-render> {
+            %prm<contents>
+        }
+        else {
+            '<div class="pod-placement"><pre>'
+                ~ (%prm<contents> // '').=trans(['<pre>', '</pre>'] => ['&lt;pre&gt;', '&lt;/pre&gt;'])
+                ~ "</pre></div>\n"
+        }
     },
     'format-x' => sub (%prm, %tml) {
         '<a name="' ~ (%prm<target> // '') ~ '" class="index-entry"></a>'
@@ -346,18 +351,24 @@ use ProcessedPod;
         }
         else { '' }
     },
-    'meta' => sub (%prm, %tml) {
+    'meta' => sub ( %prm, %tml ) {
         with %prm<meta> {
-            [~] %prm<meta>.map({
-                '<meta name="' ~ %tml<escaped>.(.<name>)
-                    ~ '" value="' ~ %tml<escaped>.(.<value>)
-                    ~ "\" />\n"
+            [~] %prm<meta>
+                .grep({ $_<name> ~~ any(<VERSION DESCRIPTION AUTHOR SUMMARY>) } )
+                .map({
+                '<meta name="' ~ .<name>.tclc
+                        ~ '" value="' ~ .<value>
+                        ~ "\" />\n"
             })
         }
         else { '' }
     },
+    'VERSION' => sub (%prm, %tml) { %prm<raw-contents> },
+    'DESCRIPTION' => sub (%prm, %tml) { %prm<raw-contents> },
+    'AUTHOR' => sub (%prm, %tml) { %prm<raw-contents> },
+    'SUMMARY' => sub (%prm, %tml) { %prm<raw-contents> },
     'toc' => sub (%prm, %tml) {
-        if %prm<toc>.defined and %prm<toc>.keys {
+        if %prm<toc>.defined and %prm<toc>.keys { say 'in toc template';
             "<div id=\"_TOC\"><table>\n<caption>Table of Contents</caption>\n"
                 ~ [~] %prm<toc>.map({
                 '<tr class="toc-level-' ~ .<level> ~ '">'

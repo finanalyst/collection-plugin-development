@@ -9,5 +9,5 @@
 	:render,
 	:add-css<css/rakudoc-table-light.css css/rakudoc-table-dark.css>,
 	:template-raku<rakudoc-table-templates.raku>,
-	:version<0.1.0>,
+	:version<0.1.1>,
 )
