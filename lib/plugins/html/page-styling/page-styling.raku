@@ -438,13 +438,14 @@ use v6.d;
         $beg ~ '[' ~ %tml<escaped>.(%prm<fnNumber>) ~ ']' ~ $end
     },
     'format-p' => sub (%prm, %tml) {
-        if %prm<no-render> {
-            %prm<contents>
-        }
-        else {
+        if %prm<as-pre> {
             '<div class="pod-placement"><pre>'
                 ~ (%prm<contents> // '').=trans(['<pre>', '</pre>'] => ['&lt;pre&gt;', '&lt;/pre&gt;'])
                 ~ "</pre></div>\n"
+        }
+        else {
+            '<a id="' ~ %prm<target> ~ '"></a>'
+            ~ %prm<contents>
         }
     },
     'format-x' => sub (%prm, %tml) {
