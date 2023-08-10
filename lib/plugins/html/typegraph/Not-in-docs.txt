@@ -18,17 +18,11 @@ Metamodel/NativeHOW
 Metamodel/StaticLexPad
 Metamodel/SubsetHOW
 Metamodel/TypePretense
-Callable[/T
-Rational[/NuT,
 Pod/Config
 CompUnit/Repository/Locally
 CompUnit/Repository/Installable
 PromiseStatus
 Signal
-Positional[/T
-Blob[/T
-Buf[/T
-Associative[/T
 NumericEnumeration
 StringyEnumeration
 Deprecation

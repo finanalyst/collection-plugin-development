@@ -1,11 +1,10 @@
 %(
     pod => sub (%prm, %tml) {
         my $rv = %tml.prior('pod').(%prm, %tml);
-        if (%prm<config><path> ~~ / 'doc/Type/' $<doc> = (.+) '.' <alnum>+ /)
-            and %prm<pod><typegraphs>:exists {
-            my $doc = $<doc>
-                .subst( / [ '.rakudoc' || '.pod6' ] $ /, '')
-                .subst( / '/' /, '', :g )
+        if (%prm<config><kind> eq 'Type') {
+            my $fn = %prm<config><path>.IO.extension('');
+            my $doc = ($fn.parts[1]<dirname>.contains('Native') ?? 'native-' !! '' ) ~ $fn.basename;
+            $doc .= subst( / '/' /, '', :g )
                 .subst( / \:\: /, '', :g );
             with %prm<pod><typegraphs>{ $doc } {
                 my $name =  %prm<config><name>
