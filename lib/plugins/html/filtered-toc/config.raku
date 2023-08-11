@@ -14,5 +14,5 @@
 		['src="https://rawgit.com/farzher/fuzzysort/master/fuzzysort.js"', 1],
 	),
 	:information<jquery-link>,
-	:version<0.1.1>,
+	:version<0.1.2>,
 )

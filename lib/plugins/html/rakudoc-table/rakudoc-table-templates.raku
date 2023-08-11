@@ -3,7 +3,7 @@ use v6.d;
 %(
     'table' => sub (%prm, %tml) {
         if %prm<procedural> {
-            my $rv = "\n<table class=\"table is-bordered centered is-striped rakudoc-table { %prm<class> // '' }\">";
+            my $rv = "\n<table class=\"table is-bordered centered rakudoc-table { %prm<class> // '' }\">";
             $rv ~= "\n<caption>$_\</caption>" with %prm<caption>;
             for %prm<grid>.list -> @row {
                 $rv ~= "\n<tr>";
@@ -30,7 +30,7 @@ use v6.d;
             $rv ~= "</table>\n";
         }
         else {
-            '<table class="table is-bordered centered is-striped'
+            '<table class="table is-bordered centered'
                     ~ ((%prm<class>.defined and %prm<class> ne '') ?? (' ' ~ %tml<escaped>.(%prm<class>)) !! '')
                     ~ '">'
                     ~ ((%prm<caption>.defined and %prm<caption> ne '') ?? ('<caption>' ~ %prm<caption> ~ '</caption>') !! '')

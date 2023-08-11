@@ -131,46 +131,4 @@ $search-match: $green;
 
 $homepage-gradient: linear-gradient(180deg, #030303 0.2%, #170F44 1%, #35229E 82.29%, #271974 100%);
 
-button.button {
-	color: $white-ter !important;
-	border: 1px solid $grey-darker !important;
-	background-color: $black-ter !important;
-	transition: background-color 500ms linear;
-}
-
-button.button:hover {
-	background-color: $black;
-}
-
-div#footer-generated .dropdown-content, div#footer-license .dropdown-content {
-	background-color: $black-ter;
-	border: 1px solid $grey-darker;
-	& .dropdown-item {
-		color: $white-ter !important;
-	}
-}
-
-a.button strong {
-  color: $scheme-main-ter;
-}
-
-a.button.is-primary .icon {
-  color: $scheme-main-ter;
-}
-
-/* Collection */
-.raku .container .columns.listing .listf-container {
-    border: 1px solid $border;
-    border-bottom: 5px solid $border-light;
-    box-shadow: $shadow-below;
-    .listf-caption {
-        background: $block-heading-background;
-        border-bottom: 1px solid $border;
-        color: $grey-dark;
-    }
-    .listf-desc:not(:last-of-type) {
-        border-bottom: 1px solid $border;
-    }
-}
-
 @import "_themes-template-common.scss";

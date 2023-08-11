@@ -39,6 +39,7 @@
 
 // Grid
 @import "../bulma/sass/grid/columns.sass";
+@import "../bulma/sass/grid/tiles.sass";
 
 // Layout
 @import "../bulma/sass/layout/footer.sass";
@@ -49,6 +50,8 @@
 @import "../bulma/sass/helpers/typography.sass";
 @import "../bulma/sass/helpers/color.sass";
 @import "../bulma/sass/helpers/spacing.sass";
+@import "../bulma/sass/helpers/visibility.sass";
+@import "../bulma/sass/helpers/flexbox.sass";
 
 // Responsiveness & custom fixes
-@import "./base/layout.scss";
+@import "./base/_layout.scss";

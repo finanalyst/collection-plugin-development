@@ -34,15 +34,6 @@ sub ($pp, %processed, %options) {
         with $podf.subtitle {
             if m/ \S / {
                 $info = .subst(/ '<p>' | '</p>' /,'',:g);
-                my $vals = $value.chars;
-                if ( $vals + $bar-chars + $info.chars ) > $search-len {
-                    $info = '<i>'
-                        ~  $info.substr( 0, ( $search-len - $vals - $bar-chars - 4 ) )
-                        ~ '</i> ... '
-                }
-                else {
-                    $info = "<i>$info\</i>"
-                }
             }
         }
         if $fn ~~ / ^ [ 'syntax/' | 'routine/' ] / {
@@ -67,7 +58,7 @@ sub ($pp, %processed, %options) {
             @entries.push: %(
                 :category<Heading>,
                 :value(.<text>),
-                :info(': section in <b>' ~ $podf.title ~ '</b>'),
+                :info('Section in <b>' ~ $podf.title ~ '</b>'),
                 :url(escape-json('/' ~ $fn ~ '#' ~ .<target>)),
                 :type<headings>,
             )

@@ -30,66 +30,66 @@ use v6.d;
             </head>
             HEADBLOCK
     },
+    'top-of-page' => sub (%prm, %tml) {
+        if %prm<title-target>:exists and %prm<title-target> ne '' {
+            '<div id="' ~ %prm<title-target> ~ '" class="top-of-page"></div>'
+        }
+        else { '' }
+    },
     'navigation' => sub (%prm, %tml) {
         qq:to/BLOCK/
-        <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
-        { %tml<left-bar-toggle>.( %prm, %tml) }
-        { %tml<head-brand>.( %prm, %tml) }
-        { %tml<head-topbar>.( %prm, %tml) }
-        { %tml<right-bar-toggle>.( %prm, %tml) }
+        <nav class="navbar is-fixed-top is-flex-touch" role="navigation" aria-label="main navigation">
+            <div class="navbar-item" style="margin-left: auto;">
+                { %tml<left-bar-toggle>.( %prm, %tml) }
+            </div>
+            <div class="container is-justify-content-space-around">
+                { %tml<head-brand>.( %prm, %tml) }
+                { %tml<head-topbar>.( %prm, %tml) }
+            </div>
+            <div class="navbar-item" style="margin-right: auto;">
+                { %tml<right-bar-toggle>.( %prm, %tml) }
+            </div>
         </nav>
         BLOCK
     },
     'left-bar-toggle' => sub (%prm, %tml ) {
       q:to/BLOCK/
-        <div id="navbar-left-toggle" class="has-tooltip-bottom navbar-start" title="Toggle Table of Contents (Ctl-a)">
-          <a class="navbar-item navbar-filter-settings navbar-sidebar-btn">
-          <div>
-            <span class="icon-text filter">
-                <span class="icon " aria-hidden="true">
-                <i class="fas fa-cogs"></i>
+        <div class="left-bar-toggle" title="Toggle Table of Contents (Ctl-a)">
+            <label class="wordToggle">
+              <span class="text">Contents</span>
+              <input id="navbar-left-toggle" type="checkbox">
+              <span class="value"
+                    data-word-off="closed"
+                    data-word-on="open"
+                    style="--switch-width: 6.7">
                 </span>
-                <span class="sidebar-title">Contents</span>
-            </span>
-          </div>
-          <div class="sidebar-arrow">
-              <span class="icon " aria-hidden="true">
-                <i class="fas fa-chevron-right"></i>
-              </span>
-          </div>
-        </a>
-      </div>
+            </label>
+        </div>
       BLOCK
     },
     'right-bar-toggle' => sub (%prm, %tml ) {
       q:to/BLOCK/
-        <div id="navbar-right-toggle" class="navbar-end has-tooltip-bottom is-hidden-touch" title="Toggle search sidebar (Ctl-s">
-            <a class="navbar-item navbar-channels navbar-sidebar-btn">
-            <div class="sidebar-arrow">
-                <span class="icon " aria-hidden="true">
-                <i class="fas fa-chevron-left"></i>
+        <div class="right-bar-toggle" title="Toggle search sidebar (Ctl-s">
+            <label class="wordToggle reverse">
+              <span class="text">Search</span>
+              <input id="navbar-right-toggle" type="checkbox">
+              <span class="value"
+                    data-word-off="closed"
+                    data-word-on="open"
+                    style="--switch-width: 6.7">
                 </span>
-            </div>
-            <div>
-                <span class="icon-text">
-                <span class="icon " aria-hidden="true">
-                <i class="fas fa-cogs"></i>
-                </span>
-                <span class="sidebar-title">Search</span>
-                </span>
-            </div>
-            </a>
+            </label>
         </div>
       BLOCK
     },
     'head-brand' => sub (%prm, %tml ) {
         q:to/BLOCK/
-        <div class="navbar-brand navbar-logo">
+        <div class="navbar-brand">
           <div class="navbar-logo">
             <a class="navbar-item" href="/">
               <img src="/assets/images/camelia-recoloured.png" alt="Raku" width="52.83" height="38">
             </a>
-            <div class="navbar-logo-tm">tm</div>
+            <span class="navbar-logo-tm">tm</span>
           </div>
           <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navMenu">
             <span aria-hidden="true"></span>
@@ -101,8 +101,8 @@ use v6.d;
     },
     'head-topbar' => sub ( %prm, %tml ) {
         q:to/BLOCK/
-          <div id="navMenu" class="navbar-item">
-            <div class="navbar-start">
+          <div id="navMenu" class="navbar-menu">
+            <div class="navbar-end">
                 <a class="navbar-item" href="/language">
                     Language
                 </a>
@@ -125,7 +125,7 @@ use v6.d;
                   <a class="navbar-link">
                     More
                   </a>
-                  <div class="navbar-dropdown">
+                  <div class="navbar-dropdown is-right is-rounded">
                     <hr class="navbar-divider">
                     <a class="navbar-item" href="/about">
                       About
@@ -150,19 +150,19 @@ use v6.d;
         }
         else {
             qq:to/BLOCK/
-            <div id="wrapper" class="section">
-                <aside id="left-column" class="menu is-hidden-touch" style="width:0px; display:none;">
-                    <div class=sidebar is-hidden-mobile" style="height: 80vh; overflow-y: scroll;">
+            <div class="tile is-ancestor section">
+                <div id="left-column" class="tile is-parent is-2 is-hidden">
+                    <div style="height: 90vh; overflow-y: scroll;">
                         { %tml<toc-sidebar>.(%prm, %tml)  }
                     </div>
                 </div>
-                <div id="main-column" class="section">
-                    <div class="container">
+                <div id="main-column" class="tile is-parent" style="overflow-x: hidden;">
+                    <div style="height: 92vh; overflow-y: scroll; flex-grow:inherit;">
                         { %tml<page-main>.(%prm, %tml) }
                     </div>
                 </div>
-                <div id="right-column" class="section" style="width:0px; display:none;">
-                    <div class="container">
+                <div id="right-column" class="tile is-parent is-3 is-hidden">
+                    <div style="height: 90vh; overflow-y: scroll;">
                         { %tml<search-sidebar>.(%prm, %tml)  }
                     </div>
                 </div>
@@ -200,13 +200,17 @@ use v6.d;
     },
     'page-content' => sub (%prm, %tml) {
         my $rv = '<section class="raku page-content">';
-        $rv ~= %prm<config><page-content-columns>
-            ?? '<div class="container"><div class="columns listing">'
-            !! '<div class="container px-4">';
-        $rv ~=  %prm<body>;
-        $rv ~= %prm<config><page-content-columns>
-            ?? '</div></div>'
-            !! '</div>';
+        with %prm<config><page-content-columns> {
+            $rv ~= '<div class="container"><div class="columns listing">'
+                    ~ %prm<body> ~ '</div>';
+        }
+        orwith %prm<config><page-content-one-col> {
+            $rv ~= '<div class="container"><div class="columns one-col">'
+                ~ %prm<body> ~ '</div>';
+        }
+        else {
+            $rv ~= '<div class="container px-4">' ~ %prm<body> ~ '</div>';
+        }
         $rv ~= "</section>\n"
     },
     'page-footnotes' => sub (%prm, %tml) {

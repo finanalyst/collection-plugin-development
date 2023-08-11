@@ -1,71 +1,46 @@
-.sidebar-search-autocomplete {
-  position: absolute;
-  max-height: 80vh;
-  overflow-y: scroll;
-  box-sizing: border-box;
-  left: 0;
-  right: 0;
-  margin: 0;
-  padding: 0;
-  list-style: none;
+$weight-light: 300;
+$weight-normal: 400;
+$weight-medium: 500;
+$weight-semibold: 600;
+$weight-bold: 700;
 
-  & ul {
-    top: 0 !important;
-    left: 0 !important;
-  }
-
-  & li.ui-autocomplete-category:hover {
-      background-color: inherit;
-      cursor: default;
-  }
-}
-
-.autocomplete-result {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin: 0.3rem;
-  padding: 0.3rem 0.5rem;
-  text-align: left;
-  font-size: 1rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  overflow-x: ellipsis;
-  transition: all 0.2s ease;
-}
-
-.autocomplete-result-match {
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-}
-
-.autocomplete-result-category {
-  font-size: 13px;
-  font-weight: bold;
-  text-transform: uppercase;
-}
-
-// new info element
-.item-info {
-    padding-left: 2em;
-    > b {
-        font-weight: 600;
+.sidebar-search-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    .autoComplete_wrapper {
+        > input {
+            background-color: $form-background;
+            border-color: $border;
+            color: $text;
+            width: 100%;
+        }
+        > ul {
+            max-height: 50vh;
+            z-index: 2;
+            background-color: $scheme-main-ter;
+            color: darken($text, 10);
+            > li {
+                background-color: $scheme-main-ter;
+                color: darken($text, 10);
+            }
+        }
     }
 }
-.ui-autocomplete {
-    max-height: 45vh;
-    overflow-y: auto;
-    overflow-x: auto;
-    .ui-menu-item-wrapper {
-        display: inline-block;
-        overflow: hidden;
-        white-space: nowrap;
+.sidebar-search-controls {
+    margin-top: auto;
+}
+.autoComplete_result {
+    display: grid;
+    .autoComplete-result-category {
+        color: $red;
+        font-weight: $weight-semibold;
+        justify-self: center;
+    }
+    .autoComplete-result-extra {
+        overflow-x: hidden;
         text-overflow: ellipsis;
+        margin: 5px;
+        font-style: oblique;
     }
-}
-
-#query::placeholder {
-  color: $input-placeholder-color;
 }

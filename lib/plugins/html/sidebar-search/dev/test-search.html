@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@10.2.7/dist/css/autoComplete.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@10.2.7/dist/autoComplete.min.js"></script>
+    <script src="ss-core.js"></script>
+    <script src="sidebar-search-extended.js"></script>
+</head>
+
+<body>
+    <div class="autoComplete_wrapper control">
+        <input id="autoComplete" type="search" dir="ltr" spellcheck=false autocorrect="off" autocomplete="off" autocapitalize="off">
+    </div>
+    <div class="control is-grouped is-grouped-centered" style="display: flex; flex-direction: column;">
+        <div id="selected-candidate" class="ss-selected"></div>
+        <label class="checkbox"><input type="checkbox" id="sidebar-search-extra" checked>
+            Include extra information (Alt-E)
+        </label>
+        <label class="checkbox"><input type="checkbox" id="sidebar-search-loose">
+            Search engine type Strict/Loose (Alt-L)
+        </label>
+        <label class="checkbox"><input type="checkbox" id="sidebar-search-headings" checked>
+            Search in headings (Alt-H)
+        </label>
+        <label class="checkbox"><input type="checkbox" id="sidebar-search-indexed" checked>
+            Search indexed items (Alt-I)
+        </label>
+        <label class="checkbox"><input type="checkbox" id="sidebar-search-composite" checked>
+            Search composite pages (Alt-C)
+        </label>
+        <label class="checkbox"><input type="checkbox" id="sidebar-search-primary" checked>
+            Search primary sources (Alt-P)
+        </label><label class="checkbox"><input type="checkbox" id="sidebar-search-newtab" checked>
+            Open in new tab (Alt-Q)
+        </label>
+        <button class="button is-link is-small is-outlined is-rounded" id="sidebar-search-google">Google search this site</button>
+        <button class="button is-link is-small is-outlined is-rounded" id="sidebar-search-help">Info about Search</button>
+    </div>
+</body>
+
+</html>

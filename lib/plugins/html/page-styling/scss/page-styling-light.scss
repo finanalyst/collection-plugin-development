@@ -130,26 +130,4 @@ $search-match: $yellow;
 
 $homepage-gradient: linear-gradient(180deg, #051A33 0.2%, #3F103A 1%, #9F0046 82.29%, #B3004F 100%);
 
-a.button strong {
-  color: $scheme-main-ter;
-}
-
-a.button.is-primary .icon {
-  color: $scheme-main-ter;
-}
-/* Collection */
-.raku .container .columns.listing .listf-container {
-    border: 1px solid $border;
-    border-bottom: 5px solid $border-light;
-    box-shadow: $shadow-below;
-    .listf-caption {
-        background: $block-heading-background;
-        border-bottom: 1px solid $border;
-        color: $grey-dark;
-    }
-    .listf-desc:not(:last-of-type) {
-        border-bottom: 1px solid $border;
-    }
-}
-
 @import "_themes-template-common.scss";

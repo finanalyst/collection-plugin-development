@@ -1,46 +1,4 @@
 @charset "UTF-8";
-button.button {
-  color: #f5f5f5 !important;
-  border: 1px solid #3A3D4E !important;
-  background-color: #212426 !important;
-  transition: background-color 500ms linear;
-}
-
-button.button:hover {
-  background-color: #030303;
-}
-
-div#footer-generated .dropdown-content, div#footer-license .dropdown-content {
-  background-color: #212426;
-  border: 1px solid #3A3D4E;
-}
-div#footer-generated .dropdown-content .dropdown-item, div#footer-license .dropdown-content .dropdown-item {
-  color: #f5f5f5 !important;
-}
-
-a.button strong {
-  color: #282c2e;
-}
-
-a.button.is-primary .icon {
-  color: #282c2e;
-}
-
-/* Collection */
-.raku .container .columns.listing .listf-container {
-  border: 1px solid #3A3D4E;
-  border-bottom: 5px solid #45485d;
-  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.07);
-}
-.raku .container .columns.listing .listf-container .listf-caption {
-  background: #212426;
-  border-bottom: 1px solid #3A3D4E;
-  color: #83858D;
-}
-.raku .container .columns.listing .listf-container .listf-desc:not(:last-of-type) {
-  border-bottom: 1px solid #3A3D4E;
-}
-
 html {
   background: #1B1D1E;
 }
@@ -480,4 +438,86 @@ var::before {
 var::after {
   content: "｣";
   padding: 3px;
+}
+
+a.button strong {
+  color: #282c2e;
+}
+
+a.button.is-primary .icon {
+  color: #282c2e;
+}
+
+/* Index pages */
+.raku.page-content .listf-container {
+  border: 1px solid #3A3D4E;
+  border-bottom: 5px solid #45485d;
+  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.07);
+}
+.raku.page-content .listf-container .listf-caption {
+  background: #212426;
+  border-bottom: 1px solid #3A3D4E;
+  color: #83858D;
+}
+.raku.page-content .listf-container .listf-desc:not(:last-of-type) {
+  border-bottom: 1px solid #3A3D4E;
+}
+
+/* For Collection */
+.raku .container .columns {
+  display: block;
+}
+.raku .container .columns.listing {
+  column-count: 2;
+}
+.raku .container .columns.one-col {
+  column-count: 1;
+  width: 55vw;
+  margin-left: auto;
+  margin-right: auto;
+}
+.raku .container .columns > p {
+  column-span: all;
+  margin: 0 0 2em;
+  text-align: center;
+}
+.raku .container .columns .listf-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.25rem;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+.raku .container .columns .listf-container div:nth-of-type(4n-2) {
+  background-color: inherit;
+}
+.raku .container .columns .listf-container div:nth-of-type(4n-1) {
+  background-color: inherit;
+}
+.raku .container .columns .listf-container .listf-caption {
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.5;
+  display: flex;
+  justify-content: center;
+}
+.raku .container .columns .listf-container .listf-file {
+  padding-top: 0.25rem;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.5;
+  border-top: 1px;
+}
+.raku .container .columns .listf-container .listf-desc {
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.5;
+  padding: 0 0.3rem 0 0.3rem;
+  margin-bottom: 0.25rem;
+  align-self: normal;
+}
+.raku .container .columns .listf-container .listf-desc > p {
+  padding: inherit;
+  margin: inherit;
 }

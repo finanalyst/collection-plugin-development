@@ -1,69 +1,40 @@
-.sidebar-search-autocomplete {
-  position: absolute;
-  max-height: 80vh;
-  overflow-y: scroll;
-  box-sizing: border-box;
-  left: 0;
-  right: 0;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.sidebar-search-autocomplete ul {
-  top: 0 !important;
-  left: 0 !important;
-}
-.sidebar-search-autocomplete li.ui-autocomplete-category:hover {
-  background-color: inherit;
-  cursor: default;
-}
-
-.autocomplete-result {
+.sidebar-search-wrapper {
   display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin: 0.3rem;
-  padding: 0.3rem 0.5rem;
-  text-align: left;
-  font-size: 1rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  overflow-x: ellipsis;
-  transition: all 0.2s ease;
+  flex-direction: column;
+  height: 100%;
+}
+.sidebar-search-wrapper .autoComplete_wrapper > input {
+  background-color: #fafafa;
+  border-color: #cccccc;
+  color: #030303;
+  width: 100%;
+}
+.sidebar-search-wrapper .autoComplete_wrapper > ul {
+  max-height: 50vh;
+  z-index: 2;
+  background-color: #f5f5f5;
+  color: black;
+}
+.sidebar-search-wrapper .autoComplete_wrapper > ul > li {
+  background-color: #f5f5f5;
+  color: black;
 }
 
-.autocomplete-result-match {
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
+.sidebar-search-controls {
+  margin-top: auto;
 }
 
-.autocomplete-result-category {
-  font-size: 13px;
-  font-weight: bold;
-  text-transform: uppercase;
+.autoComplete_result {
+  display: grid;
 }
-
-.item-info {
-  padding-left: 2em;
-}
-.item-info > b {
+.autoComplete_result .autoComplete-result-category {
+  color: #A30031;
   font-weight: 600;
+  justify-self: center;
 }
-
-.ui-autocomplete {
-  max-height: 45vh;
-  overflow-y: auto;
-  overflow-x: auto;
-}
-.ui-autocomplete .ui-menu-item-wrapper {
-  display: inline-block;
-  overflow: hidden;
-  white-space: nowrap;
+.autoComplete_result .autoComplete-result-extra {
+  overflow-x: hidden;
   text-overflow: ellipsis;
-}
-
-#query::placeholder {
-  color: #83858D;
+  margin: 5px;
+  font-style: oblique;
 }

@@ -11,7 +11,7 @@
 	:name<sidebar-search>,
 	:render,
 	:template-raku<sidebar-search-templates.raku>,
-	:version<0.1.1>,
+	:version<0.1.2>,
 	:information<css-link>,
 	:add-css<css/sidebar-search-light.css css/sidebar-search-dark.css>,
 	:js-link(
