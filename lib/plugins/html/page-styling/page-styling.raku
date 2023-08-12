@@ -37,18 +37,27 @@ use v6.d;
         else { '' }
     },
     'navigation' => sub (%prm, %tml) {
+        my $add-sidebars = %prm<config><direct-wrap>:!exists;
         qq:to/BLOCK/
         <nav class="navbar is-fixed-top is-flex-touch" role="navigation" aria-label="main navigation">
-            <div class="navbar-item" style="margin-left: auto;">
-                { %tml<left-bar-toggle>.( %prm, %tml) }
-            </div>
+            {
+            qq:to/SIDE/ if $add-sidebars;
+                <div class="navbar-item" style="margin-left: auto;">
+                    { %tml<left-bar-toggle>.( %prm, %tml) }
+                </div>
+            SIDE
+            }
             <div class="container is-justify-content-space-around">
                 { %tml<head-brand>.( %prm, %tml) }
                 { %tml<head-topbar>.( %prm, %tml) }
             </div>
-            <div class="navbar-item" style="margin-right: auto;">
-                { %tml<right-bar-toggle>.( %prm, %tml) }
-            </div>
+            {
+            qq:to/SIDE/ if $add-sidebars;
+                <div class="navbar-item" style="margin-right: auto;">
+                    { %tml<right-bar-toggle>.( %prm, %tml) }
+                </div>
+            SIDE
+            }
         </nav>
         BLOCK
     },
