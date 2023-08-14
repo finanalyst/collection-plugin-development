@@ -1,4 +1,4 @@
-// Light raku theme
+// Dark raku theme
 
 // Colors
 $black:         #030303;
@@ -21,40 +21,40 @@ $yellow:       #EED891;
 $green:        #1C6301;
 $turquoise:    #005C43;
 $cyan:         hsl(204, 71%,  53%);
-$blue:         #004FB3;
-$purple:       #5503B3;
-$red:          #A30031;
+// $blue:         #004FB3;
+$blue:         #8DB2EB;
+$purple:       #8378E8;
+$red:          #f00048;
 
 // Bulma Variables
-$light: $white-ter;
+$light: $grey-light;
 $dark: $grey-darker;
 
-$scheme-main: $white;
-$scheme-main-bis: $grey-lightest;
-$scheme-main-ter: $white-ter;
-$scheme-invert: $black-bis;
-$scheme-invert-bis: $black-ter;
-$scheme-invert-ter: lighten($black-ter, 3);
+$scheme-main: $black-bis;
+$scheme-main-bis: $black-ter;
+$scheme-main-ter: lighten($black-ter, 3);
+$scheme-invert: $white;
+$scheme-invert-bis: $white-bis;
+$scheme-invert-ter: $white-ter;
 
+$body-background-color: $black-bis;
+$background: $black-bis;
 
-$body-background-color: $white;
-$background: $white;
-
-$border: $grey;
-$border-hover: $grey-light;
+$border: $grey-darker;
+$border-hover: $grey-dark;
 $border-light: lighten($border, 5);
 $border-light-hover: $grey-light;
 
 $primary: $blue;
 $primary-invert: findColorInvert($primary);
 $primary-light: lighten($primary, 10);
-$primary-dark: darken($primary, 10);
+$primary-dark: darken($primary, 15);
 
 // Text colors
-$text: $black;
-$text-invert: $white-bis;
+$text: $white-ter;
+$text-invert: $black-ter;
 $text-light: lighten($text, 10);
 $text-dark: darken($text, 10);
 $text-strong: darken($text, 5);
 
-@import "_wordToggle.scss"
+@import "_chyronToggle.scss"

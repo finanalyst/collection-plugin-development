@@ -9,68 +9,47 @@ use v6.d;
             </div>
             <div id="selected-candidate" class="ss-selected"></div>
             <div class="control is-grouped is-grouped-centered sidebar-search-controls">
-                 <label class="wordSwitch" title="Include extra information (Alt-E)">
-                   <span class="text left">Extra info</span>
+                 <label class="centreToggle" title="Include extra information (Alt-E)" style="--switch-width: 10.5">
                    <input id="sidebar-search-extra" type="checkbox">
-                   <span class="value"
-                      data-word-on="yes"
-                      data-word-off="no"
-                      style="--switch-width: 6">
-                   </span>
+                   <span class="text">Extra info</span>
+                   <span class="on">yes</span>
+                   <span class="off">no</span>
                  </label>
-                 <label class="wordSwitch" title="Search engine type Strict/Loose (Alt-L)">
-                   <span class="text left">Search type</span>
+                 <label class="centreToggle" title="Search engine type Strict/Loose (Alt-L)" style="--switch-width: 10.5">
                    <input id="sidebar-search-loose" type="checkbox">
-                   <span class="value"
-                      data-word-on="loose"
-                      data-word-off="strict"
-                      style="--switch-width: 6">
-                   </span>
+                   <span class="text">Search type</span>
+                   <span class="on">loose</span>
+                   <span class="off">strict</span>
                  </label>
-                 <label class="wordSwitch" title="Search in headings (Alt-H)">
-                   <span class="text left">Headings</span>
+                 <label class="centreToggle" title="Search in headings (Alt-H)" style="--switch-width: 10.5">
                    <input id="sidebar-search-headings" type="checkbox">
-                   <span class="value"
-                      data-word-on="yes"
-                      data-word-off="no"
-                      style="--switch-width: 6">
-                   </span>
+                   <span class="text">Headings</span>
+                   <span class="on">yes</span>
+                   <span class="off">no</span>
                  </label>
-                 <label class="wordSwitch" title="Search indexed items (Alt-I)">
-                   <span class="text left">Indexed</span>
+                 <label class="centreToggle" title="Search indexed items (Alt-I)" style="--switch-width: 10.5">
                    <input id="sidebar-search-indexed" type="checkbox">
-                   <span class="value"
-                      data-word-on="yes"
-                      data-word-off="no"
-                      style="--switch-width: 6">
-                   </span>
+                   <span class="text">Indexed</span>
+                   <span class="on">yes</span>
+                   <span class="off">no</span>
                  </label>
-                 <label class="wordSwitch" title="Search composite pages (Alt-C)">
-                   <span class="text left">Composite</span>
+                 <label class="centreToggle" title="Search composite pages (Alt-C)" style="--switch-width: 10.5">
                    <input id="sidebar-search-composite" type="checkbox">
-                   <span class="value"
-                      data-word-on="yes"
-                      data-word-off="no"
-                      style="--switch-width: 6">
-                   </span>
+                   <span class="text">Composite</span>
+                   <span class="on">yes</span>
+                   <span class="off">no</span>
                     </label>
-                 <label class="wordSwitch" title="Search primary sources (Alt-P)">
-                   <span class="text left">Primary</span>
+                 <label class="centreToggle" title="Search primary sources (Alt-P)" style="--switch-width: 10.5">
                    <input id="sidebar-search-primary" type="checkbox">
-                   <span class="value"
-                      data-word-on="yes"
-                      data-word-off="no"
-                      style="--switch-width: 6">
-                   </span>
+                   <span class="text">Primary</span>
+                   <span class="on">yes</span>
+                   <span class="off">no</span>
                  </label>
-                 <label class="wordSwitch" title="Open in new tab (Alt-Q)">
-                   <span class="text left">New tab</span>
+                 <label class="centreToggle" title="Open in new tab (Alt-Q)" style="--switch-width: 10.5">
                    <input id="sidebar-search-newtab" type="checkbox">
-                   <span class="value"
-                      data-word-on="yes"
-                      data-word-off="no"
-                      style="--switch-width: 6">
-                   </span>
+                   <span class="text">New tab</span>
+                   <span class="on">yes</span>
+                   <span class="off">no</span>
                  </label>
                  <button class="button is-link is-small is-outlined is-rounded" id="sidebar-search-google">Google search this site</button>
                  <button class="button is-link is-small is-outlined is-rounded js-modal-trigger"

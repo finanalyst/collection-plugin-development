@@ -64,14 +64,10 @@ use v6.d;
     'left-bar-toggle' => sub (%prm, %tml ) {
       q:to/BLOCK/
         <div class="left-bar-toggle" title="Toggle Table of Contents (Ctl-a)">
-            <label class="wordToggle">
-              <span class="text">Contents</span>
-              <input id="navbar-left-toggle" type="checkbox">
-              <span class="value"
-                    data-word-off="closed"
-                    data-word-on="open"
-                    style="--switch-width: 6.7">
-                </span>
+            <i class="fas fa-cogs"></i>
+            <label class="chyronToggle left">
+                <input id="navbar-left-toggle" type="checkbox">
+                <span class="text">Contents</span>
             </label>
         </div>
       BLOCK
@@ -79,15 +75,11 @@ use v6.d;
     'right-bar-toggle' => sub (%prm, %tml ) {
       q:to/BLOCK/
         <div class="right-bar-toggle" title="Toggle search sidebar (Ctl-s">
-            <label class="wordToggle reverse">
-              <span class="text">Search</span>
+            <label class="chyronToggle right">
               <input id="navbar-right-toggle" type="checkbox">
-              <span class="value"
-                    data-word-off="closed"
-                    data-word-on="open"
-                    style="--switch-width: 6.7">
-                </span>
+              <span class="text">Search</span>
             </label>
+            <i class="fas fa-cogs"></i>
         </div>
       BLOCK
     },

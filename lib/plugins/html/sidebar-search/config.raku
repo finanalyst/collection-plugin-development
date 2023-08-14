@@ -11,9 +11,10 @@
 	:name<sidebar-search>,
 	:render,
 	:template-raku<sidebar-search-templates.raku>,
-	:version<0.1.2>,
+	:version<0.1.3>,
 	:information<css-link>,
-	:add-css<css/sidebar-search-light.css css/sidebar-search-dark.css>,
+	:add-css<css/sidebar-search-light.css css/sidebar-search-dark.css
+		css/centreToggle-dark.css css/centreToggle-light.css>,
 	:js-link(
 		['src="https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@10.2.7/dist/autoComplete.min.js"', 1],
 	),
