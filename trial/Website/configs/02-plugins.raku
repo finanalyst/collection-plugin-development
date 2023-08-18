@@ -4,17 +4,21 @@
     plugins-required => %(
         :setup('raku-doc-setup', ),
         :render<
-            hiliter font-awesome tablemanager page-styling rakudoc-table
+            hiliter font-awesome tablemanager
+            page-styling #sidebar-search
+            #ogdenwebb
+            search-bar
+            filtered-toc
+            rakudoc-table
             camelia simple-extras listfiles images deprecate-span filterlines
             secondaries typegraph generated
-            filtered-toc sidebar-search
             leafletmap latex-render graphviz
             link-error-test
             gather-js-jq gather-css
         >,
         :report<link-plugin-assets-report>,
-        :transfer<secondaries gather-js-jq gather-css images sidebar-search>,
-        :compilation<secondaries listfiles link-error-test sidebar-search>,
+        :transfer<secondaries gather-js-jq gather-css images #sidebar-search search-bar>,
+        :compilation<secondaries listfiles link-error-test #sidebar-search search-bar>,
         :completion<cro-app>,
     ),
 )
