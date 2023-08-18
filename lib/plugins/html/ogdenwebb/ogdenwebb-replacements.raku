@@ -102,7 +102,7 @@ use v6.d;
           </div>
         BLOCK
     },
-    'head-search' => sub (%prm, %tml ) { # placeholder here. Should be modified by search-bar plugin
+    'head-search' => sub (%prm, %tml ) { # template is placeholder here. Should be modified by search-bar plugin
 	    '<div class="navbar-end navbar-search-wrapper"></div>'
     },
     'sidebar' => sub (%prm, %tml) {

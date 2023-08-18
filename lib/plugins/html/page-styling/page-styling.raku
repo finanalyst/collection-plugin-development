@@ -52,7 +52,7 @@ use v6.d;
                 { %tml<head-topbar>.( %prm, %tml) }
             </div>
             {
-            qq:to/SIDE/ if $add-sidebars;
+            qq:to/SIDE/ if $add-sidebars and ! %tml<head-search>.defined;
                 <div class="navbar-item" style="margin-right: auto;">
                     { %tml<right-bar-toggle>.( %prm, %tml) }
                 </div>
@@ -73,15 +73,17 @@ use v6.d;
       BLOCK
     },
     'right-bar-toggle' => sub (%prm, %tml ) {
-      q:to/BLOCK/
-        <div class="right-bar-toggle" title="Toggle search sidebar (Ctl-s">
-            <label class="chyronToggle right">
-              <input id="navbar-right-toggle" type="checkbox">
-              <span class="text">Search</span>
-            </label>
-            <i class="fas fa-cogs"></i>
-        </div>
-      BLOCK
+	   without %tml<head-search> { # head-search is provided by search-bar, but not sidebar-search
+           q:to/BLOCK/
+            <div class="right-bar-toggle" title="Toggle search sidebar (Ctl-s">
+                <label class="chyronToggle right">
+                  <input id="navbar-right-toggle" type="checkbox">
+                  <span class="text">Search</span>
+                </label>
+                <i class="fas fa-cogs"></i>
+            </div>
+            BLOCK
+       }
     },
     'head-brand' => sub (%prm, %tml ) {
         q:to/BLOCK/
@@ -101,9 +103,10 @@ use v6.d;
         BLOCK
     },
     'head-topbar' => sub ( %prm, %tml ) {
-        q:to/BLOCK/
+        my $search-bar = %tml<head-search>.( %prm, %tml) with %tml<head-search>;
+        qq:to/BLOCK/
           <div id="navMenu" class="navbar-menu">
-            <div class="navbar-end">
+            <div class="navbar-start">
                 <a class="navbar-item" href="/language">
                     Language
                 </a>
@@ -142,6 +145,7 @@ use v6.d;
                   </div>
                 </div>
             </div>
+            { $_ with $search-bar }
           </div>
         BLOCK
     },
