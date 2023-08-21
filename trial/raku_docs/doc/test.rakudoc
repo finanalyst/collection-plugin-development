@@ -7,4 +7,102 @@
 The X<L<Array|/type/Array> constructor|Circumfix operators,Array constructor> returns an itemized L<Array|/type/Array> that does not flatten
 in list context
 
+=head1 X<do|Control flow,do>
+
+The simplest way to run a block where it cannot be a stand-alone statement
+is by writing C<do> before it:
+
+=for code
+# This dies half of the time
+do { say "Heads I win, tails I die."; Bool.pick } or die; say "I win.";
+
+Note that you need a space between the C<do> and the block.
+
+The whole C<do {...}> evaluates to the final value of the block.  The block
+will be run when that value is needed in order to evaluate the rest of the
+expression.  So:
+
+    False and do { 42.say };
+
+...will not say 42.  However, the block is only evaluated once each time
+the expression it is contained in is evaluated:
+
+    # This says "(..1 ..2 ..3)" not "(..1 ...2 ....3)"
+    my $f = "."; say do { $f ~= "." } X~ 1, 2, 3;
+
+In other words, it follows the same
+L<reification|/language/glossary#index-entry-Reify> rules as everything else.
+
+Technically, C<do> is a loop which runs exactly one iteration.
+
+A C<do> may also be used on a bare statement (without curly braces)
+but this is mainly just useful for avoiding the syntactical need to
+parenthesize a statement if it is the last thing in an expression:
+
+=for code
+3, do if 1 { 2 }  ; # OUTPUT: «(3, 2)␤»
+3,   (if 1 { 2 }) ; # OUTPUT: «(3, 2)␤»
+=for code :skip-test<syntax error>
+3,    if 1 { 2 }  ; # Syntax error
+
+=head1 X<start|Control flow,start>
+
+The simplest way to run a statement or block B<asynchronously> is by writing C<start>
+before it:
+
+=for code
+start { sleep 1; say "done" }
+say "working";
+# working, done
+
+Note that you need a space between the C<start> and the block. In the example
+above, the C<start> block is in sink context since it's not assigned to a
+variable. From version 6.d, these sunk blocks have an exception handler
+attached:
+
+=for code :skip-test<Illustrates exception>
+start { die "We're dead"; }
+say "working";
+sleep 10;
+
+This code will print C<Unhandled exception in code scheduled on thread 4 We're
+dead> in version 6.d, while it will simply get out after waiting for 10 seconds
+in version 6.c.
+
+The C<start {...}> immediately returns a C<Promise> that can be safely ignored
+if you are not interested in the result of the block. If you B<are> interested
+in the final value of the block, you can call the C<.result> method on the
+returned promise. So:
+
+    my $promise = start { sleep 10; 42 }
+    # ... do other stuff
+    say "The result is $promise.result()";
+
+If the code inside the block has not finished, the call to C<.result> will
+wait until it is done.
+
+A C<start> used on a bare statement is useful when the only thing to do
+asynchronously is a subroutine or method:
+
+    sub get42 { 42 }
+    my $promise = start get42;
+    say $promise.result; # OUTPUT: «42␤»
+
+Note that start code does not have access to the special
+variables L«C<$!>|/syntax/$!» and L«C<$/>|/syntax/$$SOLIDUS» of its outer
+block, but receives new ones, so every asynchronous task has its
+per-task state.
+
+Thus, C<try> expressions and regex matches executed in the
+asynchronous task have their per-task state.
+
+    'a' ~~ /a/; # $/ is set to ｢a｣
+    try die;    # $! is defined now with an anonymous AdHoc exception
+    # as a code block
+    await start { say $! }; # OUTPUT: «Nil␤»
+    await start { say $/ }; # OUTPUT: «Nil␤»
+    # as a single statement
+    await start $!.say;     # OUTPUT: «Nil␤»
+    await start $/.say;     # OUTPUT: «Nil␤»
+
 =end pod
