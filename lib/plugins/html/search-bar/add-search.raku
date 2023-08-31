@@ -15,11 +15,7 @@ sub ($pp, %processed, %options) {
     #| spaces in the break between the value and the info section
     #| [  ]
     my $bar-chars = 8;
-    my @entries =
-        %( :category("Syntax"), :value("# single-line comment"), :url("/language/syntax#Single-line_comments") ),
-        %( :category("Syntax"), :value("#` multi-line comment"), :url("/language/syntax#Multi-line_/_embedded_comments") ),
-        %( :category("Signature"), :value(";; (long name)"), :url("/type/Signature#index-entry-Long_Names") )
-    ;
+    my @entries;
     my $categories = <Syntax Signature Heading Glossary>.SetHash;
     # collect info stored from parsing headers
     # structure of processed
@@ -92,6 +88,6 @@ sub ($pp, %processed, %options) {
     ];
 
     [
-        ['assets/scripts/search-bar.js', 'myself', 'search-bar.js'],
+        [ 'assets/scripts/search-bar.js', 'myself', 'search-bar.js' ],
     ]
 }

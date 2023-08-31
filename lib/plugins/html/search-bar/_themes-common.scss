@@ -1,11 +1,50 @@
 @import "../ogdenwebb/scss/base/_variables.scss";
+/* Resize search box */
+.navbar-item input {
+  width: 200px;
+}
 
+.navbar-item .button, .navbar-item input {
+  height: 1.85em;
+}
+
+.navbar > .container {
+  margin: 0 auto;
+  max-width: 1140px;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.navbar-search-wrapper {
+  position: absolute;
+  top: 10%;
+  right: 3px;
+}
+
+.autocomplete_wrapper {
+  position: relative;
+}
 // Autocompletion popup
 .navbar-search-autocomplete {
   color: darken($text, 10);
   background-color: $scheme-main-ter;
   box-shadow: $shadow;
   border: 1px solid $border;
+  position: absolute;
+  max-height: 80vh;
+  overflow-y: scroll;
+  box-sizing: border-box;
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 0;
+  z-index: 1;
+  list-style: none;
+
+  & ul {
+    top: 0 !important;
+    left: 0 !important;
+  }
 
   li {
     padding: 0 5px;
@@ -25,14 +64,29 @@
     }
   }
 
+
+.navbar-search-autocomplete[hidden],
+.navbar-search-autocomplete:empty {
+  display: block;
+  opacity: 0;
+  transform: scale(0);
+}
+
   .autocomplete-result-category {
-    // background-color: $heading;
     color: $heading;
-    // border-top: 1px solid $border;
-    // border-bottom: 2px solid $border;
+    font-size: 13px;
+    font-weight: bold;
+    text-transform: uppercase;
 
     &:hover {
       background-color: unset;
     }
   }
+}
+// new info element
+.item-info {
+    padding-left: 2em;
+    > b {
+        font-weight: 600;
+    }
 }
