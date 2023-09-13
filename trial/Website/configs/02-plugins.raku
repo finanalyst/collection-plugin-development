@@ -2,7 +2,7 @@
     :plugins<plugins>,
     :plugin-format<html>,
     plugins-required => %(
-        :setup('raku-doc-setup', ),
+        :setup<raku-doc-setup>,
         :render<
             hiliter font-awesome tablemanager
             page-styling #sidebar-search

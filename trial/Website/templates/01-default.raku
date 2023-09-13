@@ -99,7 +99,7 @@ use ProcessedPod;
         '<p>' ~ %prm<contents> ~ '</p>'
     },
     'format-l' => sub ( %prm, %tml ) {
-        # type = local: <link-label> -> <target>#<place> | <target>
+        # type = local: <link-label> -> <target>#<place> | <target>.html
         # type = internal: <link-label> -> #<place>
         # type = external: <link-label> -> <target>
         my $trg;
