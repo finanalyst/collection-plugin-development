@@ -3,7 +3,7 @@ use Cro::HTTP::Server;
 use Cro::HTTP::Log::File;
 use RakuConfig;
 
-sub ($destination, $landing, $ext, %p-config, %options) {
+sub ( $destination, $landing, $ext, %p-config, %options ) {
     if (try require Cro::HTTP::Router) === Nil {
         exit note "Cro::HTTP needs to be installed"
     }
@@ -12,7 +12,7 @@ sub ($destination, $landing, $ext, %p-config, %options) {
     my $port = %p-config<cro-app><port> // %config<port>;
     my %map;
     my @urls;
-    with %p-config<cro-app><url-map> {
+    for %p-config<cro-app><url-map>.list {
         if ("$destination/$_".IO ~~ :e & :f) {
             for "$destination/$_".IO.lines {
                 if m/ \" ~ \" (.+?) \s+ \" ~ \" (.+) / {
