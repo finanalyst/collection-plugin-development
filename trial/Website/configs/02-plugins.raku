@@ -5,20 +5,18 @@
         :setup<raku-doc-setup>,
         :render<
             hiliter font-awesome tablemanager
-            page-styling #sidebar-search
-            #ogdenwebb
-            search-bar
+            page-styling
+            options-search
             filtered-toc
             rakudoc-table
             camelia simple-extras listfiles images deprecate-span filterlines
             secondaries typegraph generated
             leafletmap latex-render graphviz
-            link-error-test
             gather-js-jq gather-css
         >,
         :report<link-plugin-assets-report>,
-        :transfer<secondaries gather-js-jq gather-css images #sidebar-search search-bar raku-doc-setup>,
-        :compilation<secondaries listfiles link-error-test #sidebar-search search-bar>,
+        :transfer<secondaries gather-js-jq gather-css images raku-doc-setup options-search>,
+        :compilation<secondaries listfiles options-search>,
         :completion<cro-app>,
     ),
 )
