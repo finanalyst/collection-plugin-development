@@ -27,6 +27,7 @@
   color: gainsboro;
   left: -30vw;
   padding: 0 0 0 0.5rem;
+  max-height: 60vh;
 }
 @media screen and (max-width: 1023px) {
   .autoComplete_options .autoComplete_wrapper > ul {
