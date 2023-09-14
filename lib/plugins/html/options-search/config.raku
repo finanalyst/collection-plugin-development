@@ -11,7 +11,7 @@
 	:name<options-search>,
 	:render,
 	:template-raku<options-search-templates.raku>,
-	:version<0.1.4>,
+	:version<0.1.5>,
 	:information<css-link>,
 	:add-css<css/options-search-light.css css/options-search-dark.css
 		css/centreToggle-dark.css css/centreToggle-light.css>,
