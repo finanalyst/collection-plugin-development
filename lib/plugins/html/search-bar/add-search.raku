@@ -16,7 +16,7 @@ sub ($pp, %processed, %options) {
     #| [  ]
     my $bar-chars = 8;
     my @entries;
-    my $categories = <Syntax Signature Heading Glossary>.SetHash;
+    my $categories = <Heading Indexed>.SetHash;
     # collect info stored from parsing headers
     # structure of processed
     # <filename> => %( :config-data => :kind, @sub-kind, @category )
@@ -25,38 +25,45 @@ sub ($pp, %processed, %options) {
         $s.trans([</ \\ ">] => [<\\/ \\\\ \\">]);
     }
     sub escape-json(Str $s) is export {
-        $s.subst(｢\｣, ｢%5C｣, :g).subst('"', '\"', :g).subst(｢?｣, ｢%3F｣, :g)
+        $s.subst(｢\｣, ｢%5C｣, :g)
+                .subst('"', '\"', :g)
+                .subst(｢?｣, ｢%3F｣, :g)
+                .subst(｢.｣, '%2E', :g)
     }
     for %processed.kv -> $fn, $podf {
         my $value = $podf.title;
         my $info = '';
-        # some files dont have a subtitle, so no extra information to show
+        # some files don't have a subtitle, so no extra information to show
         with $podf.subtitle {
             if m/ \S / {
                 $info = .subst(/ '<p>' | '</p>' /,'',:g);
-                my $vals = $value.chars;
-                if ( $vals + $bar-chars + $info.chars ) > $search-len {
-                    $info = '<i>'
-                        ~  $info.substr( 0, ( $search-len - $vals - $bar-chars - 4 ) )
-                        ~ '</i> ... '
-                }
-                else {
-                    $info = "<i>$info\</i>"
-                }
             }
         }
-        @entries.push: %(
-            :category($podf.pod-config-data<subkind>.tc),
-            :$value,
-            :$info,
-            :url(escape-json('/' ~ $fn))
-        );
+        if $fn ~~ / ^ [ 'syntax/' | 'routine/' ] / {
+            @entries.push: %(
+                :category($podf.pod-config-data<subkind>.tc),
+                :$value,
+                :$info,
+                :url(escape-json('/' ~ $podf.path)),
+                :type<composite>,
+            );
+        }
+        else {
+            @entries.push: %(
+                :category( $podf.pod-config-data<subkind>.tc // 'Language' ), # a default subkind in case one is missing.
+                :$value,
+                :$info,
+                :url(escape-json('/' ~ $fn)),
+                :type<primary>,
+            )
+        }
         for $podf.raw-toc.grep({ !(.<is-title>) }) {
             @entries.push: %(
                 :category<Heading>,
                 :value(.<text>),
-                :info(': section in <b>' ~ $podf.title ~ '</b>'),
-                :url(escape-json('/' ~ $fn ~ '#' ~ .<target>))
+                :info('Section in <b>' ~ $podf.title ~ '</b>'),
+                :url(escape-json('/' ~ $fn ~ '#' ~ .<target>)),
+                :type<headings>,
             )
         }
         $categories{ $podf.pod-config-data<kind>.tc }++
