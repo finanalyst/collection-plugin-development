@@ -10,5 +10,5 @@
 	:name<listfiles>,
 	:render,
 	:template-raku<listf-templates.raku>,
-	:version<0.3.1>,
+	:version<0.3.2>,
 )
