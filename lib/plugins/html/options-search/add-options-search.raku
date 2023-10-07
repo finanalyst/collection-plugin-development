@@ -30,7 +30,7 @@ sub ($pp, %processed, %options) {
                 .subst(｢?｣, ｢%3F｣, :g)
                 .subst(｢.｣, '%2E', :g)
     }
-    for %processed.kv -> $fn , $podf {
+    for %processed.kv -> $fn, $podf {
         my $value = $podf.title;
         my $info = '';
         # some files don't have a subtitle, so no extra information to show
@@ -46,7 +46,7 @@ sub ($pp, %processed, %options) {
                 :$info,
                 :url(escape-json('/' ~ $podf.path)),
                 :type<composite>,
-            );
+            )
         }
         else {
             @entries.push: %(
