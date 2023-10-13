@@ -9,16 +9,8 @@
             :no-remote,
             :run-tests,
         ),
-        ogdenwebb => %(
-            :!extended-search,
-            :error-report,
-        ),
-        raku-repl => %(
-            :websocket-host<finanalyst.org>,
-            :websocket-port<443>,
-        ),
-        search-bar => %(
-            :search-site<new-raku.finanalyst.org>,
+        sitemap => %(
+            :root-domain<https://docs.raku.org>,
         )
     ),
 )
