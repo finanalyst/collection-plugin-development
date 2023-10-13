@@ -7,7 +7,9 @@
 	:name<sitemap>,
 	:report<make-sitemap.raku>,
 	:render,
-	:version<0.1.0>,
+	:custom-raku(),
+	:template-raku(),
+	:version<0.1.1>,
 	:root-domain<https://docs.raku.org>,
 	:information<root-domain>,
 )
