@@ -12,6 +12,7 @@ use v6.d;
         { %tml<navigation>.(%prm, %tml)  }
         { %tml<wrapper>.(%prm, %tml)  }
         { %tml<footer>.(%prm, %tml)  }
+        <div id="raku-repl"></div>
         { %tml<js-bottom>.({}, {}) }
         </body>
         </html>
@@ -150,12 +151,12 @@ use v6.d;
             qq:to/BLOCK/
             <div class="tile is-ancestor section">
                 <div id="left-column" class="tile is-parent is-2 is-hidden">
-                    <div style="height: 90vh; overflow-y: scroll;">
+                    <div id="left-col-inner">
                         { %tml<toc-sidebar>.(%prm, %tml)  }
                     </div>
                 </div>
                 <div id="main-column" class="tile is-parent" style="overflow-x: hidden;">
-                    <div style="height: 92vh; overflow-y: scroll; flex-grow:inherit;">
+                    <div id="main-col-inner">
                         { %tml<page-main>.(%prm, %tml) }
                     </div>
                 </div>
