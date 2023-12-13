@@ -54,6 +54,19 @@ sub ($pr, %processed, %options) {
             }
         }
         return () if $new eq any(%targets{$file}.list);
+        # filter out $SOLIDUS / $CIRCUMFLEX_ACCENT / $PERCENT_SIGN
+        my @badchars = ["/", "^", "%"];
+        my @goodchars = @badchars
+            .map({ '$' ~ .uniname })
+            .map({ .subst(' ', '_', :g) });
+        $new .= subst(@badchars[0], @goodchars[0], :g);
+        $new .= subst(@badchars[1], @goodchars[1], :g);
+        # if it contains escaped sequences (like %20) we do not
+        # escape %
+        if (!($new ~~ /\%<xdigit> ** 2/)) {
+            $new .= subst(@badchars[2], @goodchars[2], :g);
+        }
+        return () if $new eq any(%targets{$file}.list);
         return ($old, $new)
     }
     sub test-remote($url --> Str ) {
