@@ -18,10 +18,20 @@ sub ($pr, %processed, %options) {
     my %errors = <no-file unknown remote no-target> Z=> {}, {}, {}, {};
     my %links;
     my %targets;
+    #| possible filenames that map to a real html file
+    my %aliases;
+
     sub failed-targets($file, Str $target) {
         my $old = $target.trim;
+        my @ok-targets;
+        if %aliases{ $file }:exists {
+            @ok-targets = %targets{ %aliases{ $file } }.list
+        }
+        else {
+            @ok-targets = %targets{$file}.list
+        }
         # straight check
-        return () if $old eq any(%targets{$file}.list);
+        return () if $old eq any(@ok-targets);
         return ($old,) unless $old ~~ / <htmlcode> /;
         # first check for xhtml
         my $new = $old;
@@ -53,21 +63,7 @@ sub ($pr, %processed, %options) {
                                 [' ', '$', '&', '(', ')', '*', '+', '/', ':', '<', '>', '?', '@', '^', '|', '¦', '»']);
             }
         }
-        return () if $new eq any(%targets{$file}.list);
-        # filter out $SOLIDUS / $CIRCUMFLEX_ACCENT / $PERCENT_SIGN
-        my @badchars = ["/", "^", "%"];
-        my @goodchars = @badchars
-            .map({ '$' ~ .uniname })
-            .map({ .subst(' ', '_', :g) });
-        $new .= subst(@badchars[0], @goodchars[0], :g);
-        $new .= subst(@badchars[1], @goodchars[1], :g);
-        # if it contains escaped sequences (like %20) we do not
-        # escape %
-        if (!($new ~~ /\%<xdigit> ** 2/)) {
-            $new .= subst(@badchars[2], @goodchars[2], :g);
-        }
-        return () if $new eq any(%targets{$file}.list);
-        return ($old, $new)
+        return () if $new eq any(@ok-targets);
     }
     sub test-remote($url --> Str ) {
         state $http = LibCurl::HTTP.new;
@@ -85,7 +81,10 @@ sub ($pr, %processed, %options) {
         return '' if ($resp ~~ / \:\s(\d\d\d) / and +$0 != 404);
         $resp
     }
-    my SetHash $files .= new;
+    %aliases = %config<aliases>.map({ '/' ~ $^a => '/' ~ $^b });
+    #| SetHash of files in collection
+    my SetHash $files .= new( %aliases.keys );
+    #| SetHash of files found missing
     my SetHash $missing .= new;
     my @remote-links;
     # go through all the rendered files and pick up links and targets
@@ -124,7 +123,7 @@ sub ($pr, %processed, %options) {
         for %spec.kv -> $link, %registered {
             given %registered<type> {
                 when 'local' {
-                    # pass if it has already been registered as missing
+                    # skip this test if a file has already been registered as missing
                     next if $missing{ %registered<target> };
                     # fail if the file is not in the collection list
                     unless $files{ %registered<target> } {
@@ -135,7 +134,7 @@ sub ($pr, %processed, %options) {
                         ));
                         next
                     }
-                    # so by here file exists, so check to see whether link has a specific place listed for that file
+                    # by here file exists, so check to see whether link has a specific place listed for that file
                     next unless %registered<place>:exists and %registered<place>;
                     my @failed = failed-targets( %registered<target> , %registered<place> );
                     next unless @failed.elems;

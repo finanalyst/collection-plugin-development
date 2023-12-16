@@ -9,6 +9,7 @@
             options-search
             filtered-toc
             rakudoc-table
+            link-error-test
             camelia simple-extras listfiles images deprecate-span filterlines
             secondaries typegraph generated
             leafletmap latex-render graphviz
@@ -16,7 +17,7 @@
         >,
         :report<link-plugin-assets-report sitemap>,
         :transfer<secondaries gather-js-jq gather-css images raku-doc-setup options-search>,
-        :compilation<secondaries listfiles options-search>,
+        :compilation<secondaries listfiles link-error-test options-search>,
         :completion<cro-app>,
     ),
 )

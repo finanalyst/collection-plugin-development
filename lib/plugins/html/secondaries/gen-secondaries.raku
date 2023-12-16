@@ -69,6 +69,7 @@ sub (ProcessedPod $pp, %processed, %options) {
     for %definitions.kv -> $fn, %targets {
         counter(:dec) unless %options<no-status>;
         my $html = %processed{$fn}.pod-output;
+        my $title = %processed{$fn}.title;
         while $html ~~ m:c / <defnmark> / {
             given $/<defnmark> {
                 my $targ = .<target>.Str;
@@ -79,6 +80,7 @@ sub (ProcessedPod $pp, %processed, %options) {
                 my $kind = %attr<kind>:delete;
                 %attr<target> = $targ;
                 %attr<source> = $fn;
+                %attr<src-title> = $title;
                 $level = .<level>.Str;
                 $html ~~ m:c / <chunk> /;
                 %attr<body> = $/<chunk>[0].Str.trim;
@@ -124,7 +126,8 @@ sub (ProcessedPod $pp, %processed, %options) {
                 @subkind.append: .<subkind>;
                 @category.append: .<category>;
                 @sources.push: .<source>;
-                my $target = .<source> ~ $kind ~ .<subkind>;
+                my $target = "#({.<src-title>})_{.<subkind>}_$dn";
+                $podf.targets{ $target }++;
                 my $text = 'In ' ~ .<source>;
                 @toc.push: %( :1level, :$text, :$target );
                 $body ~= %templates<heading>.(%(
@@ -137,7 +140,7 @@ sub (ProcessedPod $pp, %processed, %options) {
                 $body ~= %templates<para>.(%(
                    :contents(qq:to/CONT/)
                         See primary documentation
-                        <a href="/{ .<source> }#{ .<target> }">in context\</a>
+                        <a href="/{ .<source> }{ .<target> }">in context\</a>
                         for <b>{ .<target>.subst( / '_' / , ' ', :g ) }</b>
                     CONT
                 ), %templates);
@@ -146,7 +149,7 @@ sub (ProcessedPod $pp, %processed, %options) {
                     .<category>.tc,
                     $dn,
                     .<subkind>,
-                    qq[[<a href="/{ .<source> }#{ .<target> }">{ .<source> }</a>]]
+                    qq[[<a href="/{ .<source> }{ .<target> }">{ .<source> }</a>]]
                 ];
             }
             # Construct TOC
@@ -176,6 +179,11 @@ sub (ProcessedPod $pp, %processed, %options) {
         %ns := $pp.get-data('tablemanager');
         %ns<dataset> = {} without %ns<dataset>;
         %ns<dataset><routines> = @routines;
+    }
+    my %let-ns;
+    if 'link-error-test' ~~ any( $pp.plugin-datakeys ) {
+        %let-ns := $pp.get-data('link-error-test');
+        %let-ns<aliases> = %url-maps;
     }
     if $hash-urls {
         'prettyurls'.IO.spurt: %url-maps.fmt("\"\/%s\" \"\/%s\"").join("\n");
