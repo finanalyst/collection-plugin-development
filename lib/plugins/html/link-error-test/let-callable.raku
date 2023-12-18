@@ -81,7 +81,7 @@ sub ($pr, %processed, %options) {
         return '' if ($resp ~~ / \:\s(\d\d\d) / and +$0 != 404);
         $resp
     }
-    %aliases = %config<aliases>.map({ '/' ~ $^a => '/' ~ $^b });
+    %aliases = %config<aliases>.kv.map({ '/' ~ $^a => '/' ~ $^b });
     #| SetHash of files in collection
     my SetHash $files .= new( %aliases.keys );
     #| SetHash of files found missing

@@ -59,6 +59,8 @@ sub (ProcessedPod $pp, %processed, %options) {
     my %things = %( routine => {}, syntax => {});
     #| url mapping data
     my %url-maps;
+    #| aliases for targets
+    my %aliases;
     #| templates hash in ProcessedPod instance
     my %templates := $pp.tmpl;
     #| container for the triples describing the files to be transferred once created
@@ -105,8 +107,10 @@ sub (ProcessedPod $pp, %processed, %options) {
             my $url = "{ $kind.Str.lc }/$esc-dn";
             %url-maps{ $url } = $mapped-name;
             %url-maps{ $fn-new.subst(/\"/,'\"',:g) } = $mapped-name;
+            %aliases{ $fn-new.subst(/\"/,'\"',:g) } = $url;
             unless $fn-name-old eq $fn-new {
-                %url-maps{ $fn-name-old.subst(/\"/,'\"',:g) } = $mapped-name
+                %url-maps{ $fn-name-old.subst(/\"/,'\"',:g) } = $mapped-name;
+                %aliases{ $fn-name-old.subst(/\"/,'\"',:g) } = $url;
             }
             my $title = $dn.trans(qw｢ &lt; &gt; &amp; &quot; ｣ => qw｢ <    >    &   " ｣);
             my $subtitle = 'Combined from primary sources listed below.';
@@ -126,9 +130,9 @@ sub (ProcessedPod $pp, %processed, %options) {
                 @subkind.append: .<subkind>;
                 @category.append: .<category>;
                 @sources.push: .<source>;
-                my $target = "#({.<src-title>})_{.<subkind>}_$dn";
+                my $target = "({.<src-title>})_{.<subkind>}_$dn".subst(/ \s /,'_',:g);
                 $podf.targets{ $target }++;
-                my $text = 'In ' ~ .<source>;
+                my $text = 'In ' ~ .<src-title>;
                 @toc.push: %( :1level, :$text, :$target );
                 $body ~= %templates<heading>.(%(
                   :1level,
@@ -140,7 +144,7 @@ sub (ProcessedPod $pp, %processed, %options) {
                 $body ~= %templates<para>.(%(
                    :contents(qq:to/CONT/)
                         See primary documentation
-                        <a href="/{ .<source> }{ .<target> }">in context\</a>
+                        <a href="/{ .<source> }#{ .<target> }">in context\</a>
                         for <b>{ .<target>.subst( / '_' / , ' ', :g ) }</b>
                     CONT
                 ), %templates);
@@ -149,7 +153,7 @@ sub (ProcessedPod $pp, %processed, %options) {
                     .<category>.tc,
                     $dn,
                     .<subkind>,
-                    qq[[<a href="/{ .<source> }{ .<target> }">{ .<source> }</a>]]
+                    qq[[<a href="/{ .<source> }#{ .<target> }">{ .<source> }</a>]]
                 ];
             }
             # Construct TOC
@@ -183,7 +187,7 @@ sub (ProcessedPod $pp, %processed, %options) {
     my %let-ns;
     if 'link-error-test' ~~ any( $pp.plugin-datakeys ) {
         %let-ns := $pp.get-data('link-error-test');
-        %let-ns<aliases> = %url-maps;
+        %let-ns<aliases> = %aliases;
     }
     if $hash-urls {
         'prettyurls'.IO.spurt: %url-maps.fmt("\"\/%s\" \"\/%s\"").join("\n");
