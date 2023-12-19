@@ -71,7 +71,7 @@ sub (ProcessedPod $pp, %processed, %options) {
     for %definitions.kv -> $fn, %targets {
         counter(:dec) unless %options<no-status>;
         my $html = %processed{$fn}.pod-output;
-        my $title = %processed{$fn}.title;
+        my $title = %processed{$fn}.title.subst(/ ^ class \s /,'');
         while $html ~~ m:c / <defnmark> / {
             given $/<defnmark> {
                 my $targ = .<target>.Str;

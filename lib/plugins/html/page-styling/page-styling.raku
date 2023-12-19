@@ -444,12 +444,12 @@ use v6.d;
     },
     'format-x' => sub (%prm, %tml) {
         my $indexedheader = %prm<meta>.elems ?? %prm<meta>[0].join(';') !! %prm<text>;
-        my $beg = qq[
-            <a name="{ %prm<target> // ''}" class="index-entry"
-            data-indexedheader="{ $indexedheader }"></a>
-            { (%prm<text>.defined and %prm<text> ne '') ?? '<span class="glossary-entry">' !! '' }
+        my $beg = qq[<a name="{ %prm<target> // ''}" class="index-entry"><span class="glossary-entry"
+            { (%prm<text>.defined and %prm<text> ne '') ??
+            ('data-indexedheader="' ~ $indexedheader ~ '">')
+            !! '>' }
         ];
-        my $end = '</span>';
+        my $end = '</span></a>';
         my $mark = "\xFF\xFF";
         if %prm<context>.Str eq 'InCodeBlock' {
             $beg = $mark ~ $beg ~ $mark;
