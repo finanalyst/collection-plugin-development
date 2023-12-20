@@ -482,6 +482,8 @@ a.button.is-primary .icon {
 a.index-entry {
   text-decoration: none;
   cursor: help;
+}
+a.index-entry span.glossary-entry {
   padding: 0 0.3em 0 0.3em;
   border-radius: 0.5em;
   border: 2px solid #f8efd3;
@@ -492,7 +494,7 @@ a.index-entry span.glossary-entry:hover::before {
   opacity: 1;
 }
 a.index-entry span.glossary-entry::before {
-  content: attr(data-indexedheader);
+  content: attr(data-index-text);
   position: absolute;
   display: inline-block;
   transform: translateY(-100%);
