@@ -24,6 +24,7 @@ sub ($pr, %processed, %options) {
     sub failed-targets($file, Str $target) {
         my $old = $target.trim;
         my @ok-targets;
+        my @tested-variants;
         if %aliases{ $file }:exists {
             @ok-targets = %targets{ %aliases{ $file } }.list
         }
@@ -31,8 +32,9 @@ sub ($pr, %processed, %options) {
             @ok-targets = %targets{$file}.list
         }
         # straight check
+        @tested-variants.push: $old;
         return () if $old eq any(@ok-targets);
-        return ($old,) unless $old ~~ / <htmlcode> /;
+        return @tested-variants unless $old ~~ / <htmlcode> /;
         # first check for xhtml
         my $new = $old;
         given $old {
@@ -63,7 +65,13 @@ sub ($pr, %processed, %options) {
                                 [' ', '$', '&', '(', ')', '*', '+', '/', ':', '<', '>', '?', '@', '^', '|', '¦', '»']);
             }
         }
+        @tested-variants.push: $new;
         return () if $new eq any(@ok-targets);
+        return @tested-variants unless $new ~~ / '&' .+? ';' /;
+        $new .= trans(qw｢ &lt; &gt; &amp; &quot; ｣ => qw｢ <    >    &     " ｣ );
+        @tested-variants.push: $new;
+        return () if $new eq any(@ok-targets);
+        return @tested-variants
     }
     sub test-remote($url --> Str ) {
         state $http = LibCurl::HTTP.new;
