@@ -13,11 +13,12 @@
             camelia simple-extras listfiles images deprecate-span filterlines
             secondaries typegraph generated
             leafletmap latex-render graphviz
+            website
             gather-js-jq gather-css sitemap
         >,
         :report<link-plugin-assets-report sitemap>,
         :transfer<secondaries gather-js-jq gather-css images raku-doc-setup options-search>,
-        :compilation<secondaries listfiles link-error-test options-search>,
+        :compilation<secondaries listfiles link-error-test options-search website>,
         :completion<cro-app>,
     ),
 )
