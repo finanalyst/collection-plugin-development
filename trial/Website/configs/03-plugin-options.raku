@@ -8,6 +8,7 @@
         link-error-test => %(
             :no-remote,
             :run-tests,
+            :structure-files<introduction about index miscellaneous reference routines types>,
         ),
         sitemap => %(
             :root-domain<https://docs.raku.org>,

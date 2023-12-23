@@ -13,5 +13,5 @@
 	:run-tests,
 	:render,
 	:template-raku<let-templates.raku>,
-	:version<0.3.16>,
+	:version<0.3.17>,
 )
