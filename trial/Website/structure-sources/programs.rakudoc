@@ -1,6 +1,0 @@
-=begin pod :no-glossary :no-toc  :page-content-one-col
-=TITLE Raku Programs Documentation
-
-=for ListFiles :select<kind=Programs>
-
-=end pod

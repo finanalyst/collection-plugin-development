@@ -16,9 +16,7 @@ use v6.d;
     :!full-render, # force rendering of all output files
     :!without-processing,
     :mode<Website>, # the default mode, which must exist
-    #:ignore< 404 HomePage >,
-    :ignore< 404 HomePage Type/Attribute Type/CallFrame Type/Cool Type/Dateish Type/Parameter
-        Type/Signature faq Language/classtut nativecall variables subscripts>,
+    :ignore(),
     :extensions< rakudoc pod pod6 p6 pm pm6 >,
     :asset-basename<asset_base>,
     :asset-paths( %( # type of asset is key, then metadata for that type
@@ -27,5 +25,35 @@ use v6.d;
             :extensions<png jpeg jpeg svg mp4 webm gif>,
         ),
     )),
-    :with-only(''),
+    :with-only(q:to/SAMPLE/), # constrain test run
+        language/101-basics
+        language/5to6-nutshell
+        language/classtut
+        language/control
+        language/faq
+        language/functions
+        language/glossary
+        language/grammars
+        language/operators
+        language/rb-nutshell
+        language/regexes
+        language/structures
+        language/unicode_entry
+        language/variables
+        native/int
+        programs/01-debugging
+        programs/02-reading-docs
+        type/Attribute
+        type/BagHash
+        type/Baggy
+        type/CallFrame
+        type/Signature
+        type/Str
+        type/X/Proc/Unsuccessful
+        type/X/Syntax/Regex/SolitaryQuantifier
+        type/independent-routines
+        404 index reference
+        about introduction routines test
+        error-report license miscellaneous types.rakudoc
+        SAMPLE
 )
