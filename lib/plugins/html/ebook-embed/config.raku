@@ -1,0 +1,16 @@
+%(
+	:auth<collection>,
+	:authors(
+		"finanalyst",
+	),
+	:compilation<compilation-callable.raku>,
+	:completion<completion-callable.raku>,
+	:custom-raku(),
+	:license<Artistic-2.0>,
+	:name<ebook-embed>,
+	:render<move-files.raku>,
+	:template-raku<ebook-styling.raku>,
+	:transfer<transfer-callable.raku>,
+	:version<0.1.0>,
+	:spine<index>
+)

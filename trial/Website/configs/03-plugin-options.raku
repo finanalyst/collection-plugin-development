@@ -13,6 +13,10 @@
         sitemap => %(
             :root-domain<https://docs.raku.org>,
             :sitemap-destination<../../rendered_html>,
-        )
+        ),
+        sqlite-db => %(
+            :database-dir<../../sqlite_dir>,
+            :db-filename<sqlite-test.sql>,
+        ),
     ),
 )

@@ -6,4 +6,7 @@
 		:collection-plugin-root<../lib>,
 		:update-behaviour<auto>,
 	)),
+	:Website( %(
+		:_mode_format<html>,
+	)),
 )

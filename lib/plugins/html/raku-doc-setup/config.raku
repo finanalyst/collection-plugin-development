@@ -7,5 +7,5 @@
 	:name<raku-doc-setup>,
 	:setup<raku-doc-change-routes.raku>,
 	:transfer<add-deprecate.raku>,
-	:version<0.3.6>,
+	:version<0.3.7>,
 )

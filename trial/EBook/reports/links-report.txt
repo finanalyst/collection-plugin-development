@@ -1,0 +1,133 @@
+Link report
+language/operators contains links
+	link entry ｢/type/Cool｣ has ｢Cool｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/Cool｣
+	link entry ｢/routine/fail｣ has ｢fail｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/routine/fail｣
+	link entry ｢/language/operators#Assignment_operators｣ has ｢assignment｣ labels a ｢local｣ link that points to ｢Assignment_operators｣ in target ｢/language/operators｣
+	link entry ｢/routine/fff｣ has ｢fff｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/routine/fff｣
+	link entry ｢/type/Bool｣ has ｢Bool｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/Bool｣
+	link entry ｢/routine/WHICH｣ has ｢WHICH｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/routine/WHICH｣
+	link entry ｢/type/Method｣ has ｢Method｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/Method｣
+	link entry ｢/type/FatRat｣ has ｢FatRat｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/FatRat｣
+	link entry ｢/language/objects#index-entry-MRO｣ has ｢MRO｣ labels a ｢local｣ link that points to ｢index-entry-MRO｣ in target ｢/language/objects｣
+	link entry ｢/type/List｣ has ｢<code>List</code>｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/List｣
+	link entry ｢/type/Baggy｣ has ｢Baggy｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/Baggy｣
+	link entry ｢/type/Capture｣ has ｢Capture｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/Capture｣
+	link entry ｢/routine/:=｣ has ｢<code>infix :=</code>｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/routine/:=｣
+	link entry ｢/type/Slip｣ has ｢Slip｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/Slip｣
+	link entry ｢/routine/fff$CIRCUMFLEX_ACCENT｣ has ｢fff^｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/routine/fff$CIRCUMFLEX_ACCENT｣
+	link entry ｢/language/terms｣ has ｢own extended documentation｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/language/terms｣
+	link entry ｢/routine/$CIRCUMFLEX_ACCENTff$CIRCUMFLEX_ACCENT｣ has ｢<code>^ff^</code>｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/routine/$CIRCUMFLEX_ACCENTff$CIRCUMFLEX_ACCENT｣
+	link entry ｢/type/ValueObjAt｣ has ｢value type｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/ValueObjAt｣
+	link entry ｢/routine/but｣ has ｢but｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/routine/but｣
+	link entry ｢/language/traps#Using_»_and_map_interchangeably｣ has ｢common mistake｣ labels a ｢local｣ link that points to ｢Using_»_and_map_interchangeably｣ in target ｢/language/traps｣
+	link entry ｢/routine/ACCEPTS｣ has ｢ACCEPTS｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/routine/ACCEPTS｣
+	link entry ｢/routine/= (item assignment)｣ has ｢= (item assignment)｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/routine/= (item assignment)｣
+	link entry ｢/routine/reduce｣ has ｢reduce｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/routine/reduce｣
+	link entry ｢/routine/||｣ has ｢infix <code>||</code>｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/routine/||｣
+	link entry ｢/routine/hash｣ has ｢hash｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/routine/hash｣
+	link entry ｢/type/Any#routine_min｣ has ｢<code>&amp;min</code>｣ labels a ｢local｣ link that points to ｢routine_min｣ in target ｢/type/Any｣
+	link entry ｢/type/Associative｣ has ｢<code>Associative</code>s｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/Associative｣
+	link entry ｢/type/Buf｣ has ｢Buf｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/Buf｣
+	link entry ｢/type/Regex｣ has ｢<code>Regex</code>｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/Regex｣
+	link entry ｢/language/quoting#Word_quoting_with_interpolation_and_quote_protection:_«_»｣ has ｢interpolating quote-words operator｣ labels a ｢local｣ link that points to ｢Word_quoting_with_interpolation_and_quote_protection:_«_»｣ in target ｢/language/quoting｣
+	link entry ｢/type/Real｣ has ｢<code>Real</code>｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/Real｣
+	link entry ｢/type/Array｣ has ｢Array｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/Array｣
+	link entry ｢/type/List#method_Str｣ has ｢Str｣ labels a ｢local｣ link that points to ｢method_Str｣ in target ｢/type/List｣
+	link entry ｢/routine/trans｣ has ｢<code>Str.trans</code>｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/routine/trans｣
+	link entry ｢/type/Rat｣ has ｢Rat｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/Rat｣
+	link entry ｢/routine/ff｣ has ｢ff｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/routine/ff｣
+	link entry ｢/type/Bag｣ has ｢Bag｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/Bag｣
+	link entry ｢/language/functions#Defining_operators｣ has ｢Defining operators functions｣ labels a ｢local｣ link that points to ｢Defining_operators｣ in target ｢/language/functions｣
+	link entry ｢/routine/« »#(Operators)_postcircumfix_«_»｣ has ｢<code>postcircumfix « »</code>｣ labels a ｢local｣ link that points to ｢(Operators)_postcircumfix_«_»｣ in target ｢/routine/« »｣
+	link entry ｢/language/variables#Item_and_list_assignment｣ has ｢item and list assignment｣ labels a ｢local｣ link that points to ｢Item_and_list_assignment｣ in target ｢/language/variables｣
+	link entry ｢#prefix ...｣ has ｢#prefix ...｣ labels a ｢internal｣ link that points to ｢prefix_...｣ in target ｢｣
+	link entry ｢/type/Sub｣ has ｢Sub｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/Sub｣
+	link entry ｢https://en.wikipedia.org/wiki/Identity_element｣ has ｢an identity value｣ labels a ｢external｣ link that points to ｢top of file｣ in target ｢https://en.wikipedia.org/wiki/Identity_element｣
+	link entry ｢/language/mop｣ has ｢the metaobject protocol documentation｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/language/mop｣
+	link entry ｢/type/BagHash｣ has ｢BagHash｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/BagHash｣
+	link entry ｢/routine/notandthen｣ has ｢notandthen｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/routine/notandthen｣
+	link entry ｢/type/Str｣ has ｢Str｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/Str｣
+	link entry ｢/type/Range｣ has ｢Range｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/Range｣
+	link entry ｢/language/list#Argument_list_(Capture)_context｣ has ｢argument list｣ labels a ｢local｣ link that points to ｢Argument_list_(Capture)_context｣ in target ｢/language/list｣
+	link entry ｢/language/operators#Metaoperators｣ has ｢metaoperators｣ labels a ｢local｣ link that points to ｢Metaoperators｣ in target ｢/language/operators｣
+	link entry ｢/routine/subst｣ has ｢<code>.subst</code> method｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/routine/subst｣
+	link entry ｢/type/Numeric｣ has ｢Numeric｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/Numeric｣
+	link entry ｢/language/subscripts｣ has ｢Subscripts｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/language/subscripts｣
+	link entry ｢/type/Hash｣ has ｢Hash｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/Hash｣
+	link entry ｢/type/Any#routine_max｣ has ｢<code>&amp;max</code>｣ labels a ｢local｣ link that points to ｢routine_max｣ in target ｢/type/Any｣
+	link entry ｢/type/Set｣ has ｢Set｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/Set｣
+	link entry ｢/routine/warn｣ has ｢warn｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/routine/warn｣
+	link entry ｢/language/containers#Binding｣ has ｢containers｣ labels a ｢local｣ link that points to ｢Binding｣ in target ｢/language/containers｣
+	link entry ｢/language/typesystem#trait_is_nodal｣ has ｢nodality｣ labels a ｢local｣ link that points to ｢trait_is_nodal｣ in target ｢/language/typesystem｣
+	link entry ｢/routine/map｣ has ｢map｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/routine/map｣
+	link entry ｢/type/Junction｣ has ｢Junction｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/Junction｣
+	link entry ｢/routine/defined｣ has ｢undefined｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/routine/defined｣
+	link entry ｢/type/StrDistance｣ has ｢StrDistance｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/StrDistance｣
+	link entry ｢/type/Mixy｣ has ｢Mixy｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/Mixy｣
+	link entry ｢/routine/ff$CIRCUMFLEX_ACCENT｣ has ｢ff^｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/routine/ff$CIRCUMFLEX_ACCENT｣
+	link entry ｢#infix_Z｣ has ｢Z｣ labels a ｢internal｣ link that points to ｢infix_Z｣ in target ｢｣
+	link entry ｢/routine/is%20nodal｣ has ｢nodality of the method｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/routine/is%20nodal｣
+	link entry ｢/language/operators#infix_%26%26｣ has ｢infix &amp;&amp;｣ labels a ｢local｣ link that points to ｢infix_%26%26｣ in target ｢/language/operators｣
+	link entry ｢/routine/{ }#(Operators)_postcircumfix_{_}｣ has ｢<code>postcircumfix { }</code>｣ labels a ｢local｣ link that points to ｢(Operators)_postcircumfix_{_}｣ in target ｢/routine/{ }｣
+	link entry ｢/routine/$CIRCUMFLEX_ACCENT$CIRCUMFLEX_ACCENT｣ has ｢infix <code>^^</code>｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/routine/$CIRCUMFLEX_ACCENT$CIRCUMFLEX_ACCENT｣
+	link entry ｢/routine/pred｣ has ｢pred｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/routine/pred｣
+	link entry ｢/type/X::Method::NotFound｣ has ｢X::Method::NotFound｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/X/Method/NotFound｣
+	link entry ｢/type/Whatever｣ has ｢Whatever｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/Whatever｣
+	link entry ｢/language/traps#Loose_Boolean_operators｣ has ｢traps｣ labels a ｢local｣ link that points to ｢Loose_Boolean_operators｣ in target ｢/language/traps｣
+	link entry ｢/routine/< >#circumfix_<_>｣ has ｢quote-words operator｣ labels a ｢local｣ link that points to ｢circumfix_<_>｣ in target ｢/routine/< >｣
+	link entry ｢/type/List#index-entry-()_empty_list｣ has ｢empty list｣ labels a ｢local｣ link that points to ｢index-entry-()_empty_list｣ in target ｢/type/List｣
+	link entry ｢https://en.wikipedia.org/wiki/Two%27s_complement｣ has ｢two's complement｣ labels a ｢external｣ link that points to ｢top of file｣ in target ｢https://en.wikipedia.org/wiki/Two%27s_complement｣
+	link entry ｢/language/control#with_orwith_without｣ has ｢<code>with</code> statement modifier｣ labels a ｢local｣ link that points to ｢with_orwith_without｣ in target ｢/language/control｣
+	link entry ｢/routine/succ｣ has ｢succ｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/routine/succ｣
+	link entry ｢/type/Callable｣ has ｢Callable｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/Callable｣
+	link entry ｢/type/Duration｣ has ｢<code>Duration</code>｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/Duration｣
+	link entry ｢/type/Any#index-entry-%24_%28item_contextualizer%29｣ has ｢(list) item contextualizer｣ labels a ｢local｣ link that points to ｢index-entry-%24_%28item_contextualizer%29｣ in target ｢/type/Any｣
+	link entry ｢/routine/deepmap｣ has ｢deepmap｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/routine/deepmap｣
+	link entry ｢/language/operators#infix_=_(list_assignment)｣ has ｢list assignment operator｣ labels a ｢local｣ link that points to ｢infix_=_(list_assignment)｣ in target ｢/language/operators｣
+	link entry ｢/language/functions#Precedence｣ has ｢precedence of custom operators｣ labels a ｢local｣ link that points to ｢Precedence｣ in target ｢/language/functions｣
+	link entry ｢/routine/orelse｣ has ｢orelse｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/routine/orelse｣
+	link entry ｢/routine/duckmap｣ has ｢duckmap｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/routine/duckmap｣
+	link entry ｢/language/optut｣ has ｢creating operators｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/language/optut｣
+	link entry ｢/type/MixHash｣ has ｢MixHash｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/MixHash｣
+	link entry ｢/routine/$CIRCUMFLEX_ACCENTfff$CIRCUMFLEX_ACCENT｣ has ｢<code>^fff^</code>｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/routine/$CIRCUMFLEX_ACCENTfff$CIRCUMFLEX_ACCENT｣
+	link entry ｢/routine/CALL-ME｣ has ｢<code>method CALL-ME</code>｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/routine/CALL-ME｣
+	link entry ｢/type/Block｣ has ｢Block｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/Block｣
+	link entry ｢/type/Int｣ has ｢Int｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/Int｣
+	link entry ｢/type/Match｣ has ｢<code>Match</code>｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/Match｣
+	link entry ｢/type/Iterable｣ has ｢<code>Iterables</code>｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/Iterable｣
+	link entry ｢/type/Seq｣ has ｢<code>Seq</code>｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/Seq｣
+	link entry ｢/language/signatures#Capture_parameters｣ has ｢signature literals page, specially the section on Captures｣ labels a ｢local｣ link that points to ｢Capture_parameters｣ in target ｢/language/signatures｣
+	link entry ｢/type/Nil｣ has ｢Nil｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/Nil｣
+	link entry ｢/language/terms#Pair｣ has ｢the Terms language documentation｣ labels a ｢local｣ link that points to ｢Pair｣ in target ｢/language/terms｣
+	link entry ｢/language/variables#index-entry-%24*COLLATION｣ has ｢<code>$*COLLATION</code>｣ labels a ｢local｣ link that points to ｢index-entry-%24*COLLATION｣ in target ｢/language/variables｣
+	link entry ｢http://design.raku.org/S03.html#Reduction_operators｣ has ｢must be specified for every operator｣ labels a ｢external｣ link that points to ｢top of file｣ in target ｢http://design.raku.org/S03.html#Reduction_operators｣
+	link entry ｢/routine/die｣ has ｢die｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/routine/die｣
+	link entry ｢/type/Positional｣ has ｢<code>Positional</code>s｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/Positional｣
+	link entry ｢/language/variables#index-entry-$_(variable)｣ has ｢anonymous state variable <code>$</code>｣ labels a ｢local｣ link that points to ｢index-entry-$_(variable)｣ in target ｢/language/variables｣
+	link entry ｢/routine/$CIRCUMFLEX_ACCENTff｣ has ｢<code>^ff</code>｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/routine/$CIRCUMFLEX_ACCENTff｣
+	link entry ｢/type/Failure｣ has ｢Failures｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/Failure｣
+	link entry ｢/language/operators#infix_=_(item_assignment)｣ has ｢item assignment｣ labels a ｢local｣ link that points to ｢infix_=_(item_assignment)｣ in target ｢/language/operators｣
+	link entry ｢/routine/cmp｣ has ｢cmp｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/routine/cmp｣
+	link entry ｢/type/Slip#constant_Empty｣ has ｢<code>Empty</code>｣ labels a ｢local｣ link that points to ｢constant_Empty｣ in target ｢/type/Slip｣
+	link entry ｢/type/Pair｣ has ｢Pair｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/Pair｣
+	link entry ｢/routine/$CIRCUMFLEX_ACCENTfff｣ has ｢<code>^fff</code>｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/routine/$CIRCUMFLEX_ACCENTfff｣
+	link entry ｢/type/DateTime｣ has ｢<code>DateTime</code>｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/DateTime｣
+	link entry ｢/type/Map｣ has ｢Map｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/Map｣
+	link entry ｢/routine/nodemap｣ has ｢nodemap｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/routine/nodemap｣
+	link entry ｢/syntax/$_｣ has ｢<code>$_</code> variable｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/syntax/$_｣
+	link entry ｢/routine/count｣ has ｢<code>.count</code>｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/routine/count｣
+	link entry ｢/language/operators#circumfix_[_]｣ has ｢postcircumfix[]｣ labels a ｢local｣ link that points to ｢circumfix_[_]｣ in target ｢/language/operators｣
+	link entry ｢/type/Promise｣ has ｢Promise｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/Promise｣
+	link entry ｢/type/Mix｣ has ｢Mix｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/Mix｣
+	link entry ｢/routine/< >#(Operators)_postcircumfix_<_>｣ has ｢<code>postcircumfix &lt; &gt;</code>｣ labels a ｢local｣ link that points to ｢(Operators)_postcircumfix_<_>｣ in target ｢/routine/< >｣
+language/intro contains links
+	link entry ｢/reference｣ has ｢/reference｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/reference｣
+	link entry ｢https://raku.org/resources｣ has ｢<code>useful resources</code>｣ labels a ｢external｣ link that points to ｢top of file｣ in target ｢https://raku.org/resources｣
+	link entry ｢/language/traps｣ has ｢<code>Traps to Avoid</code>｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/language/traps｣
+	link entry ｢/language/unicode_ascii｣ has ｢most cases｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/language/unicode_ascii｣
+	link entry ｢/language/unicode#Entering_unicode_codepoints_and_codepoint_sequences｣ has ｢help｣ labels a ｢local｣ link that points to ｢Entering_unicode_codepoints_and_codepoint_sequences｣ in target ｢/language/unicode｣
+	link entry ｢/language/unicode｣ has ｢unicode support｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/language/unicode｣
+	link entry ｢/introduction｣ has ｢/introduction｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/introduction｣
+	link entry ｢/language/containers｣ has ｢<code>Containers</code>｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/language/containers｣
+	link entry ｢/type/Signature｣ has ｢<code>Signatures</code>｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/type/Signature｣
+	link entry ｢/language/classtut｣ has ｢<code>Classes and Roles</code>｣ labels a ｢local｣ link that points to ｢top of file｣ in target ｢/language/classtut｣
