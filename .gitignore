@@ -21,3 +21,6 @@ raku-collection-plugins/
 /.raku-version
 /trial/raku_docs/**
 
+/trial/ebook_xhtml/
+/trial/ebook_final/
+/trial/EBook/structure-cache/

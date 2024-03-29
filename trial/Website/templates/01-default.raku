@@ -368,7 +368,7 @@ use ProcessedPod;
     'AUTHOR' => sub (%prm, %tml) { %prm<raw-contents> },
     'SUMMARY' => sub (%prm, %tml) { %prm<raw-contents> },
     'toc' => sub (%prm, %tml) {
-        if %prm<toc>.defined and %prm<toc>.keys { say 'in toc template';
+        if %prm<toc>.defined and %prm<toc>.keys {
             "<div id=\"_TOC\"><table>\n<caption>Table of Contents</caption>\n"
                 ~ [~] %prm<toc>.map({
                 '<tr class="toc-level-' ~ .<level> ~ '">'
