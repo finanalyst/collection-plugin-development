@@ -12,5 +12,5 @@
 	:template-raku<ebook-styling.raku>,
 	:transfer<transfer-callable.raku>,
 	:version<0.1.0>,
-	:spine<index>
+	:ebook-path-name<ebook.epub>,
 )

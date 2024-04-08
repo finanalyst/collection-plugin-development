@@ -1,5 +1,5 @@
 %(
     plugin-options => %(
-        ebook-embed => %( :spine<introduction reference miscellaneous> ),
+        ebook-embed => %( :ebook-path-name<../../ebook.epub> ),
     ),
 )

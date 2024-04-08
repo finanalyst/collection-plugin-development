@@ -1,19 +1,81 @@
 #!/usr/bin/env raku
 use v6.d;
 %(
+    'toc-section' => sub (%prm, %tml ) {
+        qq:to/SECT/
+                    <li class="section">
+                        <a href="toc.xhtml#{ %prm<key> }"><h1 id="{ %prm<key> }">{ %prm<data><name> }</h1></a>
+                        <ol class="section">
+        { %prm<data><contents> }                </ol> <!-- section -->
+                    </li> <!-- section -->
+        SECT
+    },
+    'toc' => sub (%prm, %tml) { '' },
+    'toc-chapter' => sub (%prm, %tml ) {
+        sub inset($n) { "\t" x ($n + 7) };
+        my $file = %prm<fn> ~ '.xhtml';
+        my $opened = False;
+        my $rv = qq[{ inset(-2) }<li class="chapter">\n{ inset(-1) }<a href="$file">{ %prm<title> }</a> ];
+        if %prm<toc>.defined and %prm<toc>.keys {
+            my @cont = %prm<toc>.grep( ! *.<is-title> );
+            my $last-level = 1;
+            $rv ~= "\n{ inset(0) }<ol class=\"chapter-contents\">\n";
+            for @cont -> %el {
+                my $lev = %el<level>;
+                given $last-level {
+                    when $_ < $lev {
+                        $last-level++;
+                        if $opened {
+                            $rv ~= "\n" ~ inset($last-level) ~ "<ol class=\"lev-$last-level\">\n";
+                        }
+                        else {
+                            $rv ~= qq[{inset($last-level -1 )}<li>\n{ inset($last-level -1) }<a href="$file">{ %prm<title> } - Preface</a>\n { inset($last-level) } <ol class="lev-$last-level">\n];
+                            $opened = True;
+                        }
+                        while $lev < $last-level {
+                            $last-level++;
+                            $rv ~= "\n" ~ inset($last-level)  ~ "<ol class=\"lev-$last-level\">\n";
+                        }
+                    }
+                    when $_ > $lev {
+                        while $last-level > $lev {
+                            $last-level--;
+                            $rv ~= "</li>\n" ~ inset($last-level + 1) ~ "</ol>\n" ~ inset($last-level) ~ "</li>\n";
+                        }
+                    }
+                    default {
+                        $rv ~= "</li>\n" if $opened;
+                        $opened = True;
+                    }
+                }
+                $rv ~= inset($last-level)
+                    ~ qq[<li><a href="$file#{%el.<target>}">{%el.<text> // ''}</a>];
+            }
+            # close last item
+            $rv ~= "</li>\n";
+            $last-level--;
+            # close off any remaining ol lists
+            while $last-level > 0 {
+                $last-level--;
+                $rv ~= inset($last-level) ~ "</ol>\n" ~ inset($last-level) ~ "</li>\n";
+            }
+            # final contents ol
+            $rv ~= "{ inset(-1) }</ol>\n{ inset(-2) }</li>\n";
+        }
+        else {
+            $rv ~= "\n{ inset(-2) }</li> <!-- chapter -->\n"
+        }
+        $rv
+    },
     'source-wrap' => sub (%prm, %tml) {
         qq:to/BLOCK/
-        <!DOCTYPE html>
-        <html lang="{ %prm<config><lang> }"
-            class="fontawesome-i2svg-active fontawesome-i2svg-complete">
+        <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+        <html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" lang="en-US" xml:lang="en-US">
         { %tml<head-block>.(%prm, %tml) }
         <body class="has-navbar-fixed-top">
-        { %tml<top-of-page>.(%prm, %tml) }
-        { %tml<navigation>.(%prm, %tml)  }
-        { %tml<wrapper>.(%prm, %tml)  }
-        { %tml<footer>.(%prm, %tml)  }
-        <div id="raku-repl"></div>
-        { %tml<js-bottom>.({}, {}) }
+        %tml<page-header>.(%prm, %tml)
+        %tml<page-content>.(%prm, %tml)
+        %tml<page-footnotes>.(%prm, %tml)
         </body>
         </html>
         BLOCK
@@ -31,148 +93,7 @@ use v6.d;
             </head>
             HEADBLOCK
     },
-    'top-of-page' => sub (%prm, %tml) {
-        if %prm<title-target>:exists and %prm<title-target> ne '' {
-            '<div id="' ~ %prm<title-target> ~ '" class="top-of-page"></div>'
-        }
-        else { '' }
-    },
-    'navigation' => sub (%prm, %tml) {
-        qq:to/BLOCK/
-        <nav class="navbar is-fixed-top is-flex-touch" role="navigation" aria-label="main navigation">
-            {
-            qq:to/SIDE/ unless %prm<config><direct-wrap>:exists;
-                <div class="navbar-item" style="margin-left: auto;">
-                    { %tml<left-bar-toggle>.( %prm, %tml) }
-                </div>
-            SIDE
-            }
-            <div class="container is-justify-content-space-around">
-                { %tml<head-brand>.( %prm, %tml) }
-                { %tml<head-topbar>.( %prm, %tml) }
-            </div>
-        </nav>
-        BLOCK
-    },
-    'left-bar-toggle' => sub (%prm, %tml ) {
-      q:to/BLOCK/
-        <div class="left-bar-toggle" title="Toggle Table of Contents & Index (Alt-T)">
-            <label class="chyronToggle left">
-                <input id="navbar-left-toggle" type="checkbox">
-                <span class="text">Contents</span>
-            </label>
-        </div>
-      BLOCK
-    },
-    'head-brand' => sub (%prm, %tml ) {
-        q:to/BLOCK/
-        <div class="navbar-brand">
-          <div class="navbar-logo">
-            <a class="navbar-item" href="/">
-              <img src="/assets/images/camelia-recoloured.png" alt="Raku" width="52.83" height="38">
-            </a>
-            <span class="navbar-logo-tm">tm</span>
-          </div>
-          <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navMenu">
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-          </a>
-        </div>
-        BLOCK
-    },
-    'head-topbar' => sub ( %prm, %tml ) {
-        qq:to/BLOCK/
-          <div id="navMenu" class="navbar-menu">
-            <div class="navbar-start">
-                <a class="navbar-item" href="/introduction" title="Getting started, Tutorials, Migration guides">
-                    Introduction
-                </a>
-                <a class="navbar-item" href="/reference" title="Fundamentals, General reference">
-                    Reference
-                </a>
-                <a class="navbar-item" href="/miscellaneous" title="Programs, Experimental">
-                    Miscellaneous
-                </a>
-                <a class="navbar-item" href="/types" title="The core types (classes) available">
-                    Types
-                </a>
-                <a class="navbar-item" href="/routines" title="Searchable table of routines">
-                    Routines
-                </a>
-                <a class="navbar-item" href="https://raku.org" title="Home page for community">
-                    Raku™
-                </a>
-                <a class="navbar-item" href="https://kiwiirc.com/client/irc.libera.chat/#raku" title="IRC live chat">
-                    Chat
-                </a>
-                <div class="navbar-item has-dropdown is-hoverable">
-                  <a class="navbar-link">
-                    More
-                  </a>
-                  <div class="navbar-dropdown is-right is-rounded">
-                    <hr class="navbar-divider">
-                    <a class="navbar-item" href="/about">
-                      About
-                    </a>
-                    <hr class="navbar-divider">
-                    <a class="navbar-item has-text-red" href="https://github.com/raku/doc-website/issues">
-                      Report an issue with this site
-                    </a>
-                    <hr class="navbar-divider">
-                    <a class="navbar-item" href="https://github.com/raku/doc/issues">
-                      Report an issue with the documentation content
-                    </a>
-                    <hr class="navbar-divider">
-                    <label class="centreToggle" title="Enable/Disable shortcuts (Alt-G)" style="--switch-width: 11">
-                       <input id="pageSettings" type="checkbox">
-                       <span class="text">Shortcuts</span>
-                       <span class="on">enabled</span>
-                       <span class="off">disabled</span>
-                    </label>
-                  </div>
-                </div>
-            </div>
-            { %tml<head-search>.( %prm, %tml) }
-          </div>
-        BLOCK
-    },
-    'head-search' => sub (%prm, %tml) {q:to/BLOCK/
-            <div class="navbar-end navbar-search-wrapper">
-                <div class="navbar-item">No search function</div>
-            </div>
-            BLOCK
-    },
     'wrapper' => sub (%prm, %tml) {
-        with %prm<config><direct-wrap> {
-            %prm<body>
-        }
-        else {
-            qq:to/BLOCK/
-            <div class="tile is-ancestor section">
-                { %tml<page-edit>.(%prm,%tml) }
-                <div id="left-column" class="tile is-parent is-2 is-hidden">
-                    <div id="left-col-inner">
-                        { %tml<toc-sidebar>.(%prm, %tml)   }
-                    </div>
-                </div>
-                <div id="main-column" class="tile is-parent" style="overflow-x: hidden;">
-                    <div id="main-col-inner">
-                        { %tml<page-main>.(%prm, %tml) }
-                    </div>
-                </div>
-            </div>
-            BLOCK
-        }
-    },
-    'toc-sidebar' => sub (%prm, %tml) {
-        if %tml<raku-toc-block>:exists { %tml<raku-toc-block>.(%prm, %tml) }
-        else { '' }
-    },
-    'page-main' => sub (%prm, %tml ) {
-        %tml<page-header>.(%prm, %tml)
-        ~ %tml<page-content>.(%prm, %tml)
-        ~ %tml<page-footnotes>.(%prm, %tml)
     },
     'page-header' => sub (%prm, %tml) {
         qq:to/BLOCK/
@@ -217,91 +138,6 @@ use v6.d;
         (%prm<contents> // '')
         ~ "\n" ~ (%prm<tail> // '') ~ "\n"
     },
-    'footer' => sub (%prm, %tml) {
-        qq:to/BLOCK/
-        <footer class="footer main-footer">
-          <div class="container px-4">
-            <nav class="level">
-            { %tml<footer-left>.(%prm, %tml) }
-            { %tml<footer-right>.(%prm, %tml) }
-            </nav>
-          </div>
-        </footer>
-        BLOCK
-    },
-    footer-left => sub (%prm, %tml ) {
-        q:to/FLEFT/
-        <div class="level-left">
-            <div class="level-item">
-              <a href="/about">About</a>
-            </div>
-            <div class="level-item">
-              <a id="toggle-theme">Toggle theme</a>
-            </div>
-        </div>
-        FLEFT
-    },
-    footer-right => sub (%prm, %tml ) {
-        q:to/FRIGHT/
-        <div class="level-right">
-            <div class="level-item">
-              <a href="/license">License</a>
-            </div>
-        </div>
-        FRIGHT
-    },
-    page-edit => sub (%prm, %tml) {
-        if %prm<config><path> ~~ / ^ .+ 'docs/' ( .+) $ / {
-            qq:to/BLOCK/
-            <div class="page-edit">
-                <a class="button page-edit-button"
-                   href="https://github.com/Raku/doc/edit/main/{ %tml<escaped>.(~$0) }"
-                   title="Edit this page.">
-                  <span class="icon is-right">
-                    <i class="fas fa-pen-alt is-medium"></i>
-                  </span>
-                </a>
-              </div>
-            BLOCK
-        }
-        elsif %prm<config><path> ~~ / 'Website/structure-sources/' .+ $ / {
-            qq:to/BLOCK/
-            <div class="page-edit">
-                <a class="button page-edit-button"
-                   href="https://github.com/Raku/doc-website/edit/main/{ %tml<escaped>.(~$/) }"
-                   title="Edit this page.">
-                  <span class="icon is-right">
-                    <i class="fas fa-pen-alt is-medium"></i>
-                  </span>
-                </a>
-              </div>
-            BLOCK
-        }
-        else {
-            qq:to/BLOCK/
-                <div class="page-edit">
-                    <a class="button js-modal-trigger"
-                        data-target="page-edit-info">
-                        <span class="icon">
-                            <i class="fas fa-pen-alt is-medium"></i>
-                        </span>
-                    </a>
-                </div>
-                <div id="page-edit-info" class="modal">
-                    <div class="modal-background"></div>
-                    <div class="modal-content">
-                        <div class="box">
-                            <p>This is an automatically generated page and cannot be edited directly. Text in Composite
-                            pages, (URLs starting with 'routine' or 'syntax') can be edited by clicking on the
-                            link labeled 'in context', and editing the text there.</p>
-                            <p>Exit this popup by pressing &lt;Escape&gt;, or clicking on X or on the background.</p>
-                        </div>
-                    </div>
-                    <button class="modal-close is-large" aria-label="close"></button>
-                </div>
-            BLOCK
-        }
-    },
     heading => sub (%prm, %tml) {
         my $txt = %prm<text>;
         my $index-parse = $txt ~~ /
@@ -310,13 +146,12 @@ use v6.d;
         /;
         my $h = 'h' ~ (%prm<level> // '1');
         my $targ = %tml<escaped>.(%prm<target>);
-        qq[[\n<$h id="$targ"]]
-            ~ qq[[ class="raku-$h">]]
-            ~ ( $index-parse.so ?? $index-parse[0] !! '' )
-            ~ qq[[<a href="#{ %tml<escaped>.(%prm<top>) }" title="go to top of document">]]
-            ~ ( $index-parse.so ?? $index-parse[1] !! $txt )
-            ~ qq[[<a class="raku-anchor" title="direct link" href="#$targ">§</a>]]
-            ~ qq[[</a></$h>\n]]
+        qq:to/HEAD/;
+            <$h id="$targ" class="raku-$h">
+            { $index-parse.so ?? $index-parse[0] !! '' }
+            { $index-parse.so ?? $index-parse[1] !! $txt }
+            </$h>
+            HEAD
     },
     'list' => sub (%prm, %tml) {
         qq[
@@ -325,8 +160,6 @@ use v6.d;
         </ul>
         ]
     },
-
-
     'format-b' => sub (%prm, %tml) {
         my $beg = '<strong>';
         my $end = '</strong>';

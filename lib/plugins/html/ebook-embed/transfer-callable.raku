@@ -1,6 +1,8 @@
 use v6.d;
 sub ($pr, %processed, %options --> Array ) {
-    "metadata.opf".IO.unlink;
-    note "deleting metadata.opf from ebook-embed" if %options<collection-info>;
+    for <metadata.opf toc.xhtml> {
+        .IO.unlink;
+        note "deleting $_ from ebook-embed" if %options<collection-info>;
+    }
     []
 }
