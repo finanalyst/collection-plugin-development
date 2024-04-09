@@ -1,6 +1,6 @@
 %(
-	:Website( %(
-		:_mode_format<html>,
+	:EBook( %(
+		:_mode_format<xhtml>,
 	)),
 	:_metadata_( %(
 		:collection-plugin-root<../lib>,
