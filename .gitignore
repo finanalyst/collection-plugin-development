@@ -19,7 +19,7 @@ raku-collection-plugins/
 /lib/plugins/html/typegraph/typegraphs/
 /.raku-version
 /trial/raku_docs/**
-/trial/ebook_xhtml/
-/trial/ebook_final/
+/trial/EBook/ebook_unzipped/
 /trial/EBook/structure-cache/
 /trial/EBook/reports/
+

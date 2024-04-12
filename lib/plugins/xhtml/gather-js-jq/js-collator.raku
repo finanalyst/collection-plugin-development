@@ -2,6 +2,7 @@ sub ( $pp, %options ) {
     my Bool $loadjq-lib = False;
     my @js;
     my @js-bottom;
+    my $got-ebook-embed = False;
     my multi sub add-defn(:$field, Positional :$info, :$plug, :$order = 0) {
         if $info[1] ~~ Str {
             add-defn(:$field, :info( $info[0] ), :$plug );
@@ -38,6 +39,7 @@ sub ( $pp, %options ) {
     my %own-config = $pp.get-data('gather-js-jq');
     for $pp.plugin-datakeys -> $plug {
         next if $plug eq 'js-collator' ;
+        $got-ebook-embed = True if $plug eq 'ebook-embed';
         my $data = $pp.get-data($plug);
         next unless $data ~~ Associative;
         for $data.kv -> $field, $info {
@@ -102,5 +104,9 @@ sub ( $pp, %options ) {
     }
     $template ~= ")\n";
     "js-templates.raku".IO.spurt($template);
+    # add all files to custom data section so they can be included in the manifest
+    note 'The ebook-embed plugin must come before gather-js plugin in the render section' unless $got-ebook-embed;
+    my %custom := $pp.get-data('ebook-embed');
+    %custom<for-manifest>.append: @move-dest.map( *.[0] );
     @move-dest
 }

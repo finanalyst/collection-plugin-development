@@ -1,19 +1,25 @@
 #!/usr/bin/env raku
 use v6.d;
 %(
+    'escaped' => sub ($s) { # special case with only a string as input
+        if $s and $s ne ''
+        { $s.trans(qw｢ <    >    &     " ｣ => qw｢ &lt; &gt; &amp; &quot; ｣) }
+        else { '' }
+    },
     'toc-section' => sub (%prm, %tml ) {
         qq:to/SECT/
                     <li class="section">
-                        <a href="toc.xhtml#{ %prm<key> }"><h1 id="{ %prm<key> }">{ %prm<data><name> }</h1></a>
+                        <a href="toc.xhtml#{ %prm<key> }">\<h1 id="{ %prm<key> }">{ %prm<data><name> }\</h1></a>
                         <ol class="section">
         { %prm<data><contents> }                </ol> <!-- section -->
                     </li> <!-- section -->
         SECT
     },
     'toc' => sub (%prm, %tml) { '' },
+    'glossary' => sub (%prm, %tml) { '' },
     'toc-chapter' => sub (%prm, %tml ) {
         sub inset($n) { "\t" x ($n + 7) };
-        my $file = %prm<fn> ~ '.xhtml';
+        my $file = %prm<fn-link> ~ '.xhtml';
         my $opened = False;
         my $rv = qq[{ inset(-2) }<li class="chapter">\n{ inset(-1) }<a href="$file">{ %prm<title> }</a> ];
         if %prm<toc>.defined and %prm<toc>.keys {
@@ -67,12 +73,41 @@ use v6.d;
         }
         $rv
     },
+    'index' => sub (%prm, %tml) {
+        %tml<source-wrap>.( %(
+            title => 'Index of Documentation',
+            subtitle => 'Indexed items in all the Raku documentation sources',
+            body => ([~] gather for %prm<index>.sort {
+                take qq[[\t\t<div class="index-defn">{ .key }\n]]
+                    ~ ([~] gather for .value.sort({ .<fn-link> ~ .<place> }) -> %ref {
+                        take qq[\t\t\t<a class="index-entry" href="{%ref<fn-link>}.xhtml#{%ref<target>}">{ %tml<escaped>(%ref<place>) }\</a>\n]
+                    })
+                    ~ qq[[\t\t</div>\n]]
+            }),
+        ), %tml );
+     },
+    'ebook-toc' => sub (%prm, %tml) {
+        %tml<source-wrap>.( %(
+            title => 'Raku Documentation',
+            subtitle => '',
+            body => (
+                q:to/TOC/ ~ %prm<toc-main> ~ q:to/TOCEND/;
+                    <nav epub:type="toc">
+                        <h1>Table of Contents</h1>
+                        <ol class="contents">
+                TOC
+                        </ol> <!-- contents -->
+                    </nav>
+                TOCEND
+            ),
+        ), %tml );
+     },
     'source-wrap' => sub (%prm, %tml) {
         qq:to/BLOCK/
         <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
         <html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" lang="en-US" xml:lang="en-US">
         { %tml<head-block>.(%prm, %tml) }
-        <body class="has-navbar-fixed-top">
+        <body>
         %tml<page-header>.(%prm, %tml)
         %tml<page-content>.(%prm, %tml)
         %tml<page-footnotes>.(%prm, %tml)
@@ -83,7 +118,7 @@ use v6.d;
     'head-block' => sub (%prm, %tml) {
         qq:to/HEADBLOCK/
             <head>
-                <title>{ %tml<escaped>.(%prm<title>) } | Raku Documentation\</title>
+                <title>{ %tml<escaped>.(%prm<title>) }</title>
                 <meta charset="UTF-8" />
                 { %tml<favicon>.({}, {}) }
                 { %prm<metadata> // '' }
@@ -97,40 +132,28 @@ use v6.d;
     },
     'page-header' => sub (%prm, %tml) {
         qq:to/BLOCK/
-        <section class="raku page-header">
-            <div class="container px-4">
-                <div class="raku page-title has-text-centered">
-                { %prm<title> }
-                </div>
-                <div class="raku page-subtitle has-text-centered">
-                { %prm<subtitle> }
-                </div>
+        <section class="page-header">
+            <div class="page-title">
+            { %prm<title> }
+            </div>
+            <div class="page-subtitle">
+            { %prm<subtitle> }
             </div>
         </section>
         BLOCK
     },
     'page-content' => sub (%prm, %tml) {
-        my $rv = '<section class="raku page-content">';
-        with %prm<config><page-content-columns> {
-            $rv ~= '<div class="container"><div class="columns listing">'
-                    ~ %prm<body> ~ '</div></div>';
-        }
-        orwith %prm<config><page-content-one-col> {
-            $rv ~= '<div class="container"><div class="columns one-col">'
-                ~ %prm<body> ~ '</div></div>';
-        }
-        else {
-            $rv ~= '<div class="container px-4"><div class="columns one-col">' ~ %prm<body> ~ '</div></div>';
-        }
-        $rv ~= "</section>\n"
+        qq:to/PAGE/;
+        <section class="page-content">
+        { %prm<body> }
+        </section>
+        PAGE
     },
     'page-footnotes' => sub (%prm, %tml) {
         return '' unless %prm<footnotes>;
         qq:to/BLOCK/
         <section class="page-footnotes">
-            <div class="container">
             { %prm<footnotes>  }
-            </div>
         </section>
         BLOCK
     },

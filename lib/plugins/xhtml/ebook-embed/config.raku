@@ -11,6 +11,7 @@
 	:render<move-files.raku>,
 	:template-raku<ebook-styling.raku>,
 	:transfer<transfer-callable.raku>,
-	:version<0.1.0>,
+	:version<0.1.1>,
 	:ebook-path-name<ebook.epub>,
+	:add-css<css/page.css>,
 )

@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+if [ $# -eq 0 ]
+  then
+    echo "No arguments supplied"
+    exit
+fi
+echo lib/plugins/xhtml/$1
+if [ -d lib/plugins/xhtml/$1/scss ];
+then
+    sass --update --no-source-map lib/plugins/xhtml/$1/scss:lib/plugins/xhtml/$1/css
+else
+    sass --update --no-source-map lib/plugins/xhtml/$1:lib/plugins/xhtml/$1
+fi

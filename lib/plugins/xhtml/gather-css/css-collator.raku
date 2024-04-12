@@ -2,8 +2,10 @@ sub ($pp, %options) {
     my $css = '';
     my @links;
     my @adds;
+    my $got-ebook-embed = False;
     for $pp.plugin-datakeys -> $p {
         next if $p eq 'gather-css';
+        $got-ebook-embed = True if $p eq 'ebook-embed';
         my $data = $pp.get-data($p);
         next unless $data ~~ Associative;
         with $data<css> {
@@ -35,13 +37,13 @@ sub ($pp, %options) {
         $css.subst-mutate(/ \n \N+ '.css.map' .+? $$/, '', :g);
         my $fn = $pp.get-data('mode-name') ~ '.css';
         $fn.IO.spurt($css);
-        $template ~= "\n" ~ '"\n" ~ ' ~ "'<link rel=\"stylesheet\" href=\"/assets/css/$fn\"/>'";
+        $template ~= "\n" ~ '"\n" ~ ' ~ "'<link rel=\"stylesheet\" href=\"../assets/css/$fn\"/>'";
         @move-dest.push( ("assets/css/$fn", 'myself', $fn , ) )
     }
     else { $template ~= ' "" ' } # Template is describing a subroutine that emits a string, which must be started by css
-    for @adds {
+    for @adds.grep( *.match( / '-dark' / ).not ) {
         my $link-title  = do given $_[1] { when /light/ { ' title="light"' }; when /dark/ { ' title="dark"' }; default { "" }};
-        $template ~= "\n" ~ '~ "\n" ~ ' ~ "'<link rel=\"stylesheet\" href=\"/assets/css/{ $_[1] }\"{ $link-title }/>'";
+        $template ~= "\n" ~ '~ "\n" ~ ' ~ "'<link rel=\"stylesheet\" href=\"../assets/css/{ $_[1] }\"{ $link-title }/>'";
         @move-dest.push( ('assets/css/' ~ $_[1], $_[0], $_[1], ) )
     }
     for @links {
@@ -49,5 +51,9 @@ sub ($pp, %options) {
     }
     $template ~= "\n" ~ '~ "\n" },)';
     "css-templates.raku".IO.spurt: $template;
+    # add all files to custom data section so they can be included in the manifest
+    note 'The ebook-embed plugin must come before gather-css plugin in the render section' unless $got-ebook-embed;
+    my %custom := $pp.get-data('ebook-embed');
+    %custom<for-manifest>.append: @move-dest.map( *.[0] );
     @move-dest
 }

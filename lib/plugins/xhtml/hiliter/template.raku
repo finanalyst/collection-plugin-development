@@ -147,7 +147,6 @@ my %hilight-langs = %(
         }
         qq[
             <div class="raku-code raku-lang">
-                <button class="copy-code" title="Copy code"><i class="far fa-clipboard"></i></button>
                 <label>$syntax-label\</label>
                 <div>$code\</div>
             </div>
