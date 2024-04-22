@@ -23,3 +23,4 @@ raku-collection-plugins/
 /trial/EBook/structure-cache/
 /trial/EBook/reports/
 
+/sqlite_dir/sqlite-test.sql

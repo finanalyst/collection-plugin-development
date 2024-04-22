@@ -230,22 +230,22 @@ use v6.d;
         BLOCK
     },
     footer-left => sub (%prm, %tml ) {
-        my $time = '';
-        $time = %prm<config><last-edited> if %prm<config><last-edited>:exists;
-        with $time {
-            $time = qq:to/TIME/;
-                    <div class="level-item" title="$time">
-                      <a>Last edited</a>
+        my $commit;
+        if %prm<config><last-edited>:exists and %prm<config><last-edited>.so {
+            $commit = qq:to/TIME/;
+                    <div class="level-item" title="{ %prm<config><last-edited> }">
+                      <a>Commit</a>
                     </div>
                 TIME
         }
-        else {
-            $time = q:to/TIME/;
+        elsif %prm<config><last-edited>:exists {
+            $commit = q:to/TIME/;
                     <div class="level-item" title="Unavailable">
-                      <a>Last edited</a>
+                      <a>Commit</a>
                     </div>
                 TIME
         }
+        else { $commit = '' }
         qq:to/FLEFT/
         <div class="level-left">
             <div class="level-item">
@@ -254,7 +254,7 @@ use v6.d;
             <div class="level-item">
               <a id="toggle-theme">Toggle theme</a>
             </div>
-            $time
+            $commit
         </div>
         FLEFT
     },
@@ -268,20 +268,20 @@ use v6.d;
         FRIGHT
     },
     page-edit => sub (%prm, %tml) {
-        my $time = '';
-        $time = %prm<config><last-edited> if %prm<config><last-edited>:exists;
-        with $time {
-            $time = '&#13;Last edited: ' ~ $time;
+        my $commit = '';
+        $commit = %prm<config><last-edited> if %prm<config><last-edited>:exists;
+        with $commit {
+            $commit = '&#13;Commit: ' ~ $commit;
         }
         else {
-            $time = '&#13;Last edited: Unavailable'
+            $commit = '&#13;Commit: Unavailable'
         }
         if %prm<config><path> ~~ / ^ .+ 'docs/' ( .+) $ / {
             qq:to/BLOCK/
             <div class="page-edit">
                 <a class="button page-edit-button"
                    href="https://github.com/Raku/doc/edit/main/{ %tml<escaped>.(~$0) }"
-                   title="Edit this page.$time">
+                   title="Edit this page.$commit">
                   <span class="icon is-right">
                     <i class="fas fa-pen-alt is-medium"></i>
                   </span>
@@ -294,7 +294,7 @@ use v6.d;
             <div class="page-edit">
                 <a class="button page-edit-button"
                    href="https://github.com/Raku/doc-website/edit/main/{ %tml<escaped>.(~$/) }"
-                   title="Edit this page.$time">
+                   title="Edit this page.$commit">
                   <span class="icon is-right">
                     <i class="fas fa-pen-alt is-medium"></i>
                   </span>

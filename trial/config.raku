@@ -8,6 +8,11 @@ use v6.d;
     #| the array of strings run to refresh the sources, eg. git pull
     #| assumes CWD set to the directory of sources
     :source-refresh(), #git -C raku-docs/ pull --quiet>,
+    #| the array of strings sent to the OS by run to obtain the repo's commit-id
+    :source-versioning<git -C raku_docs/doc rev-parse --short HEAD>,
+    #| the array of strings sent to the OS by run to obtain version data per file
+    #| the string is appended by the path of the file before the run is executed
+    :source-per-file-versioning('git','-C','raku_docs/doc', 'log', '-1', '--format="%h %cs"', '--'),
     # processing options independent of Mode
     :!no-status, # show progress
     :no-refresh, # call refresh step even after the initiation
