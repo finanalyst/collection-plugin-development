@@ -8,6 +8,6 @@
 	:name<generated>,
 	:render<get-commit-id.raku>,
 	:template-raku<template.raku>,
-	:version<0.1.4>,
+	:version<0.1.5>,
 	:css<generated.css>
 )
