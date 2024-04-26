@@ -3,7 +3,6 @@
 	:authors(
 		"finanalyst",
 	),
-	:compilation<compilation-callable.raku>,
 	:completion<completion-callable.raku>,
 	:custom-raku(),
 	:license<Artistic-2.0>,
@@ -11,7 +10,7 @@
 	:render<move-files.raku>,
 	:template-raku<ebook-styling.raku>,
 	:transfer<transfer-callable.raku>,
-	:version<0.1.1>,
+	:version<0.1.3>,
 	:ebook-path-name<ebook.epub>,
 	:add-css<css/page.css>,
 )

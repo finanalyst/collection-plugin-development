@@ -24,3 +24,5 @@ raku-collection-plugins/
 /trial/EBook/reports/
 
 /sqlite_dir/sqlite-test.sql
+/trial/ebook_unzipped/
+/trial/RakuDocumentation.epub

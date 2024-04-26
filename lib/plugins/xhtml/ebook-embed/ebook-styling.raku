@@ -98,6 +98,14 @@ use v6.d;
                 TOC
                         </ol> <!-- contents -->
                     </nav>
+                    <nav epub:type="landmarks" class="hide">
+                      <h1>Guide</h1>
+                      <ol>
+                        <li><a epub:type="toc" href="toc.xhtml">Table of Contents</a></li>
+                        <!--must be in here to display in kindle which only picks up
+                            toc under epub:type="landmarks">. Be sure to include nav.css to hide <ol> numbering. -->
+                      </ol>
+                    </nav>
                 TOCEND
             ),
         ), %tml );
@@ -111,6 +119,7 @@ use v6.d;
         %tml<page-header>.(%prm, %tml)
         %tml<page-content>.(%prm, %tml)
         %tml<page-footnotes>.(%prm, %tml)
+        %tml<page-footer>.(%prm, %tml)
         </body>
         </html>
         BLOCK
@@ -123,12 +132,8 @@ use v6.d;
                 { %tml<favicon>.({}, {}) }
                 { %prm<metadata> // '' }
                 { %tml<css>.({}, {}) }
-                { %tml<jq-lib>.({}, {}) }
-                { %tml<js>.({}, {}) }
             </head>
             HEADBLOCK
-    },
-    'wrapper' => sub (%prm, %tml) {
     },
     'page-header' => sub (%prm, %tml) {
         qq:to/BLOCK/
@@ -156,6 +161,18 @@ use v6.d;
             { %prm<footnotes>  }
         </section>
         BLOCK
+    },
+    'page-footer' => sub (%prm, %tml) {
+        my $rv = '';
+        $rv ~= qq[[<p>Contents rendered from ｢{ %prm<config><path> }｣.</p>\n]] if %prm<config><path>:exists;
+        if %prm<config><last-edited>:exists and %prm<config><last-edited>.so {
+            $rv ~= qq[[<p>Source file was last changed by commit #{ %prm<config><last-edited> }.</p>]]
+        }
+        qq:to/TIME/;
+                <div class="footer-item">
+                  $rv
+                </div>
+            TIME
     },
     'pod' => sub (%prm, %tml) {
         (%prm<contents> // '')

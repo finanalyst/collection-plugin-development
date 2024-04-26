@@ -67,3 +67,10 @@ ol.chapter-contents li a {
   font-size: unset;
   font-weight: unset;
 }
+
+.footer-item {
+  font-size: 11pt;
+}
+.footer-item::before {
+  content: "___________________";
+}
