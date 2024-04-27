@@ -111,6 +111,7 @@ use v6.d;
                     More
                   </a>
                   <div class="navbar-dropdown is-right is-rounded">
+                    { %tml<ebook>.( {}, {} ) }
                     <hr class="navbar-divider">
                     <a class="navbar-item" href="/about">
                       About
@@ -135,6 +136,7 @@ use v6.d;
             </div>
             { %tml<head-search>.( %prm, %tml) }
           </div>
+          { %tml<ebook-modal>({},{}) }
         BLOCK
     },
     'head-search' => sub (%prm, %tml) {q:to/BLOCK/
@@ -350,7 +352,30 @@ use v6.d;
         </ul>
         ]
     },
-
+    'ebook' => sub (%prm, %tml ) {
+        q[
+            <hr class="navbar-divider">
+            <a class="navbar-item js-modal-trigger" data-target="download-ebook">
+              Download E-Book (epub)
+            </a>
+        ]
+    },
+    'ebook-modal' => sub (%prm, %tml ) {
+        q[       <div id="download-ebook" class="modal">
+                    <div class="modal-background"></div>
+                    <div class="modal-content">
+                        <div class="box">
+                            <p><a href="/RakuDocumentation.epub" download>RakuDocumentation.epub</a> is a work in
+                            progress e-book. It needs testing on a variety of ereaders. The CSS will need enhancing.
+                            Suggestions are welcome and should be addressed by opening an issue on
+                            the Raku/doc-website repository</p>
+                            <p>Exit this popup by pressing &lt;Escape&gt;, or clicking on X or on the background.</p>
+                        </div>
+                    </div>
+                    <button class="modal-close is-large" aria-label="close"></button>
+                </div>
+        ]
+    },
 
     'format-b' => sub (%prm, %tml) {
         my $beg = '<strong>';

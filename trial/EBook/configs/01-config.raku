@@ -6,6 +6,11 @@
     >, # files to ignore
     :mode-obtain(), # not a remote repository
     :mode-refresh(), # ditto
+    #| the array of strings sent to the OS by run to obtain the repo's commit-id
+    :mode-source-versioning<git -C EBook rev-parse --short HEAD>,
+    #| the array of strings sent to the OS by run to obtain version data per file
+    #| the string is appended by the path of the file before the run is executed
+    :mode-source-per-file-versioning('git','-C','EBook/structure-sources', 'log', '-1', '--format="%h %cs"', '--'),
     :mode-extensions<rakudoc pod6>, # only use these for content
     :no-code-escape,# must use this when using highlighter
     :destination<../ebook_unzipped>, # where the html files will be sent relative to Mode directory
