@@ -366,8 +366,11 @@ use v6.d;
                     <div class="modal-content">
                         <div class="box">
                             <p><a href="/RakuDocumentation.epub" download>RakuDocumentation.epub</a> is a work in
-                            progress e-book. It needs testing on a variety of ereaders. The CSS will need enhancing.
-                            Suggestions are welcome and should be addressed by opening an issue on
+                            progress e-book. It targets the <a href="https://www.w3.org/publishing/epub3/">EPUB v3 specification</a>.
+                            It needs testing on a variety of ereaders (some of which may still implicitly expect
+                            compliance with EPUB v2). The CSS definitely needs enhancing (especially for code snippets).
+                            The Ebook opens in a Calibre reader, which is available on all operating systems.</p>
+                            <p>Suggestions are welcome and should be addressed by opening an issue on
                             the Raku/doc-website repository</p>
                             <p>Exit this popup by pressing &lt;Escape&gt;, or clicking on X or on the background.</p>
                         </div>
