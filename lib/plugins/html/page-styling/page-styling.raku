@@ -56,7 +56,7 @@ use v6.d;
     },
     'left-bar-toggle' => sub (%prm, %tml ) {
       q:to/BLOCK/
-        <div class="left-bar-toggle" title="Toggle Table of Contents & Index (Alt-T)">
+        <div class="left-bar-toggle" title="Toggle Table of Contents & Index">
             <label class="chyronToggle left">
                 <input id="navbar-left-toggle" type="checkbox">
                 <span class="text">Contents</span>
@@ -124,19 +124,14 @@ use v6.d;
                     <a class="navbar-item" href="https://github.com/raku/doc/issues">
                       Report an issue with the documentation content
                     </a>
-                    <hr class="navbar-divider">
-                    <label class="centreToggle" title="Enable/Disable shortcuts (Alt-G)" style="--switch-width: 11">
-                       <input id="pageSettings" type="checkbox">
-                       <span class="text">Shortcuts</span>
-                       <span class="on">enabled</span>
-                       <span class="off">disabled</span>
-                    </label>
+                    { %tml<cancel-announcement-popup>.( {}, {} ) }
                   </div>
                 </div>
             </div>
             { %tml<head-search>.( %prm, %tml) }
           </div>
           { %tml<ebook-modal>({},{}) }
+          { %tml<announcement-modal>.( {}, {} ) }
         BLOCK
     },
     'head-search' => sub (%prm, %tml) {q:to/BLOCK/
@@ -379,6 +374,8 @@ use v6.d;
                 </div>
         ]
     },
+    'cancel-announcement-popup' => sub ( %, %) { '' }, # placeholders for plugin
+    'announcement-modal' => sub ( %, %) { '' },
 
     'format-b' => sub (%prm, %tml) {
         my $beg = '<strong>';

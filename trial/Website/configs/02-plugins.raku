@@ -7,6 +7,7 @@
             hiliter font-awesome tablemanager
             page-styling
             options-search
+            announcements
             filtered-toc
             rakudoc-table
             link-error-test
@@ -17,7 +18,9 @@
             gather-js-jq gather-css sitemap
         >,
         :report<link-plugin-assets-report sitemap>,
-        :transfer<secondaries gather-js-jq gather-css images raku-doc-setup options-search sqlite-db>,
+        :transfer<secondaries gather-js-jq gather-css
+            images raku-doc-setup options-search sqlite-db
+            announcements announcements>,
         :compilation<secondaries listfiles link-error-test options-search website sqlite-db>,
         :completion<cro-app>,
     ),
