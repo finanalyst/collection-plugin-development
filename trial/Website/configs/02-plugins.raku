@@ -4,7 +4,9 @@
     plugins-required => %(
         :setup<raku-doc-setup>,
         :render<
-            hiliter font-awesome tablemanager
+            #hiliter
+            rainbow
+            font-awesome tablemanager
             page-styling
             options-search
             announcements
